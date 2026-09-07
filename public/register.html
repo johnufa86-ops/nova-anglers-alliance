@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Регистрация на соревнование — NOVA ANGLERS ALLIANCE</title>
+<meta name="description" content="Официальная заявка на участие в соревновании NOVA Anglers Alliance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="stars" style="display:none"></canvas>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="competitions.html" class="active">Соревнования</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="news.html">Новости</a>
+      <a href="media.html">Медиа</a>
+      <a href="alliance.html">Альянс</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/cabinet" class="login-link">Войти</a>
+      <a href="contacts.html" class="btn btn-primary btn-sm">Участвовать</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero" style="padding-bottom:48px;">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a><span>/</span><a href="competitions.html">Соревнования</a><span>/</span><a href="#" id="bcComp">…</a><span>/</span><span>Регистрация</span></div>
+    <div class="eyebrow">Официальная заявка</div>
+    <h1>Регистрация на соревнование</h1>
+    <div class="page-hero-meta" style="margin-top:28px;">
+      <div><span>Турнир</span><b id="sTitle" style="font-size:16px;">—</b></div>
+      <div><span>Дата</span><b id="sDate" style="font-size:16px;">—</b></div>
+      <div><span>Место</span><b id="sPlace" style="font-size:16px;">—</b></div>
+      <div><span>Дисциплина</span><b id="sDiscipline" style="font-size:16px;">—</b></div>
+    </div>
+  </div>
+</section>
+
+<div id="notFound" style="display:none;"><section><div class="wrap reveal" style="text-align:center;">
+  <div class="empty-state">Турнир не найден.</div>
+  <div style="margin-top:24px;"><a href="competitions.html" class="btn btn-ghost">Ко всем соревнованиям</a></div>
+</div></section></div>
+
+<div id="errorBanner" style="display:none;"></div>
+
+<div id="closedNotice" style="display:none;"><section><div class="wrap reveal" style="text-align:center;">
+  <div class="empty-state">Регистрация на этот турнир закрыта.</div>
+  <div style="margin-top:24px;"><a href="#" id="backToCompClosed" class="btn btn-ghost">К странице турнира</a></div>
+</div></section></div>
+
+<div id="wizardRoot">
+<section>
+  <div class="wrap reveal">
+
+    <div class="reg-stepper" id="stepper">
+      <div class="reg-step" data-step="1"><span class="num">1</span><span class="label">Участник</span></div>
+      <div class="reg-connector"></div>
+      <div class="reg-step" data-step="2"><span class="num">2</span><span class="label">Данные</span></div>
+      <div class="reg-connector"></div>
+      <div class="reg-step" data-step="3"><span class="num">3</span><span class="label">Проверка</span></div>
+      <div class="reg-connector"></div>
+      <div class="reg-step" data-step="4"><span class="num">4</span><span class="label">Заявка принята</span></div>
+    </div>
+
+    <div id="dupBanner" style="display:none;"></div>
+
+    <!-- STEP 1 — participant type -->
+    <div class="wizard-step" id="wstep1">
+      <div class="next-card" style="grid-template-columns:1fr;">
+        <div class="section-head" style="margin-bottom:28px;">
+          <h2 style="font-size:22px;">Кто подаёт заявку?</h2>
+          <p class="sub" id="entryTypeHint"></p>
+        </div>
+        <div class="type-choice-grid" id="typeChoiceGrid">
+          <button type="button" class="type-card" data-type="athlete">
+            <span class="check">✓</span>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+            <h3>Спортсмен</h3>
+            <p>Личная заявка на участие в личном зачёте соревнования.</p>
+          </button>
+          <button type="button" class="type-card" data-type="team">
+            <span class="check">✓</span>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 21c0-4 3-6 5-6s5 2 5 6M12 21c0-4 3-6 5-6s5 2 5 6"/></svg>
+            <h3>Экипаж / команда</h3>
+            <p>Заявка от имени экипажа — капитан и состав спортсменов.</p>
+          </button>
+        </div>
+        <div class="next-actions" style="margin-top:32px;justify-content:flex-end;">
+          <button type="button" class="btn btn-primary" id="toStep2" disabled>Далее</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 — data -->
+    <div class="wizard-step" id="wstep2">
+      <div class="next-card" style="grid-template-columns:1fr;">
+
+        <form id="formAthlete" novalidate>
+          <div class="section-head" style="margin-bottom:28px;"><h2 style="font-size:22px;">Данные спортсмена</h2></div>
+          <div class="form-grid">
+            <div class="field"><label>Фамилия</label><input type="text" id="a_lastname" required></div>
+            <div class="field"><label>Имя</label><input type="text" id="a_firstname" required></div>
+            <div class="field"><label>Отчество</label><input type="text" id="a_middlename"><span class="field-hint">Если есть</span></div>
+            <div class="field"><label>Дата рождения</label><input type="date" id="a_birthdate" required></div>
+            <div class="field"><label>Телефон</label><input type="tel" id="a_phone" placeholder="+7 (___) ___-__-__" required></div>
+            <div class="field"><label>E-mail</label><input type="email" id="a_email" placeholder="you@mail.ru" required></div>
+            <div class="field"><label>Регион</label><input type="text" id="a_region" required></div>
+            <div class="field"><label>Город</label><input type="text" id="a_city" required></div>
+            <div class="field"><label>Спортивная организация / клуб</label><input type="text" id="a_club"><span class="field-hint">Необязательно</span></div>
+            <div class="field"><label>Спортивная квалификация</label>
+              <select id="a_qualification">
+                <option>Без разряда</option><option>3 юношеский</option><option>2 разряд</option><option>1 разряд</option><option>КМС</option><option>МС</option>
+              </select>
+            </div>
+            <div class="field full" style="display:flex;align-items:flex-start;gap:10px;">
+              <input type="checkbox" id="a_agree_rules" style="width:auto;margin-top:3px;">
+              <label for="a_agree_rules" style="margin:0;text-transform:none;font-size:13.5px;color:var(--muted);">Согласен(на) с регламентом и правилами соревнования</label>
+            </div>
+            <div class="field full" style="display:flex;align-items:flex-start;gap:10px;">
+              <input type="checkbox" id="a_agree_pdn" style="width:auto;margin-top:3px;">
+              <label for="a_agree_pdn" style="margin:0;text-transform:none;font-size:13.5px;color:var(--muted);">Согласен(на) на обработку персональных данных</label>
+            </div>
+          </div>
+        </form>
+
+        <form id="formTeam" novalidate style="display:none;">
+          <div class="section-head" style="margin-bottom:28px;"><h2 style="font-size:22px;">Данные экипажа</h2></div>
+          <div class="form-grid">
+            <div class="field full"><label>Название экипажа</label><input type="text" id="t_name" required></div>
+          </div>
+
+          <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-2);margin:28px 0 14px;">Состав экипажа</h4>
+          <div id="rosterRows" style="display:flex;flex-direction:column;gap:14px;"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="addMember" style="margin-top:16px;">+ Добавить спортсмена</button>
+
+          <div class="form-grid" style="margin-top:28px;">
+            <div class="field"><label>Клуб / организация</label><input type="text" id="t_club"><span class="field-hint">Необязательно</span></div>
+            <div class="field"><label>Регион</label><input type="text" id="t_region" required></div>
+            <div class="field"><label>Город</label><input type="text" id="t_city" required></div>
+            <div class="field"><label>Телефон</label><input type="tel" id="t_phone" placeholder="+7 (___) ___-__-__" required></div>
+            <div class="field"><label>E-mail</label><input type="email" id="t_email" placeholder="you@mail.ru" required></div>
+            <div class="field full"><label>Дополнительные сведения</label><textarea id="t_notes" placeholder="Необязательно"></textarea></div>
+            <div class="field full" style="display:flex;align-items:flex-start;gap:10px;">
+              <input type="checkbox" id="t_agree_rules" style="width:auto;margin-top:3px;">
+              <label for="t_agree_rules" style="margin:0;text-transform:none;font-size:13.5px;color:var(--muted);">Экипаж согласен с регламентом и правилами соревнования</label>
+            </div>
+            <div class="field full" style="display:flex;align-items:flex-start;gap:10px;">
+              <input type="checkbox" id="t_agree_pdn" style="width:auto;margin-top:3px;">
+              <label for="t_agree_pdn" style="margin:0;text-transform:none;font-size:13.5px;color:var(--muted);">Согласие на обработку персональных данных всех участников экипажа получено</label>
+            </div>
+          </div>
+        </form>
+
+        <div class="next-actions" style="margin-top:32px;justify-content:space-between;">
+          <button type="button" class="btn btn-ghost" id="toStep1Back">Назад</button>
+          <button type="button" class="btn btn-primary" id="toStep3">Проверить данные</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 — review -->
+    <div class="wizard-step" id="wstep3">
+      <div class="next-card" style="grid-template-columns:1fr;">
+        <div class="section-head" style="margin-bottom:8px;"><h2 style="font-size:22px;">Проверьте данные</h2></div>
+        <p class="sub" style="margin-bottom:32px;">Убедитесь, что всё указано верно — после подачи изменить заявку самостоятельно будет нельзя.</p>
+        <div id="reviewContent"></div>
+        <div class="next-actions" style="margin-top:8px;justify-content:space-between;">
+          <button type="button" class="btn btn-ghost" id="toStep2Back">Изменить</button>
+          <button type="button" class="btn btn-primary" id="submitApp">Подать заявку</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 — confirmation -->
+    <div class="wizard-step" id="wstep4">
+      <div class="next-card confirm-card" style="grid-template-columns:1fr;">
+        <div class="burst-sm" aria-hidden="true">
+          <svg viewBox="0 0 520 520" width="100%" height="100%"><g fill="none" stroke="#ae8850">
+            <circle cx="260" cy="260" r="100" opacity=".4" stroke-width="1"/>
+            <circle cx="260" cy="260" r="160" opacity=".22" stroke-width="1"/>
+            <circle cx="260" cy="260" r="6" fill="#f2d5a1" stroke="none"/>
+          </g></svg>
+        </div>
+        <div class="content">
+          <svg class="confirm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+          <div class="eyebrow" style="justify-content:center;">Заявка принята</div>
+          <h2 style="font-size:clamp(24px,3.5vw,34px);text-transform:uppercase;">Спасибо за заявку</h2>
+          <div class="confirm-number mono" id="cAppId">NOVA-2026-0000</div>
+          <span class="status-pill pending" style="font-size:12px;padding:6px 16px;" id="cStatus">На рассмотрении</span>
+          <div class="confirm-meta">
+            <div><span>Соревнование</span><b id="cComp">—</b></div>
+            <div><span>Участник</span><b id="cParticipant">—</b></div>
+            <div><span>Дата подачи</span><b id="cDate">—</b></div>
+          </div>
+          <p class="sub" style="margin:22px auto 0;max-width:520px;font-size:13.5px;">Заявка сохранена в центральной базе Альянса и получила уникальный номер. Организатор рассмотрит её и обновит статус — этот же номер доступен с любого устройства по сохранённой ссылке.</p>
+          <div class="confirm-actions">
+            <button type="button" class="btn btn-ghost" id="downloadApp">Скачать заявку</button>
+            <a href="#" class="btn btn-primary" id="backToComp">Вернуться к соревнованию</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div><!-- /wizardRoot -->
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-full.png" alt="NOVA Anglers Alliance — Альянс рыболовов">
+        <p>Российская спортивная экосистема рыболовного спорта: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col"><h5>Спорт</h5><ul>
+        <li><a href="competitions.html">Соревнования</a></li><li><a href="competitions.html">Календарь</a></li>
+        <li><a href="rating.html">Рейтинг</a></li><li><a href="athletes.html">Участники</a></li>
+        <li><a href="teams.html">Команды</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Альянс</h5><ul>
+        <li><a href="news.html">Новости</a></li><li><a href="media.html">Медиа</a></li>
+        <li><a href="partners.html">Партнёры</a></li><li><a href="alliance.html">Об Альянсе</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Контакты</h5><ul>
+        <li><a href="mailto:info@nova-anglers.ru">info@nova-anglers.ru</a></li><li><a href="contacts.html">Контакты</a></li>
+        <li><a href="contacts.html">Пресс-центр</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script src="js/api.js"></script>
+<script src="data/applications.js"></script>
+<script src="register.js"></script>
+</body>
+</html>

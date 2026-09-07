@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA ANGLERS ALLIANCE — Рыболовный спорт. Новый уровень.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="competitions.html">Соревнования</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="news.html">Новости</a>
+      <a href="media.html">Медиа</a>
+      <a href="alliance.html">Альянс</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/cabinet" class="login-link">Войти</a>
+      <a href="contacts.html" class="btn btn-primary btn-sm">Участвовать</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<div id="top" class="hero">
+  <div class="hero-horizon"></div>
+  <div class="hero-rings" aria-hidden="true">
+    <img src="assets/logo-compact.png" alt="">
+  </div>
+  <div class="wrap">
+    <div class="hero-eyebrow"><span class="dot"></span>СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА</div>
+    <h1 class="hero-title">Рыболовный спорт.<br><span class="accent">Новый уровень.</span></h1>
+    <p class="hero-sub">NOVA Anglers Alliance объединяет спортсменов, команды и соревнования в единую рыболовную спортивную систему.</p>
+    <div class="hero-cta">
+      <a href="competitions.html" class="btn btn-primary">Ближайшие соревнования</a>
+      <a href="contacts.html" class="btn btn-ghost">Стать участником</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b class="mono" data-count="482">0</b><span>Спортсменов</span></div>
+      <div class="stat"><b class="mono" data-count="37">0</b><span>Экипажей</span></div>
+      <div class="stat"><b class="mono" data-count="19">0</b><span>Турниров в сезоне</span></div>
+      <div class="stat"><b class="mono" data-count="12">0</b><span>Регионов</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>SCROLL</span><span class="line"></span></div>
+</div>
+
+<!-- ============ NEXT COMPETITION ============ -->
+<section id="competition">
+  <div class="wrap reveal">
+    <div class="eyebrow">Ближайший старт</div>
+    <div class="next-card">
+      <div>
+        <div class="next-status" id="nxStatus"><span class="dot"></span>Регистрация открыта</div>
+        <h3 class="next-title" id="nxTitle">NOVA CUP — Волга. Кубок открытия сезона</h3>
+        <div class="next-meta">
+          <div><span>Дата</span><b id="nxDate">18–20 сентября 2026</b></div>
+          <div><span>Дисциплина</span><b id="nxDiscipline">Спиннинг, лодка</b></div>
+          <div><span>Место</span><b id="nxPlace">Астраханская область</b></div>
+          <div><span>Формат</span><b id="nxFormat">Экипажи, 2 спортсмена</b></div>
+        </div>
+        <div class="next-actions">
+          <a href="competition.html?id=nova-cup-volga" class="btn btn-primary btn-sm" id="nxRegisterBtn">Регистрация</a>
+          <a href="competition.html?id=nova-cup-volga#reglament" class="btn btn-ghost btn-sm" id="nxReglamentBtn">Регламент</a>
+        </div>
+      </div>
+      <div class="divider-v"></div>
+      <div class="countdown-box">
+        <span class="label">До старта</span>
+        <div class="countdown-grid" id="countdown">
+          <div class="cd-unit"><b id="cd-d">00</b><span>дни</span></div>
+          <div class="cd-unit"><b id="cd-h">00</b><span>часы</span></div>
+          <div class="cd-unit"><b id="cd-m">00</b><span>мин</span></div>
+          <div class="cd-unit"><b id="cd-s">00</b><span>сек</span></div>
+        </div>
+        <div class="entrants">
+          <span class="avatars"><span>ЕК</span><span>МА</span><span>ДС</span></span>
+          <span id="nxEntrants">Загружаем данные о регистрации…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE ============ -->
+<section id="live">
+  <div class="wrap reveal">
+    <div class="eyebrow">NOVA Live</div>
+    <div class="section-head">
+      <h2>Последний турнир</h2>
+      <p class="sub">NOVA CUP — Дон. Финальный этап зимней серии, 210 спортсменов, 3 дня соревнований.</p>
+    </div>
+    <div class="live-panel">
+      <div class="live-top">
+        <div class="live-badge"><span class="dot"></span>ЗАВЕРШЁН · ИТОГОВЫЙ ПРОТОКОЛ</div>
+        <div class="live-meta mono">NOVA CUP — ДОН · 08–10.03.2026</div>
+      </div>
+      <table class="live-table">
+        <thead><tr><th>#</th><th>Спортсмен / Экипаж</th><th>Регион</th><th style="text-align:right">Очки</th></tr></thead>
+        <tbody>
+          <tr><td class="pos-cell top">01</td><td>Артём Волков</td><td>Ростовская обл.</td><td class="pts-cell">2 480<span class="trend-up">▲</span></td></tr>
+          <tr><td class="pos-cell top">02</td><td>Экипаж «Меридиан»</td><td>Краснодарский край</td><td class="pts-cell">2 415<span class="trend-up">▲</span></td></tr>
+          <tr><td class="pos-cell top">03</td><td>Игорь Шахов</td><td>Волгоградская обл.</td><td class="pts-cell">2 390<span class="trend-down">▼</span></td></tr>
+          <tr><td class="pos-cell">04</td><td>Дарья Соколова</td><td>Астраханская обл.</td><td class="pts-cell">2 301</td></tr>
+          <tr><td class="pos-cell">05</td><td>Экипаж «Нордвест»</td><td>Ленинградская обл.</td><td class="pts-cell">2 264<span class="trend-up">▲</span></td></tr>
+        </tbody>
+      </table>
+      <div class="live-footer"><a href="competition.html?id=nova-don-winter#results" class="btn btn-ghost btn-sm">Смотреть результаты</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RATING ============ -->
+<section id="rating">
+  <div class="wrap reveal">
+    <div class="eyebrow">Рейтинг NOVA</div>
+    <div class="section-head">
+      <h2>Каждый старт имеет значение.</h2>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="athletes">Спортсмены</button>
+      <button class="tab-btn" data-tab="crews">Экипажи</button>
+      <button class="tab-btn" data-tab="clubs">Клубы</button>
+    </div>
+    <div class="rating-list reveal-stagger" id="ratingList"></div>
+    <div class="rating-foot"><a href="rating.html" class="btn btn-ghost">Полный рейтинг</a></div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="wrap reveal">
+    <div class="eyebrow">NOVA Anglers Alliance</div>
+    <div class="section-head">
+      <h2>Мы создаём новую спортивную среду для рыболовов.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-card"><span class="num mono">01</span>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+        <h3>Соревнования</h3><p>Профессиональная организация турниров и чемпионатов по всей стране — от региональных этапов до финала сезона.</p>
+      </div>
+      <div class="about-card"><span class="num mono">02</span>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
+        <h3>Спортсмены</h3><p>Профили участников, полная история выступлений и единый рейтинг, объединяющий все дисциплины Альянса.</p>
+      </div>
+      <div class="about-card"><span class="num mono">03</span>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 21c0-4 3-6 5-6s5 2 5 6M12 21c0-4 3-6 5-6s5 2 5 6"/></svg>
+        <h3>Сообщество</h3><p>Команды, клубы, партнёры и люди, которые каждый день развивают рыболовный спорт в России.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CALENDAR ============ -->
+<section id="calendar">
+  <div class="wrap reveal">
+    <div class="eyebrow">Календарь NOVA</div>
+    <div class="section-head">
+      <h2>Сезон 2026</h2>
+      <p class="sub">19 турниров, 12 регионов — полный календарь дисциплин Альянса.</p>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="boat">Лодка</button>
+      <button class="filter-btn" data-filter="shore">Берег</button>
+      <button class="filter-btn" data-filter="spin">Спиннинг</button>
+      <button class="filter-btn" data-filter="other">Другие</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-foot"><a href="competitions.html" class="btn btn-ghost">Весь календарь</a></div>
+  </div>
+</section>
+
+<!-- ============ ATHLETES ============ -->
+<section id="athletes">
+  <div class="wrap reveal">
+    <div class="eyebrow">Лучшие в NOVA</div>
+    <div class="section-head">
+      <h2>Участники сезона</h2>
+    </div>
+    <div class="ath-grid" id="athGrid"></div>
+    <div class="ath-foot"><a href="athletes.html" class="btn btn-ghost">Все участники</a></div>
+  </div>
+</section>
+
+<!-- ============ NEWS ============ -->
+<section id="news">
+  <div class="wrap reveal">
+    <div class="eyebrow">Новости NOVA</div>
+    <div class="section-head"><h2>Что происходит в Альянсе</h2></div>
+    <div class="news-grid" id="newsGrid"></div>
+  </div>
+</section>
+
+<!-- ============ MEDIA ============ -->
+<section id="media" style="padding:0;border-top:1px solid var(--line-soft);">
+  <div class="media-block" style="border:none;border-radius:0;">
+    <div class="media-hero reveal">
+      <div class="eyebrow" style="justify-content:center;">NOVA Media</div>
+      <h2>Соревнования. Люди. Эмоции.</h2>
+      <p class="sub">Каждый старт NOVA — это истории, кадры и эмоции спортсменов со всей страны.</p>
+    </div>
+    <div class="media-tiles">
+      <div class="media-tile"></div><div class="media-tile"><div class="play">▶</div></div><div class="media-tile"></div>
+      <div class="media-tile"><div class="play">▶</div></div><div class="media-tile"></div><div class="media-tile"></div>
+    </div>
+    <div class="social-row">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>Instagram</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 3v11a4 4 0 1 1-4-4"/><path d="M16 3c0 3 2 5 5 5"/></svg>TikTok</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg>VK</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg>Telegram</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARTNERS ============ -->
+<section id="partners">
+  <div class="wrap reveal">
+    <div class="eyebrow">Партнёры NOVA</div>
+    <div class="section-head"><h2>Развиваем рыболовный спорт вместе.</h2></div>
+    <div class="partners-grid">
+      <div class="partner-cell">AURUM</div><div class="partner-cell">DEEPWATER</div><div class="partner-cell">VOLGA GEAR</div><div class="partner-cell">POLARIS</div><div class="partner-cell">KRAFT</div>
+    </div>
+    <div class="partners-foot">
+      <p>Ищете партнёрство с крупнейшим рыболовным альянсом страны?</p>
+      <a href="contacts.html" class="btn btn-primary btn-sm">Стать партнёром</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section id="final-cta" class="final-cta">
+  <div class="burst" aria-hidden="true">
+    <svg viewBox="0 0 900 900" width="100%" height="100%"><g fill="none" stroke="#aa834a">
+      <circle cx="450" cy="450" r="160" opacity=".4" stroke-width="1"/>
+      <circle cx="450" cy="450" r="260" opacity=".25" stroke-width="1"/>
+      <circle cx="450" cy="450" r="360" opacity=".12" stroke-width="1"/>
+      <circle cx="450" cy="450" r="8" fill="#e7cc9c" stroke="none"/>
+    </g></svg>
+  </div>
+  <div class="wrap reveal">
+    <h2>Твой след в рыболовном спорте начинается здесь.</h2>
+    <p class="sub">Стань частью NOVA Anglers Alliance.</p>
+    <div class="hero-cta">
+      <a href="competitions.html" class="btn btn-primary">Участвовать в соревновании</a>
+      <a href="contacts.html" class="btn btn-ghost">Стать участником NOVA</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-full.png" alt="NOVA Anglers Alliance — Альянс рыболовов">
+        <p>Российская спортивная экосистема рыболовного спорта: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col"><h5>Спорт</h5><ul>
+        <li><a href="competitions.html">Соревнования</a></li><li><a href="competitions.html">Календарь</a></li>
+        <li><a href="rating.html">Рейтинг</a></li><li><a href="athletes.html">Участники</a></li>
+        <li><a href="teams.html">Команды</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Альянс</h5><ul>
+        <li><a href="news.html">Новости</a></li><li><a href="media.html">Медиа</a></li>
+        <li><a href="partners.html">Партнёры</a></li><li><a href="alliance.html">Об Альянсе</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Контакты</h5><ul>
+        <li><a href="mailto:info@nova-anglers.ru">info@nova-anglers.ru</a></li><li><a href="contacts.html">Контакты</a></li>
+        <li><a href="contacts.html">Пресс-центр</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/competitions.js"></script>
+<script>
+
+/* ---------- countdown — цель: ближайший турнир с сервера ---------- */
+let target = new Date(); target.setDate(target.getDate()+14); target.setHours(target.getHours()+6);
+function tickCountdown(){
+  const now = new Date(); let diff = Math.max(0, target - now);
+  const d = Math.floor(diff/86400000); diff -= d*86400000;
+  const h = Math.floor(diff/3600000); diff -= h*3600000;
+  const m = Math.floor(diff/60000); diff -= m*60000;
+  const s = Math.floor(diff/1000);
+  const pad = n=>String(n).padStart(2,'0');
+  document.getElementById('cd-d').textContent = pad(d);
+  document.getElementById('cd-h').textContent = pad(h);
+  document.getElementById('cd-m').textContent = pad(m);
+  document.getElementById('cd-s').textContent = pad(s);
+}
+tickCountdown(); setInterval(tickCountdown, 1000);
+
+/* ---------- next competition block — live data from the server ---------- */
+function updateNextCard(){
+  const list = NOVA_DATA.competitions || [];
+  const next = list.find(c => c.registration === 'open') || list.find(c => c.stage !== 'finished');
+  if(!next) return;
+  const el = id => document.getElementById(id);
+  if(el('nxTitle')) el('nxTitle').textContent = next.title;
+  if(el('nxStatus')) el('nxStatus').innerHTML = `<span class="dot"></span>${NOVA.registrationLabel(next.registration)}`;
+  if(el('nxDate')) el('nxDate').textContent = next.dateLabel;
+  if(el('nxDiscipline')) el('nxDiscipline').textContent = next.disciplineLabel;
+  if(el('nxPlace')) el('nxPlace').textContent = next.place;
+  if(el('nxFormat')) el('nxFormat').textContent = next.format;
+  if(el('nxEntrants')) el('nxEntrants').textContent = `${next.participants} ${next.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано`;
+  ['nxRegisterBtn','nxReglamentBtn'].forEach(id => {
+    if(el(id)) el(id).href = `competition.html?id=${next.id}${id==='nxReglamentBtn'?'#reglament':''}`;
+  });
+  if(el('nxRegisterBtn') && next.registration === 'closed'){
+    const b = el('nxRegisterBtn');
+    b.textContent = 'Регистрация закрыта';
+    b.removeAttribute('href'); b.style.opacity = '.6'; b.style.pointerEvents = 'none';
+  }
+  const d = new Date(next.dateStart);
+  if(!isNaN(d)){ d.setHours(9,0,0,0); if(d.getTime() > Date.now()) target = d; }
+}
+updateNextCard();
+
+/* ---------- rating preview (top 5 athletes) — from NOVA_DATA ---------- */
+let currentTab = 'athletes';
+function renderRating(tab){
+  currentTab = tab;
+  const list = document.getElementById('ratingList');
+  const key = tab === 'athletes' ? 'athletes' : 'teams';
+  let data;
+  if(tab === 'athletes'){
+    data = [...NOVA_DATA.athletes].sort((a,b)=>b.rating-a.rating).slice(0,5)
+      .map(a=>({name:a.name, team:a.region, pts:a.rating, href:`athlete.html?id=${a.id}`}));
+  } else {
+    const type = tab === 'crews' ? 'crew' : 'club';
+    data = NOVA_DATA.teams.filter(t=>t.type===type).sort((a,b)=>b.rating-a.rating).slice(0,5)
+      .map(t=>({name:t.name, team:t.region, pts:t.rating, href:`team.html?id=${t.id}`}));
+  }
+  const maxPts = data[0].pts;
+  list.innerHTML = data.map((d,i)=>`
+    <a href="${d.href}" class="rating-row" style="text-decoration:none;color:inherit;">
+      <div class="rank-orbit orbit" style="width:52px;height:52px;">
+        ${orbitSVG(52, Math.round((d.pts/maxPts)*100))}
+        <div class="core"><b class="mono">${i+1}</b></div>
+      </div>
+      <div class="rname"><b>${d.name}</b><span>${d.team}</span></div>
+      <div class="rpts"><b>${d.pts.toLocaleString('ru-RU')}</b><span>очков</span></div>
+    </a>`).join('');
+}
+renderRating('athletes');
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderRating(btn.dataset.tab);
+  });
+});
+
+/* ---------- calendar preview (next 6 upcoming) — from NOVA_DATA ---------- */
+let currentFilter = 'all';
+function renderCal(filter){
+  currentFilter = filter || currentFilter;
+  const grid = document.getElementById('calGrid');
+  const items = NOVA_DATA.competitions
+    .filter(c => c.stage !== 'finished')
+    .filter(c => currentFilter==='all' || c.discipline === currentFilter)
+    .slice(0,6);
+  grid.innerHTML = items.length ? items.map(competitionCardHTML).join('') : emptyState('Нет турниров по выбранному фильтру');
+}
+renderCal('all');
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCal(btn.dataset.filter);
+  });
+});
+
+/* ---------- athletes preview (top 4) — from NOVA_DATA ---------- */
+function renderAthletes(){
+  const athPreview = [...NOVA_DATA.athletes].sort((a,b)=>b.rating-a.rating).slice(0,4);
+  document.getElementById('athGrid').innerHTML = athPreview.map((a,i)=>`
+    <a href="athlete.html?id=${a.id}" class="ath-card" style="display:block;text-decoration:none;color:inherit;">
+      <div class="ath-photo" style="background:linear-gradient(150deg,#1a1d22,#0e0f13);">
+        <span class="rank-flag mono">#${i+1}</span>${a.initials}
+      </div>
+      <div class="ath-info">
+        <b>${a.name}</b><div class="team">${a.region}</div>
+        <div class="pts"><b class="mono">${a.rating.toLocaleString('ru-RU')}</b><span>очков</span></div>
+      </div>
+    </a>`).join('');
+}
+renderAthletes();
+
+/* ---------- news preview (latest 4) — from NOVA_DATA ---------- */
+function renderNews(){
+  const newsPreview = NOVA_DATA.news.slice(0,4);
+  document.getElementById('newsGrid').innerHTML = newsPreview.map(n=>`
+    <a href="article.html?id=${n.id}" class="news-card" style="display:flex;text-decoration:none;color:inherit;">
+      <div class="news-img"><span class="news-cat">${n.category}</span></div>
+      <div class="news-body">
+        <span class="news-date mono">${n.date}</span>
+        <h4>${n.title}</h4>
+        <p>${n.excerpt}</p>
+      </div>
+    </a>`).join('');
+}
+renderNews();
+
+/* свежие данные соревнований с сервера — перерисовываем живые блоки */
+NOVACompetitions.onRefresh(() => {
+  updateNextCard();
+  renderRating(currentTab);
+  renderCal(currentFilter);
+});
+NOVACompetitions.load();
+
+/* ---------- starfield canvas ---------- */
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+/* reduceMotion is declared once, globally, in common.js */
+function resizeCanvas(){
+  canvas.width = window.innerWidth; canvas.height = Math.min(window.innerHeight, 900);
+  const count = Math.floor((canvas.width*canvas.height)/9000);
+  stars = Array.from({length:count}, ()=>({
+    x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+    r:Math.random()*1.3+0.2, a:Math.random()*0.6+0.15, s:(Math.random()*0.4+0.05)
+  }));
+}
+function drawStars(t){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  stars.forEach(st=>{
+    const tw = reduceMotion ? st.a : st.a + Math.sin(t/900 + st.x)*0.15;
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(240,235,255,${Math.max(0,tw)})`;
+    ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+    ctx.fill();
+  });
+  if(!reduceMotion) requestAnimationFrame(drawStars);
+}
+resizeCanvas(); drawStars(0);
+window.addEventListener('resize', resizeCanvas);
+
+/* ---------- hero parallax (subtle) ---------- */
+if(!reduceMotion){
+  const rings = document.querySelector('.hero-rings');
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    if(rings) rings.style.transform = `translateY(${-50+y*0.06}%)`;
+  }, {passive:true});
+}
+</script>
+</body>
+</html>

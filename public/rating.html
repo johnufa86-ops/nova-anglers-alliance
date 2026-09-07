@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Рейтинг спортсменов — Nova Anglers Alliance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+      color: #111827;
+      line-height: 1.6;
+    }
+    .container { max-width: 1152px; margin: 0 auto; padding: 2rem 1rem; }
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid #e5e7eb;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 1.875rem; font-weight: 700; }
+    .text-sm { font-size: 0.875rem; }
+    .text-gray { color: #6b7280; }
+    .text-blue { color: #2563eb; }
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
+    select, input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead { background-color: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    th { text-align: left; padding: 0.75rem 1rem; font-weight: 600; color: #4b5563; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; }
+    tr:hover { background-color: #f9fafb; }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .medal { font-size: 1.25rem; }
+    .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+    .btn-page {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      background: white;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .btn-page:hover:not(:disabled) { background-color: #f9fafb; }
+    .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="flex-between" style="margin-bottom: 2rem;">
+      <div>
+        <h1>Рейтинг спортсменов</h1>
+        <p class="text-gray" style="margin-top: 0.25rem;">Официальная таблица начисления баллов сезона</p>
+      </div>
+      <a href="/">← Главная</a>
+    </div>
+
+    <div class="card">
+      <div class="grid-3">
+        <div>
+          <label>Сезон</label>
+          <select id="seasonFilter">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
+        </div>
+        <div>
+          <label>Дисциплина</label>
+          <select id="disciplineFilter">
+            <option value="">Все дисциплины</option>
+            <option value="spinning">Спиннинг</option>
+            <option value="feeder">Фидер</option>
+            <option value="carp">Карп</option>
+          </select>
+        </div>
+        <div>
+          <label>Поиск по спортсмену</label>
+          <input type="text" id="searchInput" placeholder="Имя или фамилия...">
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 4rem;">#</th>
+            <th>Имя</th>
+            <th>Клуб / Город</th>
+            <th class="text-center">Турниров</th>
+            <th class="text-right">Очки</th>
+          </tr>
+        </thead>
+        <tbody id="ratingTableBody">
+          <tr>
+            <td colspan="5" class="text-center text-gray" style="padding: 2rem;">Загрузка рейтинга...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <p id="paginationInfo" class="text-sm text-gray">Страница 1</p>
+      <div style="display: flex; gap: 0.5rem;">
+        <button id="prevPage" onclick="changePage(-1)" class="btn-page" disabled>Назад</button>
+        <button id="nextPage" onclick="changePage(1)" class="btn-page" disabled>Вперед</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const pageSize = 20;
+    let totalEntries = 0;
+    let ratingData = [];
+
+    async function loadRating() {
+      try {
+        const season = document.getElementById('seasonFilter').value;
+        const discipline = document.getElementById('disciplineFilter').value;
+        const search = document.getElementById('searchInput').value;
+
+        const params = new URLSearchParams({
+          season,
+          page: currentPage.toString(),
+          limit: pageSize.toString(),
+        });
+        if (discipline) params.append('discipline', discipline);
+        if (search) params.append('search', search);
+
+        const response = await fetch(`/api/rating?${params}`);
+        const data = await response.json();
+        
+        ratingData = data.data || [];
+        totalEntries = data.total || ratingData.length;
+        
+        renderTable();
+      } catch (error) {
+        console.error('Error loading rating:', error);
+        document.getElementById('ratingTableBody').innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center" style="padding: 2rem; color: #ef4444;">Ошибка загрузки рейтинга</td>
+          </tr>
+        `;
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('ratingTableBody');
+      
+      if (ratingData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center text-gray" style="padding: 2rem;">Нет данных для отображения</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = ratingData.map((entry, index) => {
+        const place = (currentPage - 1) * pageSize + index + 1;
+        const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : place === 3 ? '🥉' : place;
+        
+        return `
+          <tr>
+            <td><span class="medal">${medal}</span></td>
+            <td class="font-semibold">${entry.athlete?.firstName || ''} ${entry.athlete?.lastName || ''}</td>
+            <td class="text-gray">${entry.athlete?.club || ''} • ${entry.athlete?.city || ''}</td>
+            <td class="text-center">${entry.competitionsCount || 1}</td>
+            <td class="text-right font-bold">${entry.points || 0}</td>
+          </tr>
+        `;
+      }).join('');
+
+      updatePagination();
+    }
+
+    function updatePagination() {
+      const totalPages = Math.ceil(totalEntries / pageSize);
+      document.getElementById('paginationInfo').textContent = `Страница ${currentPage} (Всего участников: ${totalEntries})`;
+      document.getElementById('prevPage').disabled = currentPage <= 1;
+      document.getElementById('nextPage').disabled = currentPage >= totalPages;
+    }
+
+    function changePage(delta) {
+      currentPage += delta;
+      loadRating();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadRating();
+      
+      document.getElementById('seasonFilter').addEventListener('change', () => {
+        currentPage = 1;
+        loadRating();
+      });
+      
+      document.getElementById('disciplineFilter').addEventListener('change', () => {
+        currentPage = 1;
+        loadRating();
+      });
+      
+      let searchTimeout;
+      document.getElementById('searchInput').addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          currentPage = 1;
+          loadRating();
+        }, 300);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Документы — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+      <div class="eyebrow">Личный кабинет</div>
+      <h1 class="admin-title">Документы</h1>
+      <p class="admin-sub">Медицинская справка, удостоверение федерации и паспорт — обязательный комплект участника. Организатор проверяет документы в течение нескольких дней.</p>
+
+      <div class="admin-grid-2" style="margin-top:36px;align-items:start;">
+
+        <!-- ЗАГРУЗКА -->
+        <div class="admin-card">
+          <h3>Загрузить документ</h3>
+          <div id="upError" style="display:none;margin-bottom:16px;"></div>
+          <form id="uploadForm" novalidate>
+            <div class="field">
+              <label for="docType">Тип документа</label>
+              <select id="docType" required>
+                <option value="medical">Медицинская справка</option>
+                <option value="federation_id">Удостоверение федерации</option>
+                <option value="passport">Паспорт (разворот)</option>
+              </select>
+            </div>
+            <div class="field" id="expiresField">
+              <label for="docExpires">Действителен до <span style="text-transform:none;color:var(--muted-2);">(для медсправки)</span></label>
+              <input type="date" id="docExpires">
+            </div>
+            <div class="field">
+              <label>Файл</label>
+              <div class="cab-dropzone" id="dropzone" tabindex="0" role="button" aria-label="Выбрать файл">
+                <span id="dzIcon">⇪</span>
+                <b id="dzTitle">Перетащите файл или нажмите</b>
+                <span id="dzSub" class="cab-dz-sub">PDF, JPG, PNG, WEBP · до 10 МБ</span>
+              </div>
+              <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display:none;">
+            </div>
+            <button type="submit" class="btn btn-primary" id="uploadBtn" style="width:100%;justify-content:center;margin-top:8px;" disabled>Загрузить</button>
+          </form>
+          <div class="login-hint">
+            Файлы видны только вам и организаторам Альянса. Принятый документ нельзя удалить — только заменить новым.
+          </div>
+        </div>
+
+        <!-- СПИСОК -->
+        <div class="admin-card">
+          <h3>Мои документы <span class="count" id="docCount"></span></h3>
+          <div id="docsList"><p class="cab-loading">Загрузка…</p></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cabinet.js"></script>
+<script src="/js/cabinet-ui.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = NOVACabinetUI.esc;
+let selectedFile = null;
+
+/* ---------- выбор файла + drag-n-drop ---------- */
+const dz = $('dropzone');
+function setFile(file) {
+  if (!file) return;
+  const okTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  if (!okTypes.includes(file.type) && !['pdf', 'jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+    NOVACabinetUI.toast('Формат не поддерживается: PDF, JPG, PNG, WEBP', 'error');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    NOVACabinetUI.toast('Файл больше 10 МБ', 'error');
+    return;
+  }
+  selectedFile = file;
+  $('dzTitle').textContent = file.name;
+  $('dzSub').textContent = NOVACabinetUI.fmtSize(file.size) || '';
+  $('dzIcon').textContent = '✓';
+  $('uploadBtn').disabled = false;
+  dz.classList.add('has-file');
+}
+dz.addEventListener('click', () => $('docFile').click());
+dz.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('docFile').click(); } });
+$('docFile').addEventListener('change', (e) => setFile(e.target.files[0]));
+['dragover', 'dragenter'].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('drag'); }));
+['dragleave', 'drop'].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove('drag'); }));
+dz.addEventListener('drop', (e) => setFile(e.dataTransfer.files && e.dataTransfer.files[0]));
+
+$('docType').addEventListener('change', () => {
+  $('expiresField').style.display = $('docType').value === 'medical' ? 'block' : 'none';
+});
+
+/* ---------- загрузка ---------- */
+$('uploadForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  if (!selectedFile) return;
+  const btn = $('uploadBtn');
+  btn.disabled = true; btn.textContent = 'Загрузка…';
+  $('upError').style.display = 'none';
+
+  const fd = new FormData();
+  fd.append('type', $('docType').value);
+  if ($('docExpires').value) fd.append('expiresAt', $('docExpires').value);
+  fd.append('file', selectedFile);
+
+  try {
+    await NOVACabinet.uploadDocument(fd);
+    NOVACabinetUI.toast('Документ загружен — ожидает проверки');
+    selectedFile = null;
+    $('docFile').value = '';
+    $('dzTitle').textContent = 'Перетащите файл или нажмите';
+    $('dzSub').textContent = 'PDF, JPG, PNG, WEBP · до 10 МБ';
+    $('dzIcon').textContent = '⇪';
+    dz.classList.remove('has-file');
+    $('uploadBtn').disabled = true;
+    await loadDocs();
+  } catch (e) {
+    $('upError').style.display = 'block';
+    $('upError').innerHTML = `<div class="reg-banner reg-banner-error" style="margin:0;"><span><b>${esc(e.message || 'Не удалось загрузить файл')}</b></span></div>`;
+  } finally {
+    btn.disabled = !selectedFile; btn.textContent = 'Загрузить';
+  }
+});
+
+/* ---------- список ---------- */
+function docRow(d) {
+  const deletable = ['pending', 'rejected', 'expired'].includes(d.status);
+  return `
+    <div class="cab-doc" data-id="${esc(d.id)}">
+      <div class="cab-doc-main">
+        <b>${esc(d.typeLabel)}</b>
+        <span class="row-sub" style="color:var(--muted-2);font-size:12.5px;">
+          ${esc(d.fileName)}${d.fileSize ? ' · ' + NOVACabinetUI.fmtSize(d.fileSize) : ''} · загружен ${NOVACabinetUI.fmtDate(d.uploadedAt)}
+          ${d.expiresAt ? ` · действ. до ${NOVACabinetUI.fmtDate(d.expiresAt)}` : ''}
+        </span>
+        ${d.status === 'rejected' && d.rejectReason ? `<span class="cab-doc-reject">Причина: ${esc(d.rejectReason)}</span>` : ''}
+      </div>
+      <div class="cab-doc-actions">
+        ${NOVACabinetUI.docPill(d.status, d.statusLabel)}
+        <a href="${esc(d.downloadUrl)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" title="Открыть">Открыть</a>
+        ${deletable ? `<button type="button" class="btn btn-ghost btn-sm cab-doc-del" data-id="${esc(d.id)}" title="Удалить">Удалить</button>` : ''}
+      </div>
+    </div>`;
+}
+
+async function loadDocs() {
+  try {
+    const data = await NOVACabinet.documents();
+    const docs = data.documents || [];
+    $('docCount').textContent = docs.length ? `${docs.length}` : '';
+    $('docsList').innerHTML = docs.length
+      ? docs.map(docRow).join('')
+      : '<p style="color:var(--muted-2);font-size:13.5px;">Документов пока нет — загрузите первый слева.</p>';
+
+    document.querySelectorAll('.cab-doc-del').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try {
+          await NOVACabinet.deleteDocument(btn.dataset.id);
+          NOVACabinetUI.toast('Документ удалён');
+          await loadDocs();
+        } catch (e) {
+          btn.disabled = false;
+          NOVACabinetUI.toast(e.message || 'Не удалось удалить', 'error');
+        }
+      });
+    });
+  } catch (e) {
+    if (e.code === 'UNAUTHORIZED') { window.location.href = '/cabinet'; return; }
+    $('docsList').innerHTML = `<div class="reg-banner reg-banner-error"><span><b>Временная ошибка.</b> ${NOVA_API.errorMessage(e.code)}</span></div>`;
+  }
+}
+
+(async function init() {
+  const user = await NOVACabinetUI.guard('documents');
+  if (!user) return;
+  $('expiresField').style.display = 'block';
+  await loadDocs();
+})();
+</script>
+</body>
+</html>

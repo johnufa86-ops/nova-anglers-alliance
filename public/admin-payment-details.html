@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление реквизитами — Панель организатора</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+  <div class="max-w-4xl mx-auto py-10 px-4">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-bold">Банковские реквизиты</h1>
+      <a href="/admin.html" class="text-blue-600 hover:underline">← Назад в админку</a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6 mb-8 border border-gray-100">
+      <h2 class="text-lg font-semibold mb-4">Глобальные реквизиты организации</h2>
+      <form id="detailsForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Наименование банка</label>
+          <input type="text" id="bankName" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="ПАО СБЕРБАНК">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Расчетный счет (20 цифр)</label>
+            <input type="text" id="accountNumber" maxlength="20" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="40802810000000000000">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">БИК (9 цифр)</label>
+            <input type="text" id="bik" maxlength="9" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="044525225">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">ИНН (10 или 12 цифр)</label>
+            <input type="text" id="inn" maxlength="12" class="w-full border rounded-lg p-2.5 text-sm" placeholder="7701234567">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Получатель платежа</label>
+            <input type="text" id="recipientName" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="Федерация рыболовного спорта">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Шаблон назначения платежа</label>
+          <input type="text" id="paymentPurpose" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="Целевой взнос за участие в турнире">
+        </div>
+        <div id="formErrors" class="text-red-600 text-sm hidden"></div>
+        <div id="formSuccess" class="text-green-600 text-sm hidden">Реквизиты успешно сохранены!</div>
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm hover:bg-blue-700 transition">
+          Сохранить реквизиты
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    async function loadDetails() {
+      const res = await fetch('/api/admin/payment-details');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data) {
+          document.getElementById('bankName').value = json.data.bankName || '';
+          document.getElementById('accountNumber').value = json.data.accountNumber || '';
+          document.getElementById('bik').value = json.data.bik || '';
+          document.getElementById('inn').value = json.data.inn || '';
+          document.getElementById('recipientName').value = json.data.recipientName || '';
+          document.getElementById('paymentPurpose').value = json.data.paymentPurpose || '';
+        }
+      }
+    }
+
+    document.getElementById('detailsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('formErrors');
+      const succBox = document.getElementById('formSuccess');
+      errBox.classList.add('hidden');
+      succBox.classList.add('hidden');
+
+      const payload = {
+        bankName: document.getElementById('bankName').value,
+        accountNumber: document.getElementById('accountNumber').value,
+        bik: document.getElementById('bik').value,
+        inn: document.getElementById('inn').value,
+        recipientName: document.getElementById('recipientName').value,
+        paymentPurpose: document.getElementById('paymentPurpose').value,
+      };
+
+      const res = await fetch('/api/admin/payment-details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errBox.textContent = data.error || 'Ошибка при сохранении';
+        errBox.classList.remove('hidden');
+      } else {
+        succBox.classList.remove('hidden');
+      }
+    });
+
+    loadDetails();
+  </script>
+</body>
+</html>

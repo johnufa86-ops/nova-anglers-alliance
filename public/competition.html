@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Соревнование — NOVA ANGLERS ALLIANCE</title>
+<meta name="description" content="Даты, регламент, участники, результаты и очки NOVA — карточка турнира NOVA Anglers Alliance." id="pageDescription">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="stars" style="display:none"></canvas>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="competitions.html" class="active">Соревнования</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="news.html">Новости</a>
+      <a href="media.html">Медиа</a>
+      <a href="alliance.html">Альянс</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/cabinet" class="login-link">Войти</a>
+      <a href="contacts.html" class="btn btn-primary btn-sm">Участвовать</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="pageRoot">
+<!-- Everything below is rendered by the script at the bottom from NOVA_DATA
+     based on ?id= in the URL. If the id isn't found, a not-found message
+     is shown instead of the sections. -->
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a><span>/</span><a href="competitions.html">Соревнования</a><span>/</span><span id="bcTitle">…</span></div>
+    <div class="page-hero-body">
+      <div>
+        <div id="stageRow" style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;"></div>
+        <h1 id="hTitle">…</h1>
+        <p class="sub" id="hSub"></p>
+      </div>
+      <div class="page-hero-meta">
+        <div><span>Дата</span><b style="font-size:16px;" id="mDate">—</b></div>
+        <div><span>Место</span><b style="font-size:16px;" id="mPlace">—</b></div>
+        <div><span>Участники</span><b style="font-size:16px;" id="mParticipants">—</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="notFound" style="display:none;">
+  <section><div class="wrap reveal" style="text-align:center;">
+    <div class="empty-state">Турнир не найден. Возможно, ссылка устарела.</div>
+    <div style="margin-top:24px;"><a href="competitions.html" class="btn btn-ghost">Ко всем соревнованиям</a></div>
+  </div></section>
+</div>
+
+<div id="contentRoot">
+
+<!-- ОСНОВНАЯ ИНФОРМАЦИЯ -->
+<section>
+  <div class="wrap reveal">
+    <div class="next-card" style="grid-template-columns:1.4fr 1fr;">
+      <div>
+        <h3 class="next-title" style="font-size:22px;">О турнире</h3>
+        <p class="prose" style="margin-bottom:28px;" id="oDescription"></p>
+        <div class="next-meta">
+          <div><span>Дисциплина</span><b id="oDiscipline">—</b></div>
+          <div><span>Формат</span><b id="oFormat">—</b></div>
+          <div><span>Дней соревнований</span><b id="oDays">—</b></div>
+          <div><span>Призовой фонд</span><b id="oPrize">—</b></div>
+          <div><span>Организатор</span><b id="oOrganizer">—</b></div>
+          <div><span>Контакт</span><b id="oContact">—</b></div>
+        </div>
+        <div class="next-actions">
+          <a href="#" class="btn btn-primary btn-sm" id="oRegisterBtn">Зарегистрироваться</a>
+          <a href="#reglament" class="btn btn-ghost btn-sm">Регламент</a>
+        </div>
+      </div>
+      <div>
+        <div class="map-block" id="oMap">КАРТА АКВАТОРИИ</div>
+        <div class="entrants" style="margin-top:20px;">
+          <span class="avatars"><span>ЕК</span><span>МА</span><span>ДС</span></span>
+          <span id="oEntrants">— участников зарегистрировано</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- РЕГЛАМЕНТ -->
+<section id="reglament">
+  <div class="wrap reveal">
+    <div class="eyebrow">Регламент</div>
+    <div class="section-head"><h2>Правила турнира</h2></div>
+    <div class="prose" id="regBody"></div>
+  </div>
+</section>
+
+<!-- РЕГИСТРАЦИЯ -->
+<section id="registration">
+  <div class="wrap reveal">
+    <div class="eyebrow">Регистрация</div>
+    <div class="section-head"><h2>Регистрация на соревнование</h2></div>
+    <div class="next-card" style="grid-template-columns:1.3fr 1fr;">
+      <div>
+        <p class="prose" style="margin-bottom:24px;">Заявка подаётся в несколько шагов: выбор участника (спортсмен или экипаж), данные, проверка — и вы получаете номер заявки со статусом рассмотрения.</p>
+        <div class="next-meta">
+          <div><span>Формат участия</span><b id="regEntryType">—</b></div>
+          <div><span>Мест осталось</span><b id="regSlotsLeft">—</b></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:14px;">
+        <a href="#" class="btn btn-primary" id="oRegisterBtnMain" style="justify-content:center;">Зарегистрироваться</a>
+        <a href="#reglament" class="btn btn-ghost btn-sm" style="justify-content:center;">Сначала посмотреть регламент</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- УЧАСТНИКИ -->
+<section id="participants">
+  <div class="wrap reveal">
+    <div class="eyebrow">Участники</div>
+    <div class="section-head"><h2>Зарегистрированные спортсмены и экипажи</h2></div>
+    <div class="table-wrap">
+      <table class="live-table">
+        <thead><tr><th>#</th><th>Спортсмен / экипаж</th><th>Команда</th><th style="text-align:right">Статус</th></tr></thead>
+        <tbody id="participantsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- РЕЗУЛЬТАТЫ -->
+<section id="results">
+  <div class="wrap reveal">
+    <div class="eyebrow">Результаты</div>
+    <div class="section-head"><h2>Итоговый протокол</h2></div>
+    <div class="table-wrap" id="resultsWrap">
+      <table class="live-table">
+        <thead><tr><th>Место</th><th>Спортсмен / экипаж</th><th>Вес / баллы</th><th style="text-align:right">Очки NOVA</th></tr></thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- РЕЙТИНГ -->
+<section id="ratingImpact">
+  <div class="wrap reveal">
+    <div class="eyebrow">Рейтинг</div>
+    <div class="section-head"><h2>Очки NOVA за этот турнир</h2></div>
+    <p class="prose" style="margin-bottom:24px;">Коэффициент начисления очков для этого турнира: <b class="mono" style="color:var(--core-soft);" id="rMultiplier">×1.0</b>. Очки, начисленные каждому участнику, указаны в таблице результатов выше.</p>
+    <a href="rating.html" class="btn btn-ghost">Посмотреть полный рейтинг NOVA</a>
+  </div>
+</section>
+
+<!-- МЕДИА -->
+<section id="media">
+  <div class="wrap reveal">
+    <div class="eyebrow">Медиа</div>
+    <div class="section-head"><h2>Фото и видео турнира</h2></div>
+    <div class="media-tiles" id="mediaTiles" style="border:1px solid var(--line);border-radius:4px;"></div>
+  </div>
+</section>
+
+<!-- ДОКУМЕНТЫ -->
+<section id="documents">
+  <div class="wrap reveal">
+    <div class="eyebrow">Документы</div>
+    <div class="section-head"><h2>Официальные документы</h2></div>
+    <div class="doc-list" id="docList"></div>
+  </div>
+</section>
+
+</div><!-- /contentRoot -->
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-full.png" alt="NOVA Anglers Alliance — Альянс рыболовов">
+        <p>Российская спортивная экосистема рыболовного спорта: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col"><h5>Спорт</h5><ul>
+        <li><a href="competitions.html">Соревнования</a></li><li><a href="competitions.html">Календарь</a></li>
+        <li><a href="rating.html">Рейтинг</a></li><li><a href="athletes.html">Участники</a></li>
+        <li><a href="teams.html">Команды</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Альянс</h5><ul>
+        <li><a href="news.html">Новости</a></li><li><a href="media.html">Медиа</a></li>
+        <li><a href="partners.html">Партнёры</a></li><li><a href="alliance.html">Об Альянсе</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Контакты</h5><ul>
+        <li><a href="mailto:info@nova-anglers.ru">info@nova-anglers.ru</a></li><li><a href="contacts.html">Контакты</a></li>
+        <li><a href="contacts.html">Пресс-центр</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/competitions.js"></script>
+<script>
+const slug = NOVA.qs('id') || 'nova-cup-volga';
+
+function renderNotFound(){
+  document.getElementById('contentRoot').style.display = 'none';
+  document.querySelector('.page-hero').style.display = 'none';
+  document.getElementById('notFound').style.display = 'block';
+}
+
+function render(c){
+  if(!c){ renderNotFound(); return; }
+
+  document.getElementById('pageTitle').textContent = c.title + ' — NOVA ANGLERS ALLIANCE';
+  document.getElementById('pageDescription').setAttribute('content', c.description.slice(0,160));
+  document.getElementById('bcTitle').textContent = c.shortTitle;
+  document.getElementById('hTitle').textContent = c.title;
+  document.getElementById('hSub').textContent = c.description;
+  document.getElementById('mDate').textContent = c.dateLabel;
+  document.getElementById('mPlace').textContent = c.place;
+  document.getElementById('mParticipants').textContent = `${c.participants} / ${c.participantsLimit}`;
+
+  document.getElementById('stageRow').innerHTML = `
+    <span class="stage-badge ${c.stage}">${c.stage==='live'?'<span class="dot"></span>':''}${NOVA.stageLabel(c.stage)}</span>
+    <span class="next-status" style="margin:0;"><span class="dot"></span>${NOVA.registrationLabel(c.registration)}</span>`;
+
+  document.getElementById('oDescription').textContent = c.description;
+  document.getElementById('oDiscipline').textContent = c.disciplineLabel;
+  document.getElementById('oFormat').textContent = c.format;
+  document.getElementById('oDays').textContent = c.days;
+  document.getElementById('oPrize').textContent = c.prizeFund;
+  document.getElementById('oOrganizer').textContent = c.organizer;
+  document.getElementById('oContact').innerHTML = `<a href="mailto:${c.contact}" style="color:inherit;">${c.contact}</a>`;
+  document.getElementById('oMap').textContent = (c.place || '').toUpperCase();
+  document.getElementById('oEntrants').textContent = `${c.participants} участников зарегистрировано`;
+
+  const entryTypeLabel = { individual:'Только спортсмены', team:'Только экипажи', both:'Спортсмены и экипажи' }[c.entryType] || '—';
+  document.getElementById('regEntryType').textContent = entryTypeLabel;
+  document.getElementById('regSlotsLeft').textContent = Math.max(0, c.participantsLimit - c.participants);
+
+  const registerHref = `register.html?id=${c.id}`;
+  const regButtons = [document.getElementById('oRegisterBtn'), document.getElementById('oRegisterBtnMain')];
+  regButtons.forEach(btn => {
+    if(c.registration === 'closed' || c.stage === 'finished'){
+      btn.textContent = c.stage === 'finished' ? 'Турнир завершён' : 'Регистрация закрыта';
+      btn.classList.replace('btn-primary','btn-ghost');
+      btn.removeAttribute('href');
+      btn.style.opacity = '.6';
+      btn.style.pointerEvents = 'none';
+    } else {
+      btn.href = registerHref;
+    }
+  });
+
+  document.getElementById('regBody').innerHTML = (c.regulations||[]).map(r => `
+    <h3>${r.h}</h3>
+    ${r.p ? `<p>${r.p}</p>` : ''}
+    ${r.list ? `<ul>${r.list.map(li=>`<li>${li}</li>`).join('')}</ul>` : ''}
+  `).join('') || '<p>Регламент турнира будет опубликован дополнительно.</p>';
+
+  /* результаты (демо-контент; реальные протоколы — будущий этап) */
+  const rBody = document.getElementById('resultsBody');
+  const results = c.results || [];
+  rBody.innerHTML = results.length ? results.map(r=>{
+    const name = r.athleteName || r.teamName || '—';
+    return `<tr>
+      <td class="pos-cell ${r.place<=3?'top':''}">${String(r.place||'').padStart(2,'0')}</td>
+      <td><span class="entity-link">${name}</span></td>
+      <td>${r.score||''}</td>
+      <td class="pts-cell">${r.novaPoints??'—'}</td>
+    </tr>`;
+  }).join('') : '';
+  if(!results.length){
+    document.getElementById('resultsWrap').innerHTML = emptyState(c.stage === 'finished' ? 'Протокол уточняется' : 'Турнир ещё не завершён — результаты появятся после финиша');
+  }
+  document.getElementById('rMultiplier').textContent = c.pointsMultiplier || '×1.0';
+
+  /* медиа */
+  const mediaTiles = c.media && c.media.length ? c.media : null;
+  document.getElementById('mediaTiles').innerHTML = mediaTiles
+    ? mediaTiles.map(label => `<div class="media-tile labeled"><span class="tlabel">${label}</span></div>`).join('')
+    : `<div style="grid-column:1/-1;">${emptyState('Медиаматериалы появятся после турнира')}</div>`;
+
+  /* документы */
+  document.getElementById('docList').innerHTML = (c.documents||[]).length
+    ? c.documents.map(d => `<div class="doc-row"><span class="doc-name">📄 ${d.name}</span><span class="doc-type">${d.type}</span></div>`).join('')
+    : `<div class="doc-row"><span class="doc-name" style="color:var(--muted-2);">Документы пока не опубликованы</span></div>`;
+
+  /* участники — реальный список из базы (только подтверждённые,
+     только публичные поля: имя / команда / регион) */
+  renderParticipants(c);
+}
+
+async function renderParticipants(c){
+  const pBody = document.getElementById('participantsBody');
+  let rows = null;
+  try {
+    const list = await NOVACompetitions.participants(c.id);
+    rows = list.map(p => ({
+      name: p.name,
+      team: p.teamName || p.region,
+      region: p.region,
+      status: 'confirmed',
+    }));
+  } catch(e) {
+    /* сервер недоступен — демо-фолбэк */
+    rows = (c.participantsList||[]).map(NOVA.participant.bind(NOVA)).filter(Boolean)
+      .map(p => ({ name: p.name, team: p.sub, region: p.sub, status: 'confirmed' }));
+  }
+  pBody.innerHTML = rows.length ? rows.map((p,i)=>`
+    <tr>
+      <td class="pos-cell">${String(i+1).padStart(2,'0')}</td>
+      <td><span class="entity-link">${p.name}</span></td>
+      <td>${p.team}</td>
+      <td style="text-align:right;"><span class="status-pill confirmed">Подтверждён</span></td>
+    </tr>`).join('') : `<tr><td colspan="4"><div class="empty-state">Подтверждённых участников пока нет — подайте первую заявку</div></td></tr>`;
+}
+
+/* 1) мгновенный рендер из офлайн-демо-данных (без пустого экрана);
+   2) как только сервер ответит — перерисовка реальными данными */
+render(NOVA.competition(slug));
+NOVACompetitions.onRefresh(() => render(NOVA.competition(slug)));
+NOVACompetitions.load();
+</script>
+</body>
+</html>

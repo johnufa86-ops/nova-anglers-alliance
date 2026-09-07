@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Профиль команды — NOVA ANGLERS ALLIANCE</title>
+<meta name="description" content="Профиль экипажа или клуба NOVA Anglers Alliance: состав, рейтинг и турниры." id="pageDescription">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="stars" style="display:none"></canvas>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="competitions.html">Соревнования</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="news.html">Новости</a>
+      <a href="media.html">Медиа</a>
+      <a href="alliance.html">Альянс</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/cabinet" class="login-link">Войти</a>
+      <a href="contacts.html" class="btn btn-primary btn-sm">Участвовать</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero" style="padding-bottom:56px;">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a><span>/</span><a href="teams.html">Команды</a><span>/</span><span id="bcName">…</span></div>
+
+    <div id="notFound" style="display:none;">
+      <div class="empty-state">Команда не найдена.</div>
+      <div style="margin-top:24px;"><a href="teams.html" class="btn btn-ghost">Ко всем командам</a></div>
+    </div>
+
+    <div id="profileRoot">
+      <div class="profile-header">
+        <div class="profile-photo"><span class="rank-flag mono" id="pRank">#—</span><span id="pInitials"></span></div>
+        <div class="profile-id">
+          <div class="team-tag" id="pTypeTag">—</div>
+          <h1 id="pName">…</h1>
+          <p class="region" id="pMeta"></p>
+        </div>
+        <div class="next-actions">
+          <a href="rating.html" class="btn btn-ghost btn-sm">В рейтинге</a>
+          <a href="contacts.html" class="btn btn-primary btn-sm">Связаться</a>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><span>Место в рейтинге</span><b id="kRank">#—</b></div>
+        <div class="kpi-card"><span>Очки сезона</span><b id="kPoints">—</b></div>
+        <div class="kpi-card"><span>Турниров</span><b id="kComps">—</b></div>
+        <div class="kpi-card"><span>Состав</span><b id="kMembers">—</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="contentRoot">
+<section>
+  <div class="wrap reveal">
+    <div class="eyebrow">Состав</div>
+    <div class="section-head"><h2>Спортсмены команды</h2></div>
+    <div class="people-grid" id="rosterGrid"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap reveal">
+    <div class="eyebrow">Турниры</div>
+    <div class="section-head"><h2>Участие в соревнованиях</h2></div>
+    <div class="table-wrap" id="compsWrap">
+      <table class="live-table">
+        <thead><tr><th>Турнир</th><th>Дата</th><th>Место</th><th style="text-align:right">Статус</th></tr></thead>
+        <tbody id="compsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-full.png" alt="NOVA Anglers Alliance — Альянс рыболовов">
+        <p>Российская спортивная экосистема рыболовного спорта: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col"><h5>Спорт</h5><ul>
+        <li><a href="competitions.html">Соревнования</a></li><li><a href="competitions.html">Календарь</a></li>
+        <li><a href="rating.html">Рейтинг</a></li><li><a href="athletes.html">Участники</a></li>
+        <li><a href="teams.html">Команды</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Альянс</h5><ul>
+        <li><a href="news.html">Новости</a></li><li><a href="media.html">Медиа</a></li>
+        <li><a href="partners.html">Партнёры</a></li><li><a href="alliance.html">Об Альянсе</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Контакты</h5><ul>
+        <li><a href="mailto:info@nova-anglers.ru">info@nova-anglers.ru</a></li><li><a href="contacts.html">Контакты</a></li>
+        <li><a href="contacts.html">Пресс-центр</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script>
+const id = NOVA.qs('id') || 'meridian';
+const t = NOVA.team(id);
+
+if(!t){
+  document.getElementById('profileRoot').style.display = 'none';
+  document.getElementById('contentRoot').style.display = 'none';
+  document.getElementById('notFound').style.display = 'block';
+} else {
+  const kindLabel = t.type === 'crew' ? 'Экипаж' : 'Клуб';
+  document.getElementById('pageTitle').textContent = t.name + ' — профиль команды — NOVA ANGLERS ALLIANCE';
+  document.getElementById('bcName').textContent = t.name;
+  document.getElementById('pInitials').textContent = t.initials;
+  document.getElementById('pName').textContent = t.name;
+  document.getElementById('pTypeTag').textContent = `${kindLabel} · ${t.region}`;
+  document.getElementById('pMeta').textContent = `${kindLabel} NOVA · ${t.competitions} турниров в системе`;
+
+  const sameType = NOVA_DATA.teams.filter(x=>x.type===t.type).sort((a,b)=>b.rating-a.rating);
+  const rank = sameType.findIndex(x=>x.id===t.id) + 1;
+  document.getElementById('pRank').textContent = '#'+rank;
+  document.getElementById('kRank').textContent = '#'+rank;
+  document.getElementById('kPoints').textContent = t.rating.toLocaleString('ru-RU');
+  document.getElementById('kComps').textContent = t.competitions;
+  document.getElementById('kMembers').textContent = t.athleteIds.length || '—';
+
+  const roster = t.athleteIds.map(aid => NOVA.athlete(aid)).filter(Boolean);
+  document.getElementById('rosterGrid').innerHTML = roster.length ? roster.map(a=>`
+    <a href="athlete.html?id=${a.id}" class="person-card" style="text-decoration:none;color:inherit;">
+      <div class="person-photo">${a.initials}</div>
+      <b>${a.name}</b><span>${a.region}</span>
+    </a>`).join('') : `<div style="grid-column:1/-1;">${emptyState('Состав пока не опубликован')}</div>`;
+
+  /* competitions this team appears in — derived from competitions.participantsList */
+  const comps = NOVA_DATA.competitions.filter(c => (c.participantsList||[]).some(p => p.teamId === t.id));
+  document.getElementById('compsBody').innerHTML = comps.length ? comps.map(c=>{
+    const entry = c.participantsList.find(p=>p.teamId===t.id);
+    const result = (c.results||[]).find(r=>r.teamId===t.id);
+    return `<tr class="is-link" onclick="location.href='competition.html?id=${c.id}'">
+      <td><a href="competition.html?id=${c.id}" class="entity-link">${c.shortTitle}</a></td>
+      <td>${c.dateLabel}</td>
+      <td>${result ? result.place : '—'}</td>
+      <td style="text-align:right;"><span class="status-pill ${entry.status}">${entry.status==='confirmed'?'Подтверждён':'Ожидает'}</span></td>
+    </tr>`;
+  }).join('') : '';
+  if(!comps.length){
+    document.getElementById('compsWrap').innerHTML = emptyState('Команда пока не участвовала в турнирах NOVA');
+  }
+}
+</script>
+</body>
+</html>

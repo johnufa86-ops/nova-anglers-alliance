@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заявки — кабинет организатора — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div class="eyebrow">Реестр заявок</div>
+      <h1 class="admin-title">Заявки на участие</h1>
+      <p class="admin-sub">Поиск по номеру, ФИО, e-mail и названию экипажа. Фильтры по соревнованию, статусу, дате и типу участия.</p>
+
+      <div class="admin-toolbar">
+        <input type="search" class="admin-input admin-search" id="fSearch" placeholder="Поиск: номер заявки, ФИО, e-mail, экипаж…">
+        <select class="admin-select" id="fCompetition"><option value="all">Все соревнования</option></select>
+        <select class="admin-select" id="fStatus">
+          <option value="all">Все статусы</option>
+          <option value="submitted">Подана</option>
+          <option value="under_review">На проверке</option>
+          <option value="approved">Подтверждена</option>
+          <option value="needs_changes">Требует доработки</option>
+          <option value="rejected">Отклонена</option>
+          <option value="withdrawn">Отозвана</option>
+        </select>
+        <select class="admin-select" id="fType">
+          <option value="all">Все типы</option>
+          <option value="athlete">Спортсмены</option>
+          <option value="team">Экипажи</option>
+        </select>
+        <input type="date" class="admin-input" id="fDateFrom" title="Дата подачи — с">
+        <input type="date" class="admin-input" id="fDateTo" title="Дата подачи — по">
+        <button type="button" class="btn btn-ghost btn-sm" id="fReset">Сбросить</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>№ заявки</th>
+              <th>Соревнование</th>
+              <th>Участник / экипаж</th>
+              <th>Дата</th>
+              <th>Статус</th>
+              <th style="text-align:right;">Действия</th>
+            </tr>
+          </thead>
+          <tbody id="appsBody">
+            <tr><td colspan="6" style="color:var(--muted-2);">Загрузка…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <span id="pagerInfo"></span>
+        <button type="button" id="pagerPrev">← Назад</button>
+        <button type="button" id="pagerNext">Вперёд →</button>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script src="/data/applications.js"></script>
+<script>
+const STATUS_CLASS = {
+  submitted:'submitted', under_review:'under_review', approved:'approved',
+  needs_changes:'needs_changes', rejected:'rejected', withdrawn:'withdrawn',
+};
+
+let page = 1;
+const pageSize = 20;
+let total = 0;
+let competitionsCache = [];
+
+const $id = (i) => document.getElementById(i);
+
+function readFilters(){
+  return {
+    q: $id('fSearch').value.trim(),
+    competition: $id('fCompetition').value,
+    status: $id('fStatus').value,
+    type: $id('fType').value,
+    dateFrom: $id('fDateFrom').value,
+    dateTo: $id('fDateTo').value,
+  };
+}
+
+async function loadList(){
+  const f = readFilters();
+  try {
+    const data = await NOVAApplications.listAll({ ...f, page, pageSize });
+    total = data.total;
+    renderRows(data.applications || []);
+  } catch(e){
+    $id('appsBody').innerHTML = `<tr><td colspan="6"><div class="empty-state">${NOVAAdminUI.esc(e.message || 'Не удалось загрузить список')}</div></td></tr>`;
+  }
+}
+
+function renderRows(list){
+  if(!list.length){
+    $id('appsBody').innerHTML = `<tr><td colspan="6"><div class="empty-state">Заявок по этим условиям нет</div></td></tr>`;
+  } else {
+    $id('appsBody').innerHTML = list.map(a => `
+      <tr>
+        <td class="mono" style="color:var(--core-soft);">${a.applicationNumber}</td>
+        <td>${NOVAAdminUI.esc(a.competition ? a.competition.name : '—')}</td>
+        <td>
+          <a class="row-link" href="/admin/application?id=${a.id}" style="color:inherit;text-decoration:none;">
+            <span class="row-title">${NOVAAdminUI.esc(a.participantName || '—')}</span>
+            <span class="row-sub">${a.entryType === 'team' ? 'Экипаж' : 'Спортсмен'} · ${NOVAAdminUI.esc(a.contactEmail)}</span>
+          </a>
+        </td>
+        <td class="mono" style="color:var(--muted);white-space:nowrap;">${NOVAAdminUI.fmtDateTime(a.submittedAt)}</td>
+        <td><span class="pill ${STATUS_CLASS[a.status] || ''}">${NOVAApplications.statusLabel(a.status)}</span></td>
+        <td style="text-align:right;white-space:nowrap;"><a class="btn btn-ghost btn-sm" href="/admin/application?id=${a.id}">Открыть</a></td>
+      </tr>`).join('');
+  }
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  $id('pagerInfo').textContent = `Стр. ${page} из ${pages} · всего ${total}`;
+  $id('pagerPrev').disabled = page <= 1;
+  $id('pagerNext').disabled = page >= pages;
+}
+
+let searchTimer = null;
+function bindFilters(){
+  ['fSearch','fCompetition','fStatus','fType','fDateFrom','fDateTo'].forEach(id => {
+    const el = $id(id);
+    el.addEventListener(el.tagName === 'INPUT' && el.type === 'search' ? 'input' : 'change', () => {
+      if(id === 'fSearch'){
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => { page = 1; loadList(); }, 350);
+      } else { page = 1; loadList(); }
+    });
+  });
+  $id('fReset').addEventListener('click', () => {
+    $id('fSearch').value = ''; $id('fStatus').value = 'all'; $id('fType').value = 'all';
+    $id('fDateFrom').value = ''; $id('fDateTo').value = ''; $id('fCompetition').value = 'all';
+    page = 1; loadList();
+  });
+  $id('pagerPrev').addEventListener('click', () => { if(page > 1){ page--; loadList(); } });
+  $id('pagerNext').addEventListener('click', () => { if(page * pageSize < total){ page++; loadList(); } });
+}
+
+async function loadCompetitions(){
+  try {
+    const data = await NOVA_API.get('/api/competitions');
+    competitionsCache = (data.competitions || []).map(c => ({ slug: c.id, name: c.shortTitle || c.title }));
+    const sel = $id('fCompetition');
+    sel.innerHTML = '<option value="all">Все соревнования</option>' +
+      competitionsCache.map(c => `<option value="${c.slug}">${NOVAAdminUI.esc(c.name)}</option>`).join('');
+  } catch(e){ /* справочник не критичен */ }
+}
+
+(async function init(){
+  const user = await NOVAAdminUI.guard('applications', ['view']);
+  if(!user) return;
+  bindFilters();
+  await loadCompetitions();
+  loadList();
+})();
+</script>
+</body>
+</html>

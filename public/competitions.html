@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Соревнования — NOVA ANGLERS ALLIANCE</title>
+<meta name="description" content="Полный календарь соревнований NOVA Anglers Alliance: даты, дисциплины, регионы и статус регистрации.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="stars" style="display:none"></canvas>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="competitions.html" class="active">Соревнования</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="news.html">Новости</a>
+      <a href="media.html">Медиа</a>
+      <a href="alliance.html">Альянс</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/cabinet" class="login-link">Войти</a>
+      <a href="contacts.html" class="btn btn-primary btn-sm">Участвовать</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a><span>/</span><span>Соревнования</span></div>
+    <div class="page-hero-body">
+      <div>
+        <div class="eyebrow">Календарь NOVA</div>
+        <h1>Соревнования</h1>
+        <p class="sub">Полный календарь турниров сезона 2026 — от региональных этапов до финала. Каждый старт приносит очки в единый рейтинг NOVA.</p>
+      </div>
+      <div class="page-hero-meta">
+        <div><span>Турниров в сезоне</span><b class="mono" id="statTotal">0</b></div>
+        <div><span>Регионов</span><b class="mono" id="statRegions">0</b></div>
+        <div><span>Открыта регистрация</span><b class="mono" id="statOpen">0</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap reveal">
+    <div class="filters">
+      <button class="filter-btn active" data-stage="all">Все</button>
+      <button class="filter-btn" data-stage="upcoming">Предстоящие</button>
+      <button class="filter-btn" data-stage="live">Идут сейчас</button>
+      <button class="filter-btn" data-stage="finished">Завершённые</button>
+    </div>
+    <div class="filters" style="margin-top:-6px;">
+      <select class="select-compact" id="fDiscipline">
+        <option value="all">Все дисциплины</option>
+        <option value="boat">Лодка</option>
+        <option value="shore">Берег</option>
+        <option value="spin">Спиннинг</option>
+        <option value="other">Другие</option>
+      </select>
+      <select class="select-compact" id="fRegion">
+        <option value="all">Все регионы</option>
+      </select>
+      <select class="select-compact" id="fSort">
+        <option value="date-asc">Сначала ближайшие</option>
+        <option value="date-desc">Сначала поздние</option>
+      </select>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+</section>
+
+<section class="final-cta" style="padding:100px 0;">
+  <div class="burst" aria-hidden="true">
+    <svg viewBox="0 0 900 900" width="100%" height="100%"><g fill="none" stroke="#ae8850">
+      <circle cx="450" cy="450" r="160" opacity=".4" stroke-width="1"/>
+      <circle cx="450" cy="450" r="260" opacity=".25" stroke-width="1"/>
+      <circle cx="450" cy="450" r="8" fill="#f2d5a1" stroke="none"/>
+    </g></svg>
+  </div>
+  <div class="wrap reveal">
+    <h2 style="font-size:clamp(26px,4vw,42px);">Хотите провести турнир NOVA в своём регионе?</h2>
+    <p class="sub">Подайте заявку на организацию официального этапа Альянса.</p>
+    <div class="hero-cta" style="justify-content:center;">
+      <a href="contacts.html" class="btn btn-primary">Подать заявку</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-full.png" alt="NOVA Anglers Alliance — Альянс рыболовов">
+        <p>Российская спортивная экосистема рыболовного спорта: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col"><h5>Спорт</h5><ul>
+        <li><a href="competitions.html">Соревнования</a></li><li><a href="competitions.html">Календарь</a></li>
+        <li><a href="rating.html">Рейтинг</a></li><li><a href="athletes.html">Участники</a></li>
+        <li><a href="teams.html">Команды</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Альянс</h5><ul>
+        <li><a href="news.html">Новости</a></li><li><a href="media.html">Медиа</a></li>
+        <li><a href="partners.html">Партнёры</a></li><li><a href="alliance.html">Об Альянсе</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Контакты</h5><ul>
+        <li><a href="mailto:info@nova-anglers.ru">info@nova-anglers.ru</a></li><li><a href="contacts.html">Контакты</a></li>
+        <li><a href="contacts.html">Пресс-центр</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/competitions.js"></script>
+<script>
+/* populate region filter dynamically from data */
+let state = { stage:'all', discipline:'all', region:'all', sort:'date-asc' };
+
+function initCatalog(){
+  const fRegion = document.getElementById('fRegion');
+  fRegion.innerHTML = '<option value="all">Все регионы</option>';
+  const regions = [...new Set(NOVA_DATA.competitions.map(c=>c.region))].sort();
+  fRegion.insertAdjacentHTML('beforeend', regions.map(r=>`<option value="${r}" ${state.region===r?'selected':''}>${r}</option>`).join(''));
+  fRegion.value = state.region;
+
+  /* header stats — live counts from the server (fallback: demo data) */
+  const totalComps = NOVA_DATA.competitions.length;
+  const regionCount = new Set(NOVA_DATA.competitions.map(c=>c.region)).size;
+  const openCount = NOVA_DATA.competitions.filter(c=>c.registration==='open').length;
+  [['statTotal',totalComps],['statRegions',regionCount],['statOpen',openCount]].forEach(([id,val])=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = val;
+  });
+
+  renderCal();
+}
+
+function renderCal(){
+  const grid = document.getElementById('calGrid');
+  let items = NOVA_DATA.competitions.filter(c =>
+    (state.stage === 'all' || c.stage === state.stage) &&
+    (state.discipline === 'all' || c.discipline === state.discipline) &&
+    (state.region === 'all' || c.region === state.region)
+  );
+  items = items.sort((a,b)=> state.sort === 'date-asc'
+    ? new Date(a.dateStart) - new Date(b.dateStart)
+    : new Date(b.dateStart) - new Date(a.dateStart));
+  grid.innerHTML = items.length ? items.map(competitionCardHTML).join('') : emptyState('Турниров по этим фильтрам пока нет');
+}
+initCatalog();
+
+/* свежие данные с сервера приходят асинхронно — перерисовываем */
+NOVACompetitions.onRefresh(initCatalog);
+NOVACompetitions.load();
+
+document.querySelectorAll('.filter-btn[data-stage]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-btn[data-stage]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.stage = btn.dataset.stage;
+    renderCal();
+  });
+});
+document.getElementById('fDiscipline').addEventListener('change', e=>{ state.discipline = e.target.value; renderCal(); });
+document.getElementById('fRegion').addEventListener('change', e=>{ state.region = e.target.value; renderCal(); });
+document.getElementById('fSort').addEventListener('change', e=>{ state.sort = e.target.value; renderCal(); });
+</script>
+</body>
+</html>

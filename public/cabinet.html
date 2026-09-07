@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кабинет спортсмена — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- ================= ВХОД / РЕГИСТРАЦИЯ ================= -->
+<div id="loginView" style="display:none;">
+  <div class="login-wrap">
+    <div style="text-align:center;margin-bottom:30px;">
+      <img src="/assets/logo-full.png" alt="NOVA Anglers Alliance" style="height:64px;margin:0 auto;">
+    </div>
+    <div class="login-card">
+      <h1>Кабинет спортсмена</h1>
+      <p class="sub">Ваша цифровая спортивная книжка: заявки, документы, результаты и рейтинг.</p>
+
+      <div class="cab-tabs" role="tablist">
+        <button type="button" class="cab-tab active" id="tabLogin" role="tab">Вход</button>
+        <button type="button" class="cab-tab" id="tabRegister" role="tab">Регистрация</button>
+      </div>
+
+      <div id="authError" style="display:none;margin-bottom:16px;"></div>
+
+      <!-- ВХОД -->
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" autocomplete="username" placeholder="you@mail.ru" required>
+        </div>
+        <div class="field">
+          <label for="loginPassword">Пароль</label>
+          <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;margin-top:8px;">Войти</button>
+      </form>
+
+      <!-- РЕГИСТРАЦИЯ -->
+      <form id="registerForm" novalidate style="display:none;">
+        <div class="field">
+          <label for="regName">ФИО</label>
+          <input type="text" id="regName" autocomplete="name" placeholder="Волков Артём Сергеевич" required>
+          <span class="field-error" id="err-regName" style="display:none;"></span>
+        </div>
+        <div class="field">
+          <label for="regEmail">E-mail</label>
+          <input type="email" id="regEmail" autocomplete="email" placeholder="you@mail.ru" required>
+          <span class="field-hint">Если вы подавали заявку на турнир с этого e-mail — история заявок привяжется автоматически.</span>
+          <span class="field-error" id="err-regEmail" style="display:none;"></span>
+        </div>
+        <div class="field">
+          <label for="regPassword">Пароль</label>
+          <input type="password" id="regPassword" autocomplete="new-password" placeholder="Минимум 8 символов" required>
+          <span class="field-error" id="err-regPassword" style="display:none;"></span>
+        </div>
+        <button type="submit" class="btn btn-primary" id="registerBtn" style="width:100%;justify-content:center;margin-top:8px;">Создать кабинет</button>
+      </form>
+
+      <div class="login-hint">
+        Кабинет организатора — <a href="/admin" style="color:var(--pulse-2);">/admin</a>.
+        Доступы к нему выдаёт администратор Альянса.
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:22px;font-size:13px;"><a href="/" style="color:var(--muted);">← Вернуться на сайт</a></p>
+  </div>
+</div>
+
+<!-- ================= ДАШБОРД ================= -->
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:8px;">
+        <div>
+          <div class="eyebrow">Личный кабинет</div>
+          <h1 class="admin-title">Моя спортивная книжка</h1>
+        </div>
+        <a href="/register" class="btn btn-primary btn-sm">Подать заявку</a>
+      </div>
+      <p class="admin-sub" id="dashSub">Заявки, документы и рейтинг — всё в одном месте.</p>
+
+      <div class="cab-hero" id="cabHero" style="display:none;">
+        <span class="cab-avatar cab-avatar-lg" id="heroAvatar" aria-hidden="true">—</span>
+        <div class="cab-hero-info">
+          <b id="heroName">—</b>
+          <span id="heroMeta">—</span>
+        </div>
+        <a href="/cabinet/profile" class="btn btn-ghost btn-sm">Редактировать профиль</a>
+      </div>
+
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiApps">—</div><div class="kpi-label">Заявок подано</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiApproved">—</div><div class="kpi-label">Подтверждено</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiPoints">—</div><div class="kpi-label">Очки рейтинга NOVA</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiDocs">—</div><div class="kpi-label">Документы</div></div>
+      </div>
+
+      <div id="dashAlerts"></div>
+
+      <div class="admin-grid-2">
+        <div class="admin-card">
+          <h3>Последние заявки <span class="count" id="recentCount"></span></h3>
+          <div id="recentList"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="admin-card">
+            <h3>Документы <span class="count" id="docCount"></span></h3>
+            <div id="docList"></div>
+            <a href="/cabinet/documents" class="btn btn-ghost btn-sm" style="margin-top:16px;">Все документы</a>
+          </div>
+          <div class="admin-card">
+            <h3>Рейтинг NOVA <span class="count">сезон 2026</span></h3>
+            <div id="ratingMini"></div>
+            <a href="/cabinet/results" class="btn btn-ghost btn-sm" style="margin-top:16px;">Все результаты</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cabinet.js"></script>
+<script src="/js/cabinet-ui.js"></script>
+<script src="/data/applications.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+
+function showAuthError(html) {
+  const box = $('authError');
+  box.style.display = 'block';
+  box.innerHTML = `<div class="reg-banner reg-banner-error" style="margin:0;"><span>${html}</span></div>`;
+}
+function fieldError(field, message) {
+  const el = $('err-' + field);
+  if (el) { el.textContent = message; el.style.display = message ? 'block' : 'none'; }
+}
+
+/* ---------- табы ---------- */
+function selectTab(tab) {
+  const login = tab === 'login';
+  $('tabLogin').classList.toggle('active', login);
+  $('tabRegister').classList.toggle('active', !login);
+  $('loginForm').style.display = login ? 'block' : 'none';
+  $('registerForm').style.display = login ? 'none' : 'block';
+  $('authError').style.display = 'none';
+}
+$('tabLogin').addEventListener('click', () => selectTab('login'));
+$('tabRegister').addEventListener('click', () => selectTab('register'));
+if (new URLSearchParams(location.search).get('mode') === 'register') selectTab('register');
+
+/* ---------- вход ---------- */
+$('loginForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const btn = $('loginBtn');
+  btn.disabled = true; btn.textContent = 'Вход…';
+  $('authError').style.display = 'none';
+  try {
+    const user = await NOVACabinet.login(
+      $('loginEmail').value.trim(),
+      $('loginPassword').value
+    );
+    window.location.href = user && user.role !== 'athlete' ? '/admin' : '/cabinet';
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Войти';
+    showAuthError(`<b>${NOVACabinetUI.esc(e.message || 'Не удалось войти')}</b>`);
+  }
+});
+
+/* ---------- регистрация (e-mail верификация → затем клейм) ---------- */
+$('registerForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const btn = $('registerBtn');
+  ['regName', 'regEmail', 'regPassword'].forEach((f) => fieldError(f.replace('reg', '').toLowerCase(), ''));
+  $('authError').style.display = 'none';
+
+  const name = $('regName').value.trim();
+  const email = $('regEmail').value.trim();
+  const password = $('regPassword').value;
+
+  let bad = false;
+  if (name.length < 2) { fieldError('regname', 'Укажите ФИО'); bad = true; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fieldError('regemail', 'Укажите корректный e-mail'); bad = true; }
+  if (password.length < 8) { fieldError('regpassword', 'Пароль — минимум 8 символов'); bad = true; }
+  if (bad) return;
+
+  btn.disabled = true; btn.textContent = 'Создаём кабинет…';
+  try {
+    // STAGE 6: аккаунт создаётся сразу, но история заявок/документы
+    // активируются ТОЛЬКО после подтверждения e-mail по ссылке из письма
+    const res = await NOVACabinet.register(name, email, password);
+    if (res && res.needsVerification) {
+      sessionStorage.setItem('nova_needs_verification', '1');
+    }
+    window.location.href = '/cabinet';
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Создать кабинет';
+    if (e.code === 'VALIDATION_ERROR' && e.details) {
+      const map = { name: 'regname', email: 'regemail', password: 'regpassword' };
+      let shown = false;
+      for (const [k, msg] of Object.entries(e.details)) {
+        if (map[k]) { fieldError(map[k], msg); shown = true; }
+      }
+      if (!shown) showAuthError(`<b>${NOVACabinetUI.esc(e.message)}</b>`);
+    } else {
+      showAuthError(`<b>${NOVACabinetUI.esc(e.message || 'Не удалось зарегистрироваться')}</b>`);
+    }
+  }
+});
+
+/* ---------- дашборд ---------- */
+function renderDashboard(data, user) {
+  // hero
+  const a = data.athlete;
+  $('heroAvatar').textContent = NOVACabinetUI.initials(a ? a.displayName : user.name);
+  $('heroName').textContent = a && a.displayName ? a.displayName : user.name;
+  const meta = [];
+  if (a && a.club) meta.push(a.club);
+  if (a && a.region) meta.push(a.region);
+  if (a && a.sportsCategory) meta.push(a.sportsCategory);
+  $('heroMeta').textContent = meta.length ? meta.join(' · ') : data.user.email;
+  $('cabHero').style.display = 'flex';
+
+  // kpis
+  $('kpiApps').textContent = data.stats.applicationsTotal;
+  $('kpiApproved').textContent = data.stats.applicationsApproved;
+  $('kpiPoints').textContent = data.stats.ratingPoints;
+  $('kpiDocs').textContent = `${data.stats.documents.approved}/${data.stats.documents.total}`;
+
+  // alerts — STAGE 6: верификация e-mail и отписка важнее прочих плашек
+  const qs = new URLSearchParams(location.search);
+  const verified = qs.get('verified');
+  const unsubscribed = qs.get('unsubscribed');
+  if (verified || unsubscribed) {
+    history.replaceState(null, '', '/cabinet');
+  }
+
+  const needsVerify = data.user && data.user.emailVerified === false;
+  let alertHTML = '';
+  if (verified === '1') {
+    alertHTML += `<div class="reg-banner reg-banner-ok" style="margin-top:28px;">
+      <span><b>E-mail подтверждён.</b> «Цифровая спортивная книжка» активна: история заявок и документы привязаны к аккаунту.</span>
+    </div>`;
+  } else if (verified === 'expired') {
+    alertHTML += `<div class="reg-banner reg-banner-error" style="margin-top:28px;">
+      <span><b>Ссылка истекла.</b> Запросите новое письмо — кнопка ниже.</span>
+    </div>`;
+  } else if (verified === 'invalid') {
+    alertHTML += `<div class="reg-banner reg-banner-error" style="margin-top:28px;">
+      <span><b>Ссылка недействительна.</b> Запросите новое письмо — кнопка ниже.</span>
+    </div>`;
+  } else if (verified === 'claimed') {
+    alertHTML += `<div class="reg-banner reg-banner-error" style="margin-top:28px;">
+      <span><b>Этот e-mail уже привязан к другому аккаунту.</b> Войдите через него или обратитесь в поддержку.</span>
+    </div>`;
+  }
+  if (unsubscribed === '1') {
+    alertHTML += `<div class="reg-banner reg-banner-warn" style="margin-top:14px;">
+      <span><b>Уведомления отключены.</b> Включить снова можно в разделе «Профиль».</span>
+    </div>`;
+  }
+  if (needsVerify) {
+    alertHTML += `<div class="reg-banner reg-banner-warn" style="margin-top:14px;" id="verifyBanner">
+      <span><b>Подтвердите e-mail.</b> Мы отправили письмо на ${NOVACabinetUI.esc(data.user.email)}. История заявок, документы и рейтинг откроются после подтверждения адреса.
+      <button type="button" class="btn btn-ghost btn-sm" id="resendVerifyBtn" style="margin-left:10px;">Отправить письмо заново</button></span>
+    </div>`;
+  }
+
+  const claimed = sessionStorage.getItem('nova_claimed_apps');
+  if (claimed) {
+    sessionStorage.removeItem('nova_claimed_apps');
+    alertHTML += `
+      <div class="reg-banner reg-banner-warn" style="margin-top:14px;">
+        <span><b>Профиль связан.</b> Из вашей истории найдено заявок: <b class="mono">${NOVACabinetUI.esc(claimed)}</b> — теперь они видны в кабинете.</span>
+      </div>`;
+  }
+
+  if (alertHTML) {
+    $('dashAlerts').innerHTML = alertHTML;
+    const resend = document.getElementById('resendVerifyBtn');
+    if (resend) {
+      resend.addEventListener('click', async () => {
+        resend.disabled = true; resend.textContent = 'Отправляем…';
+        try {
+          await NOVA_API.post('/api/auth/verify', {});
+          NOVACabinetUI.toast('Письмо отправлено — проверьте почту');
+          resend.textContent = 'Отправлено';
+        } catch (e) {
+          NOVACabinetUI.toast(NOVA_API.errorMessage(e.code) || 'Не удалось отправить', 'error');
+          resend.disabled = false; resend.textContent = 'Отправить письмо заново';
+        }
+      });
+    }
+  } else if (data.stats.documents.pending > 0) {
+    $('dashAlerts').innerHTML = `
+      <div class="reg-banner reg-banner-warn" style="margin-top:28px;">
+        <span><b>Документы на проверке:</b> ${data.stats.documents.pending}. Мы сообщим статус здесь — проверяйте раздел «Документы».</span>
+      </div>`;
+  }
+}
+
+function appRow(a) {
+  return `
+    <a class="mini-row" href="/cabinet/applications#app-${NOVACabinetUI.esc(a.applicationNumber)}">
+      <span class="mono">${NOVACabinetUI.esc(a.applicationNumber)}</span>
+      <span class="grow"><b>${NOVACabinetUI.esc(a.participantName)}</b><span class="row-sub" style="color:var(--muted-2);font-size:12px;">${NOVACabinetUI.esc(a.competition.shortTitle)}</span></span>
+      ${NOVACabinetUI.pill(a.status, a.statusLabel)}
+      <span class="mono" style="font-size:12px;color:var(--muted-2);">${NOVACabinetUI.fmtDate(a.submittedAt)}</span>
+    </a>`;
+}
+
+async function loadDashboard(user) {
+  try {
+    const [profile, docs, results] = await Promise.all([
+      NOVACabinet.profile(),
+      NOVACabinet.documents(),
+      NOVACabinet.results(),
+    ]);
+    renderDashboard(profile, user);
+
+    // последние заявки
+    const appsData = await NOVACabinet.applications();
+    const recent = (appsData.applications || []).slice(0, 5);
+    $('recentCount').textContent = recent.length ? `всего ${appsData.applications.length}` : '';
+    $('recentList').innerHTML = recent.length
+      ? recent.map(appRow).join('')
+      : '<p style="color:var(--muted-2);font-size:13.5px;">Заявок пока нет. <a href="/register" style="color:var(--pulse-2);">Подать первую заявку →</a></p>';
+
+    // документы (3 последних)
+    const docs3 = (docs.documents || []).slice(0, 3);
+    $('docCount').textContent = docs.documents.length ? `всего ${docs.documents.length}` : '';
+    $('docList').innerHTML = docs3.length
+      ? docs3.map((d) => `
+        <div class="mini-row" style="cursor:default;">
+          <span class="grow"><b>${NOVACabinetUI.esc(d.typeLabel)}</b><span class="row-sub" style="color:var(--muted-2);font-size:12px;">${NOVACabinetUI.esc(d.fileName)}${d.fileSize ? ' · ' + NOVACabinetUI.fmtSize(d.fileSize) : ''}</span></span>
+          ${NOVACabinetUI.docPill(d.status, d.statusLabel)}
+        </div>`).join('')
+      : '<p style="color:var(--muted-2);font-size:13.5px;">Документы не загружены.</p>';
+
+    // мини-рейтинг
+    const top = (results.items || []).slice(0, 3);
+    $('ratingMini').innerHTML = top.length
+      ? top.map((r) => `
+        <div class="mini-row" style="cursor:default;">
+          <span class="grow"><b>${NOVACabinetUI.esc(r.competition.shortTitle)}</b><span class="row-sub" style="color:var(--muted-2);font-size:12px;">${NOVACabinetUI.esc(r.competition.dateLabel)}</span></span>
+          <span class="mono" style="color:var(--muted);">${NOVACabinetUI.esc(r.score)}</span>
+          <span class="mono" style="color:var(--core-soft);">${r.novaPoints} очк.</span>
+        </div>`).join('')
+      : '<p style="color:var(--muted-2);font-size:13.5px;">Результаты появятся после подведения итогов турниров.</p>';
+  } catch (e) {
+    if (e.code === 'UNAUTHORIZED') { window.location.href = '/cabinet'; return; }
+    $('adminContent').insertAdjacentHTML('afterbegin',
+      `<div class="reg-banner reg-banner-error" style="margin-bottom:30px;"><span><b>Временная ошибка.</b> ${NOVA_API.errorMessage(e.code)}</span></div>`);
+  }
+}
+
+(async function init() {
+  const user = await NOVACabinet.me();
+  if (user) {
+    $('loginView').style.display = 'none';
+    $('adminShell').style.display = 'flex';
+    NOVACabinetUI.mountShell('dashboard', user);
+    if (user.role === 'athlete') loadDashboard(user);
+  } else {
+    $('loginView').style.display = 'block';
+  }
+})();
+</script>
+</body>
+</html>

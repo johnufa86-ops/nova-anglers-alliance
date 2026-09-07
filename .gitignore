@@ -1,0 +1,23 @@
+# Зависимости
+node_modules/
+
+# Сборка
+.next/
+out/
+.vercel/
+
+# СЕКРЕТЫ — никогда не коммитить!
+.env
+.env.local
+.env.production
+*.bak
+
+# Загруженные файлы (чеки, документы — персональные данные!)
+uploads/
+private-uploads/
+storage/
+
+# Логи и мусор
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+      <div class="eyebrow">Личный кабинет</div>
+      <h1 class="admin-title">Профиль спортсмена</h1>
+      <p class="admin-sub">Данные профиля используются организаторами при проверке заявок. E-mail — идентификатор вашей спортивной книжки и не меняется.</p>
+
+      <div class="admin-grid-2" style="margin-top:36px;align-items:start;">
+        <div class="admin-card">
+          <h3>Основные данные</h3>
+          <div id="profileError" style="display:none;margin-bottom:16px;"></div>
+          <form id="profileForm" novalidate>
+            <div class="field">
+              <label for="pfName">ФИО</label>
+              <input type="text" id="pfName" placeholder="Волков Артём Сергеевич">
+            </div>
+            <div class="field">
+              <label for="pfEmail">E-mail <span style="text-transform:none;color:var(--muted-2);">(неизменяемый)</span></label>
+              <input type="email" id="pfEmail" disabled>
+            </div>
+            <div class="field">
+              <label for="pfPhone">Телефон</label>
+              <input type="tel" id="pfPhone" placeholder="+7 (___) ___-__-__">
+            </div>
+            <div class="field">
+              <label for="pfBirth">Дата рождения</label>
+              <input type="date" id="pfBirth">
+            </div>
+            <button type="submit" class="btn btn-primary" id="saveBtn" style="width:100%;justify-content:center;margin-top:8px;">Сохранить</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h3>Спортивные данные</h3>
+          <div class="field">
+            <label for="pfRegion">Регион</label>
+            <input type="text" id="pfRegion" placeholder="Ростовская обл.">
+          </div>
+          <div class="field">
+            <label for="pfCity">Город</label>
+            <input type="text" id="pfCity" placeholder="Ростов-на-Дону">
+          </div>
+          <div class="field">
+            <label for="pfClub">Клуб / команда</label>
+            <input type="text" id="pfClub" placeholder="Клуб «Меридиан»">
+          </div>
+          <div class="field">
+            <label for="pfCategory">Спортивный разряд</label>
+            <input type="text" id="pfCategory" placeholder="КМС, МС, 1 разряд…">
+          </div>
+          <div class="login-hint">
+            Разряд и клуб отображаются в заявках и подтверждённых списках участников.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cabinet.js"></script>
+<script src="/js/cabinet-ui.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = NOVACabinetUI.esc;
+
+function fill(data) {
+  const a = data.athlete || {};
+  $('pfName').value = a.displayName || data.user.name || '';
+  $('pfEmail').value = data.user.email || '';
+  $('pfPhone').value = a.phone || '';
+  $('pfRegion').value = a.region || '';
+  $('pfCity').value = a.city || '';
+  $('pfClub').value = a.club || '';
+  $('pfCategory').value = a.sportsCategory || '';
+  if (a.birthDate) {
+    const d = new Date(a.birthDate);
+    $('pfBirth').value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+}
+
+$('profileForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const btn = $('saveBtn');
+  btn.disabled = true; btn.textContent = 'Сохранение…';
+  $('profileError').style.display = 'none';
+
+  const name = $('pfName').value.trim();
+  const parts = name.split(/\s+/);
+  const payload = {
+    name,
+    firstName: parts[1] || '—',
+    lastName: parts[0] || '',
+    middleName: parts.slice(2).join(' ') || null,
+    phone: $('pfPhone').value.trim(),
+    region: $('pfRegion').value.trim(),
+    city: $('pfCity').value.trim(),
+    club: $('pfClub').value.trim(),
+    sportsCategory: $('pfCategory').value.trim(),
+  };
+  if ($('pfBirth').value) payload.birthDate = $('pfBirth').value;
+
+  try {
+    await NOVACabinet.saveProfile(payload);
+    NOVACabinetUI.toast('Профиль сохранён');
+  } catch (e) {
+    $('profileError').style.display = 'block';
+    let detail = '';
+    if (e.code === 'VALIDATION_ERROR' && e.details) {
+      detail = ' ' + Object.values(e.details).map((m) => esc(String(m))).join(' · ');
+    }
+    $('profileError').innerHTML = `<div class="reg-banner reg-banner-error" style="margin:0;"><span><b>${esc(e.message || 'Не удалось сохранить')}</b>${detail}</span></div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Сохранить';
+  }
+});
+
+(async function init() {
+  const user = await NOVACabinetUI.guard('profile');
+  if (!user) return;
+  try {
+    fill(await NOVACabinet.profile());
+  } catch (e) {
+    if (e.code === 'UNAUTHORIZED') { window.location.href = '/cabinet'; return; }
+    NOVACabinetUI.toast('Не удалось загрузить профиль', 'error');
+  }
+})();
+</script>
+</body>
+</html>

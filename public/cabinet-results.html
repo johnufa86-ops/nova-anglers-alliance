@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Результаты и рейтинг — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+      <div class="eyebrow">Личный кабинет</div>
+      <h1 class="admin-title">Результаты и рейтинг</h1>
+      <p class="admin-sub">Протоколы турниров, в которых вы участвовали, и начисленные очки рейтинга NOVA за сезон 2026.</p>
+
+      <div class="kpi-grid" style="margin-top:36px;">
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiTotal">—</div><div class="kpi-label">Очки рейтинга NOVA</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiEvents">—</div><div class="kpi-label">Турниров с результатом</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiPodium">—</div><div class="kpi-label">Призовых мест</div></div>
+      </div>
+
+      <div class="admin-card" style="margin-top:28px;">
+        <h3>Протоколы <span class="count" id="resCount"></span></h3>
+        <div id="resultsList"><p class="cab-loading">Загрузка…</p></div>
+      </div>
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cabinet.js"></script>
+<script src="/js/cabinet-ui.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = NOVACabinetUI.esc;
+
+function resultRow(r) {
+  const medal = r.place && r.place <= 3 ? ['🥇', '🥈', '🥉'][r.place - 1] + ' ' : '';
+  return `
+    <div class="mini-row" style="cursor:default;">
+      <span class="mono" style="color:var(--muted-2);">${r.place ? '№' + r.place : '—'}</span>
+      <span class="grow">
+        <b>${medal}${esc(r.competition.shortTitle)}</b>
+        <span class="row-sub" style="color:var(--muted-2);font-size:12px;">
+          ${esc(r.competition.dateLabel)} · ${esc(r.displayName)} · ${esc(r.competition.pointsMultiplier)}
+        </span>
+      </span>
+      <span class="mono" style="color:var(--muted);">${esc(r.score)}</span>
+      <span class="mono" style="color:var(--core-soft);font-weight:700;">${r.novaPoints} очк.</span>
+      <a class="btn btn-ghost btn-sm" href="/competition.html?id=${esc(r.competition.slug)}">Турнир</a>
+    </div>`;
+}
+
+(async function init() {
+  const user = await NOVACabinetUI.guard('results');
+  if (!user) return;
+
+  try {
+    const data = await NOVACabinet.results();
+    const items = data.items || [];
+    $('kpiTotal').textContent = data.totalPoints;
+    $('kpiEvents').textContent = data.competitions;
+    $('kpiPodium').textContent = items.filter((r) => r.place && r.place <= 3).length;
+    $('resCount').textContent = items.length ? `${items.length}` : '';
+    $('resultsList').innerHTML = items.length
+      ? items.map(resultRow).join('')
+      : '<p style="color:var(--muted-2);font-size:13.5px;">Пока нет результатов: очки появятся после подведения итогов турниров, где ваша заявка подтверждена.</p>';
+  } catch (e) {
+    if (e.code === 'UNAUTHORIZED') { window.location.href = '/cabinet'; return; }
+    $('resultsList').innerHTML = `<div class="reg-banner reg-banner-error"><span><b>Временная ошибка.</b> ${NOVA_API.errorMessage(e.code)}</span></div>`;
+  }
+})();
+</script>
+</body>
+</html>

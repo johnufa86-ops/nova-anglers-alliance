@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кабинет организатора — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="loginView" style="display:none;">
+  <div class="login-wrap">
+    <div style="text-align:center;margin-bottom:30px;">
+      <img src="/assets/logo-full.png" alt="NOVA Anglers Alliance" style="height:64px;margin:0 auto;">
+    </div>
+    <div class="login-card">
+      <h1>Кабинет организатора</h1>
+      <p class="sub">Вход по служебной учётной записи Альянса. Все действия фиксируются.</p>
+      <div id="loginError" style="display:none;margin-bottom:16px;"></div>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" autocomplete="username" placeholder="organizer@nova-anglers.ru" required>
+        </div>
+        <div class="field">
+          <label for="loginPassword">Пароль</label>
+          <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;margin-top:8px;">Войти</button>
+      </form>
+      <div class="login-hint">
+        Доступы выдаёт администратор Альянса. Первичные учётные записи
+        создаются сид-скриптом (см. <span class="mono">README.md → Доступы</span>)
+        и задаются переменными окружения <span class="mono">NOVA_*_EMAIL / NOVA_*_PASSWORD</span>.
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:22px;font-size:13px;"><a href="/" style="color:var(--muted);">← Вернуться на сайт</a></p>
+  </div>
+</div>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:8px;">
+        <div>
+          <div class="eyebrow">Панель управления</div>
+          <h1 class="admin-title">Дашборд</h1>
+        </div>
+        <a href="/admin/applications" class="btn btn-ghost btn-sm">Все заявки</a>
+      </div>
+      <p class="admin-sub" id="dashSub">Сводка по заявкам и соревнованиям сезона 2026.</p>
+
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiCompetitions">—</div><div class="kpi-label">Активные соревнования</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiTotal">—</div><div class="kpi-label">Всего заявок</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiNew">—</div><div class="kpi-label">Новые заявки</div></div>
+        <div class="kpi-card"><div class="kpi-value mono" id="kpiApproved">—</div><div class="kpi-label">Подтверждённые участники</div></div>
+      </div>
+
+      <div class="admin-grid-2">
+        <div class="admin-card">
+          <h3>Последние заявки <span class="count" id="recentCount"></span></h3>
+          <div id="recentList"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="admin-card">
+            <h3>Требуют проверки <span class="count" id="reviewCount"></span></h3>
+            <div id="reviewList"></div>
+          </div>
+          <div class="admin-card">
+            <h3>Открытая регистрация <span class="count" id="openCount"></span></h3>
+            <div id="openList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card" style="margin-top:28px;">
+        <h3>Документы спортсменов <span class="count" id="docPendingCount"></span></h3>
+        <p style="color:var(--muted-2);font-size:13px;margin-bottom:18px;">Медсправки, удостоверения и паспорта, загруженные спортсменами в личном кабинете. Принятые документы становятся частью «спортивной книжки».</p>
+        <div id="adminDocsList"></div>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script src="/data/applications.js"></script>
+<script>
+const pill = (s) => `<span class="pill ${s}">${NOVAApplications.statusLabel(s)}</span>`;
+const entryPill = (t) => `<span class="pill ${t==='team'?'soon':'closed'}" style="border-color:var(--line);">${t==='team'?'Экипаж':'Спортсмен'}</span>`;
+
+function miniRow(a){
+  const name = a.participantName || '—';
+  const comp = a.competition ? a.competition.name : '—';
+  return `
+    <a class="mini-row" href="/admin/application?id=${a.id}">
+      <span class="mono">${a.applicationNumber}</span>
+      <span class="grow"><b>${NOVAAdminUI.esc(name)}</b><span class="row-sub" style="color:var(--muted-2);font-size:12px;">${NOVAAdminUI.esc(comp)}</span></span>
+      ${entryPill(a.entryType)}
+      ${pill(a.status)}
+      <span class="mono" style="font-size:12px;color:var(--muted-2);">${NOVAAdminUI.fmtDate(a.submittedAt)}</span>
+    </a>`;
+}
+
+function renderOverview(data){
+  document.getElementById('kpiCompetitions').textContent = data.kpis.activeCompetitions;
+  document.getElementById('kpiTotal').textContent = data.kpis.totalApplications;
+  document.getElementById('kpiNew').textContent = data.kpis.newApplications;
+  document.getElementById('kpiApproved').textContent = data.kpis.approvedParticipants;
+
+  const recent = data.recent || [];
+  document.getElementById('recentCount').textContent = recent.length ? `последние ${recent.length}` : '';
+  document.getElementById('recentList').innerHTML = recent.length
+    ? recent.map(miniRow).join('')
+    : '<p style="color:var(--muted-2);font-size:13.5px;">Заявок пока нет.</p>';
+
+  const review = data.needsReview || [];
+  document.getElementById('reviewCount').textContent = review.length ? `${review.length}` : '';
+  document.getElementById('reviewList').innerHTML = review.length
+    ? review.map(miniRow).join('')
+    : '<p style="color:var(--muted-2);font-size:13.5px;">Всё рассмотрено — новых заявок нет.</p>';
+
+  const open = data.openRegistrations || [];
+  document.getElementById('openCount').textContent = open.length ? `${open.length}` : '';
+  document.getElementById('openList').innerHTML = open.length
+    ? open.map(c => `
+      <a class="mini-row" href="/admin/competition/${c.slug}">
+        <span class="grow"><b>${NOVAAdminUI.esc(c.name)}</b><span class="row-sub" style="color:var(--muted-2);font-size:12px;">старт ${NOVAAdminUI.fmtDate(c.startDate)}</span></span>
+        <span class="mono" style="color:var(--core-soft);">${c.registered}${c.maxEntries ? ' / ' + c.maxEntries : ''}</span>
+        <span class="pill open">открыта</span>
+      </a>`).join('')
+    : '<p style="color:var(--muted-2);font-size:13.5px;">Нет соревнований с открытой регистрацией.</p>';
+}
+
+async function loadDashboard(){
+  try {
+    const data = await NOVAApplications.getStatistics();
+    renderOverview(data);
+  } catch(e){
+    if(e.code === 'UNAUTHORIZED'){ window.location.href = '/admin'; return; }
+    document.getElementById('adminContent').insertAdjacentHTML('afterbegin',
+      `<div class="reg-banner reg-banner-error" style="margin-bottom:30px;"><span><b>Временная ошибка.</b> ${NOVA_API.errorMessage(e.code)}</span></div>`);
+  }
+}
+
+/* ---------- STAGE 5: документы спортсменов ---------- */
+function docRow(d){
+  const who = d.user ? (d.user.athlete && d.user.athlete.displayName ? d.user.athlete.displayName : d.user.name) : '—';
+  const canReview = NOVAAdmin.can(currentUser, 'review');
+  return `
+    <div class="mini-row" style="cursor:default;flex-wrap:wrap;">
+      <span class="grow">
+        <b>${NOVAAdminUI.esc(d.typeLabel)}</b>
+        <span class="row-sub" style="color:var(--muted-2);font-size:12px;">${NOVAAdminUI.esc(who)} · ${NOVAAdminUI.esc(d.fileName)} · ${NOVAAdminUI.fmtDate(d.uploadedAt)}${d.expiresAt ? ' · до ' + NOVAAdminUI.fmtDate(d.expiresAt) : ''}</span>
+      </span>
+      <a href="${d.downloadUrl}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Открыть</a>
+      ${canReview && d.status === 'pending' ? `
+        <button type="button" class="btn btn-primary btn-sm" data-doc="${d.id}" data-action="approved">Принять</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-doc="${d.id}" data-action="rejected">Отклонить</button>` : ''}
+      <span class="pill ${d.status === 'approved' ? 'confirmed' : d.status === 'rejected' ? 'closed' : 'open'}">${d.statusLabel}</span>
+    </div>`;
+}
+
+async function loadDocs(user){
+  const host = document.getElementById('adminDocsList');
+  try {
+    const data = await NOVAApplications.listDocuments({ status: 'pending' });
+    const pending = data.documents || [];
+    document.getElementById('docPendingCount').textContent = pending.length ? `${pending.length}` : '';
+    host.innerHTML = pending.length
+      ? pending.map(docRow).join('')
+      : '<p style="color:var(--muted-2);font-size:13.5px;">Новых документов на проверке нет.</p>';
+    host.querySelectorAll('button[data-doc]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        const action = btn.dataset.action;
+        let rejectReason = null;
+        if (action === 'rejected') {
+          rejectReason = prompt('Причина отклонения (спортсмен увидит её в кабинете):');
+          if (!rejectReason || rejectReason.trim().length < 3) {
+            NOVAAdminUI.toast('Укажите причину отклонения', 'error');
+            btn.disabled = false;
+            return;
+          }
+        }
+        try {
+          await NOVAApplications.reviewDocument(btn.dataset.doc, action, rejectReason);
+          NOVAAdminUI.toast(action === 'approved' ? 'Документ принят' : 'Документ отклонён');
+          loadDocs(user);
+        } catch (e) {
+          btn.disabled = false;
+          NOVAAdminUI.toast(e.message || 'Не удалось сохранить решение', 'error');
+        }
+      });
+    });
+  } catch (e) {
+    host.innerHTML = '<p style="color:var(--muted-2);font-size:13.5px;">Не удалось загрузить документы.</p>';
+  }
+}
+
+let currentUser = null;
+
+(async function init(){
+  const user = await NOVAAdmin.me();
+  currentUser = user;
+  if(user){
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('adminShell').style.display = 'flex';
+    NOVAAdminUI.mountShell('dashboard', user);
+    loadDashboard();
+    loadDocs(user);
+  } else {
+    document.getElementById('loginView').style.display = 'block';
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const errBox = document.getElementById('loginError');
+      errBox.style.display = 'none';
+      btn.disabled = true; btn.textContent = 'Вход…';
+      try {
+        await NOVAAdmin.login(
+          document.getElementById('loginEmail').value.trim(),
+          document.getElementById('loginPassword').value
+        );
+        window.location.href = '/admin';
+      } catch(e){
+        btn.disabled = false; btn.textContent = 'Войти';
+        errBox.style.display = 'block';
+        errBox.innerHTML = `<div class="reg-banner reg-banner-error" style="margin:0;"><span><b>${NOVAAdminUI.esc(e.message || 'Не удалось войти')}</b></span></div>`;
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
