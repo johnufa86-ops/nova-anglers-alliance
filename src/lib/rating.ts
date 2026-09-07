@@ -34,11 +34,43 @@ function parseResults(content: string): Record<string, unknown>[] {
   }
 }
 
-export async function computeGlobalRating(): Promise<{
+// ── кэш рейтинга (5 минут) ──
+const RATING_CACHE_TTL_MS = 5 * 60 * 1000;
+type CachedRating = {
+  data: { updatedAt: string; athletes: RatingEntry[]; teams: RatingEntry[] };
+  expiresAt: number;
+};
+let globalRatingCache: CachedRating | null = null;
+
+type AggregatedCache = {
+  data: any;
+  expiresAt: number;
+  key: string;
+};
+let aggregatedCache: AggregatedCache | null = null;
+
+export function clearRatingCache() {
+  globalRatingCache = null;
+  aggregatedCache = null;
+}
+
+export function getRatingCacheStats() {
+  return {
+    hasGlobal: !!globalRatingCache,
+    globalExpiresIn: globalRatingCache ? Math.max(0, globalRatingCache.expiresAt - Date.now()) : 0,
+    hasAggregated: !!aggregatedCache,
+    aggregatedKey: aggregatedCache?.key || null,
+  };
+}
+
+export async function computeGlobalRating(opts?: { force?: boolean }): Promise<{
   updatedAt: string;
   athletes: RatingEntry[];
   teams: RatingEntry[];
 }> {
+  if (!opts?.force && globalRatingCache && globalRatingCache.expiresAt > Date.now()) {
+    return globalRatingCache.data;
+  }
   const apps = await db.application.findMany({
     where: { status: 'approved' },
     select: {
@@ -71,7 +103,7 @@ export async function computeGlobalRating(): Promise<{
     const comp = app.competition;
     if (!['completed', 'in_progress'].includes(comp.status)) continue;
 
-    const results = parseResults(comp.content);
+    const results = parseResults(comp.content || '{}');
     const ownAthletes = app.participants.map((p) => p.athlete);
     const teamName = app.team?.name || null;
 
@@ -81,14 +113,14 @@ export async function computeGlobalRating(): Promise<{
 
       for (const ath of ownAthletes) {
         const rowName = String(row.athleteName ?? '');
-        if (rowName && samePersonName(rowName, ath.displayName)) {
-          bump(athletes, ath.id, ath.displayName, ath.region, points);
+        if (rowName && samePersonName(rowName, ath.displayName || '')) {
+          bump(athletes, ath.id, ath.displayName || '', ath.region || '', points);
         }
       }
       if (teamName && app.team) {
         const rowTeam = String(row.teamName ?? '');
         if (rowTeam && normalizeName(rowTeam).includes(normalizeName(teamName))) {
-          bump(teams, app.team.id, app.team.name, app.team.region, points);
+          bump(teams, app.team.id, app.team.name, app.team.region || '', points);
         }
       }
     }
@@ -96,11 +128,11 @@ export async function computeGlobalRating(): Promise<{
     // старт зачётен даже без строки протокола — запись появляется с 0 очков
     for (const ath of ownAthletes) {
       if (!athletes.has(ath.id)) {
-        athletes.set(ath.id, { id: ath.id, name: ath.displayName, region: ath.region, points: 0, competitions: 0 });
+        athletes.set(ath.id, { id: ath.id, name: ath.displayName || '', region: ath.region || '', points: 0, competitions: 0 });
       }
     }
     if (app.team && !teams.has(app.team.id)) {
-      teams.set(app.team.id, { id: app.team.id, name: app.team.name, region: app.team.region, points: 0, competitions: 0 });
+      teams.set(app.team.id, { id: app.team.id, name: app.team.name, region: app.team.region || '', points: 0, competitions: 0 });
     }
   }
 
@@ -121,9 +153,30 @@ export async function computeGlobalRating(): Promise<{
 
   const sortDesc = (a: RatingEntry, b: RatingEntry) => b.points - a.points || b.competitions - a.competitions;
 
-  return {
+  const result = {
     updatedAt: new Date().toISOString(),
     athletes: [...athletes.values()].sort(sortDesc),
     teams: [...teams.values()].sort(sortDesc),
   };
+
+  globalRatingCache = {
+    data: result,
+    expiresAt: Date.now() + RATING_CACHE_TTL_MS,
+  };
+
+  return result;
+}
+
+// Кэшированный агрегат для /api/rating (season+discipline+search)
+export async function getCachedAggregatedRating(
+  key: string,
+  fetcher: () => Promise<any>,
+  ttlMs: number = RATING_CACHE_TTL_MS
+): Promise<any> {
+  if (aggregatedCache && aggregatedCache.key === key && aggregatedCache.expiresAt > Date.now()) {
+    return aggregatedCache.data;
+  }
+  const data = await fetcher();
+  aggregatedCache = { data, expiresAt: Date.now() + ttlMs, key };
+  return data;
 }

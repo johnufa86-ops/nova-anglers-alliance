@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
+import { lazyExpireApplications } from '@/lib/applications';
 
 export async function GET(req: NextRequest) {
   try {
-    // Временное решение: возвращаем все заявки без проверки авторизации
-    // В продакшене здесь должна быть проверка токена пользователя
-    
+    await lazyExpireApplications();
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const applications = await (db as any).application.findMany({
+      where: {
+        OR: [{ userId: user.id }, { athlete: { userId: user.id } }],
+      },
       include: {
         competition: {
           select: {

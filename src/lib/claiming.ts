@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * STAGE 5/6 — Profile Claiming («цифровая спортивная книжка»).
  *

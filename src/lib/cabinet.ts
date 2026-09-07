@@ -127,15 +127,15 @@ export async function computeAthleteResults(userId: string): Promise<{
       if (!matched) continue;
 
       items.push({
-        applicationNumber: app.applicationNumber,
+        applicationNumber: app.applicationNumber || '',
         competition: {
           slug: comp.slug,
-          name: comp.name,
-          shortName: comp.shortName || comp.name,
-          dateLabel: comp.dateLabel,
-          pointsMultiplier: comp.pointsMultiplier,
+          name: comp.name || '',
+          shortName: (comp.shortName || comp.name || '') as string,
+          dateLabel: comp.dateLabel || '',
+          pointsMultiplier: comp.pointsMultiplier || '×1.0',
         },
-        entryType: app.entryType,
+        entryType: app.entryType || 'athlete',
         displayName: soloName || (teamName ? `Экипаж «${teamName}»` : '—'),
         score: String(row.score ?? '—'),
         novaPoints: parseNovaPoints(row.novaPoints),

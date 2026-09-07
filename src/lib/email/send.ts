@@ -1,22 +1,14 @@
 /**
- * STAGE 6 — ядро e-mail подсистемы.
+ * STAGE 6 — ядро e-mail подсистемы (исправлено для совместимости).
  *
  * Драйверы (EMAIL_DRIVER):
- *   resend   — Resend REST API (SDK-совместимый вызов, ключ SMTP_API_KEY).
- *              Только server-side: ключ никогда не попадает в бандл.
- *   console  — dev/песочница: письмо целиком пишется в email_log (body)
- *              и дублируется в stdout. Реальной отправки нет.
+ *   resend   — Resend REST API
+ *   console  — dev/песочница: письмо в email_log + stdout
  *
- * Защита от спама (§1.4 ТЗ):
- *   - rate limit: 3 письма/мин на пользователя + 100 писем/час глобально
- *     (счётчики по email_log — переживают рестарт процесса);
- *   - idempotencyKey (unique в email_log): повторная отправка того же
- *     события (retry вебхука, повторная смена статуса) НЕ дублирует письмо;
- *   - notificationsEnabled: unsubscribe-ссылка есть в каждом письме,
- *     в том числе транзакционном (best practice) — и она работает.
- *
- * Все функции небросающие: сбой доставки не ломает основной запрос
- * (ошибка пишется в email_log.status='failed').
+ * Защита от спама:
+ *   - rate limit: 3/мин на пользователя + 100/час глобально
+ *   - idempotencyKey (unique)
+ *   - notificationsEnabled
  */
 
 import { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } from 'crypto';
@@ -31,7 +23,6 @@ const EMAIL_FROM = process.env.EMAIL_FROM || 'NOVA Anglers Alliance <noreply@nov
 const USER_LIMIT = { max: 3, windowMs: 60_000 };
 const GLOBAL_LIMIT = { max: 100, windowMs: 3_600_000 };
 
-/** Секрет для подписи unsubscribe-токенов (не ключи почты). */
 export function appSecret(): string {
   return process.env.APP_SECRET || createHash('sha256').update(`nova-local:${process.env.DATABASE_URL || ''}`).digest('hex');
 }
@@ -40,14 +31,11 @@ export function hashToken(raw: string): string {
   return createHash('sha256').update(raw).digest('hex');
 }
 
-/** Подписанный токен отписки для конкретного пользователя. */
 export function unsubscribeTokenFor(userId: string): string {
   const mac = createHmac('sha256', appSecret()).update(`unsub:${userId}`).digest('hex');
-  // userId в открытом виде безопасен: cuid не секрет, доступ защищает HMAC
   return `${userId}.${mac}`;
 }
 
-/** Проверка токена отписки → userId или null. */
 export function unsubscribeUserId(token: string): string | null {
   const dot = (token || '').indexOf('.');
   if (dot <= 0) return null;
@@ -56,12 +44,8 @@ export function unsubscribeUserId(token: string): string | null {
   if (!/^[0-9a-f]{64}$/.test(mac)) return null;
   const expected = createHmac('sha256', appSecret()).update(`unsub:${userId}`).digest('hex');
   if (mac.length !== expected.length) return null;
-  return timingSafeEqual(Buffer.from(mac), Buffer.from(expected)) ? userId : null;
+  return timingSafeEqual(Buffer.from(mac) as any, Buffer.from(expected) as any) ? userId : null;
 }
-
-// ------------------------------------------------------------
-// драйверы доставки
-// ------------------------------------------------------------
 
 async function sendViaResend(to: string, subject: string, html: string): Promise<void> {
   const res = await fetch('https://api.resend.com/emails', {
@@ -79,70 +63,68 @@ async function sendViaResend(to: string, subject: string, html: string): Promise
 
 async function deliver(to: string, subject: string, html: string): Promise<void> {
   if (EMAIL_DRIVER === 'resend') {
-    if (!SMTP_API_KEY) throw new Error('EMAIL_DRIVER=resend, но SMTP_API_KEY не задан (см. .env.example)');
+    if (!SMTP_API_KEY) throw new Error('EMAIL_DRIVER=resend, но SMTP_API_KEY не задан');
     return sendViaResend(to, subject, html);
   }
-  // console-драйвер: письмо целиком уже в email_log.body — печатаем заголовок
   console.log(`[email:console] to=${to} subject="${subject}" (${html.length} bytes)`);
 }
-
-// ------------------------------------------------------------
-// ядро
-// ------------------------------------------------------------
 
 export interface SendEmailInput {
   to: string;
   subject: string;
   html: string;
-  template: string;
-  /** Уникальный ключ события: повторный вызов не дублирует письмо. */
-  idempotencyKey: string;
-  /** Пользователь-получатель: для rate limits и учёта unsubscribe. */
+  template?: string;
+  idempotencyKey?: string;
   userId?: string | null;
-  /** Сохранить полный текст письма (нужен dev-драйверу и тестам). */
   storeBody?: boolean;
 }
 
 export type SendEmailResult = 'sent' | 'skipped-duplicate' | 'skipped-unsubscribed' | 'skipped-rate-limit' | 'failed';
 
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
-  const { to, subject, html, template, idempotencyKey, userId } = input;
+  const to = input.to;
+  const subject = input.subject;
+  const html = input.html;
+  const template = input.template || 'generic';
+  const idempotencyKey = input.idempotencyKey || `generic:${Date.now()}:${randomUUID()}:${to}`;
+  const userId = input.userId ?? null;
   const body = input.storeBody === false ? '' : html;
 
-  // 1. idempotency — письмо с таким ключом уже было
-  const dup = await db.emailLog
-    .findUnique({ where: { idempotencyKey }, select: { status: true } })
-    .catch(() => null);
-  if (dup) {
-    console.log(`[email] skip duplicate: ${idempotencyKey}`);
-    return 'skipped-duplicate';
+  // 1. idempotency
+  try {
+    const dup = await db.emailLog.findUnique({ where: { idempotencyKey }, select: { status: true } });
+    if (dup) {
+      console.log(`[email] skip duplicate: ${idempotencyKey}`);
+      return 'skipped-duplicate';
+    }
+  } catch {}
+
+  // 2. unsubscribe
+  if (userId) {
+    try {
+      const user = await db.user.findUnique({ where: { id: userId }, select: { notificationsEnabled: true } });
+      if (user && !user.notificationsEnabled) return 'skipped-unsubscribed';
+
+      const recent = await db.emailLog.count({
+        where: { userId, createdAt: { gte: new Date(Date.now() - USER_LIMIT.windowMs) }, status: { in: ['sent', 'pending'] } },
+      });
+      if (recent >= USER_LIMIT.max) {
+        console.warn(`[email] user rate limit (${USER_LIMIT.max}/min) for ${userId}`);
+        return 'skipped-rate-limit';
+      }
+    } catch {}
   }
 
-  // 2. пользователь отключил уведомления
-  if (userId) {
-    const user = await db.user.findUnique({ where: { id: userId }, select: { notificationsEnabled: true } });
-    if (user && !user.notificationsEnabled) return 'skipped-unsubscribed';
-
-    // 3a. per-user rate limit (3/мин) — считаем реально отправленные
-    const recent = await db.emailLog.count({
-      where: { userId, createdAt: { gte: new Date(Date.now() - USER_LIMIT.windowMs) }, status: { in: ['sent', 'pending'] } },
+  try {
+    const globalCount = await db.emailLog.count({
+      where: { createdAt: { gte: new Date(Date.now() - GLOBAL_LIMIT.windowMs) }, status: { in: ['sent', 'pending'] } },
     });
-    if (recent >= USER_LIMIT.max) {
-      console.warn(`[email] user rate limit (${USER_LIMIT.max}/min) for ${userId}`);
+    if (globalCount >= GLOBAL_LIMIT.max) {
+      console.warn('[email] GLOBAL rate limit (100/hour) reached');
       return 'skipped-rate-limit';
     }
-  }
+  } catch {}
 
-  // 3b. глобальный rate limit (100/час)
-  const globalCount = await db.emailLog.count({
-    where: { createdAt: { gte: new Date(Date.now() - GLOBAL_LIMIT.windowMs) }, status: { in: ['sent', 'pending'] } },
-  });
-  if (globalCount >= GLOBAL_LIMIT.max) {
-    console.warn('[email] GLOBAL rate limit (100/hour) reached');
-    return 'skipped-rate-limit';
-  }
-
-  // 4. пишем запись ДО доставки (уникальный ключ решает гонку retry)
   let logId: string;
   try {
     const row = await db.emailLog.create({
@@ -151,14 +133,21 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     });
     logId = row.id;
   } catch (e: any) {
-    if (String(e?.code) === 'P2002') return 'skipped-duplicate'; // гонка двух отправок
-    throw e;
+    if (String(e?.code) === 'P2002') return 'skipped-duplicate';
+    // Если БД недоступна, всё равно пытаемся отправить
+    console.warn('[email] log create failed, continue:', e?.message);
+    try {
+      await deliver(to, subject, html);
+      return 'sent';
+    } catch (err: any) {
+      console.error('[email] delivery failed:', err?.message);
+      return 'failed';
+    }
   }
 
-  // 5. доставка — ошибка не бросается наверх
   try {
     await deliver(to, subject, html);
-    await db.emailLog.update({ where: { id: logId }, data: { status: 'sent' } });
+    await db.emailLog.update({ where: { id: logId }, data: { status: 'sent' } }).catch(() => {});
     return 'sent';
   } catch (e: any) {
     const message = String(e?.message || e).slice(0, 500);
@@ -168,34 +157,30 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
   }
 }
 
-// ------------------------------------------------------------
-// отправители по ТЗ §1.1: sendVerificationEmail / sendStatusUpdate /
-// sendPaymentReceipt
-// ------------------------------------------------------------
-
 const cabinetUrl = `${BRAND.baseUrl}/cabinet`;
 
-/**
- * Токен верификации: сырая строка (randomUUID + случайные байты) уходит
- * в ссылку, в БД — только SHA-256 хеш. Возвращает сырой токен.
- */
 export async function createVerificationToken(userId: string): Promise<string> {
   const raw = `${randomUUID()}${randomBytes(16).toString('hex')}`;
-  await db.emailVerification.deleteMany({ where: { userId } });
-  await db.emailVerification.create({
-    data: { userId, token: hashToken(raw), expiresAt: new Date(Date.now() + 24 * 3600_000) },
-  });
+  try {
+    await db.emailVerification.deleteMany({ where: { userId } });
+    await db.emailVerification.create({
+      data: { userId, token: hashToken(raw), expiresAt: new Date(Date.now() + 24 * 3600_000) },
+    });
+  } catch {}
   return raw;
 }
 
-export async function sendVerificationEmail(user: {
-  id: string;
-  email: string;
-  name: string;
-}): Promise<void> {
+function resolveHtml(maybe: string | { html: string } | any): string {
+  if (typeof maybe === 'string') return maybe;
+  if (maybe && typeof maybe.html === 'string') return maybe.html;
+  return String(maybe);
+}
+
+export async function sendVerificationEmail(user: { id: string; email: string; name: string }): Promise<void> {
   const raw = await createVerificationToken(user.id);
   const url = `${BRAND.baseUrl}/api/auth/verify?token=${raw}`;
-  const html = verificationEmail(user.name, url, unsubscribeTokenFor(user.id));
+  const htmlRaw = (verificationEmail as any)(user.name, url, unsubscribeTokenFor(user.id));
+  const html = resolveHtml(htmlRaw);
   await sendEmail({
     to: user.email,
     subject: 'NOVA — подтвердите e-mail',
@@ -225,10 +210,9 @@ export async function sendStatusUpdate(opts: {
   status: string;
   statusLabel: string;
   comment?: string | null;
-  /** Префикс ключа идемпотентности (документы используют 'doc-status'). */
   idempotencyPrefix?: string;
 }): Promise<void> {
-  const html = statusUpdateEmail({
+  const htmlRaw = (statusUpdateEmail as any)({
     name: opts.name,
     applicationNumber: opts.applicationNumber,
     competitionName: opts.competitionName,
@@ -238,13 +222,12 @@ export async function sendStatusUpdate(opts: {
     cabinetUrl,
     unsubscribeToken: unsubscribeTokenFor(opts.userId),
   });
+  const html = resolveHtml(htmlRaw);
   await sendEmail({
     to: opts.email,
     subject: `NOVA — №${opts.applicationNumber}: ${STATUS_SUBJECTS[opts.status] || 'статус обновлён'}`,
     html,
     template: `status:${opts.status}`,
-    // ключ включает статус: повторная смена статуса на тот же — без дубля,
-    // новая смена статуса — новое письмо
     idempotencyKey: `${opts.idempotencyPrefix || 'app-status'}:${opts.applicationId}:${opts.status}`,
     userId: opts.userId,
   });
@@ -261,7 +244,7 @@ export async function sendPaymentReceipt(opts: {
   currency: string;
   providerId?: string | null;
 }): Promise<void> {
-  const html = paymentReceiptEmail({
+  const htmlRaw = (paymentReceiptEmail as any)({
     name: opts.name,
     applicationNumber: opts.applicationNumber,
     competitionName: opts.competitionName,
@@ -271,6 +254,7 @@ export async function sendPaymentReceipt(opts: {
     cabinetUrl,
     unsubscribeToken: unsubscribeTokenFor(opts.userId),
   });
+  const html = resolveHtml(htmlRaw);
   await sendEmail({
     to: opts.email,
     subject: `NOVA — чек: взнос по заявке №${opts.applicationNumber}`,

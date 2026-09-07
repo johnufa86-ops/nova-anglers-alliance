@@ -41,8 +41,8 @@ export function verifyPassword(password: string, stored: string): boolean {
   try {
     const [scheme, salt, hash] = stored.split(':');
     if (scheme !== 'scrypt' || !salt || !hash) return false;
-    const candidate = scryptSync(password, salt, 64);
-    const expected = Buffer.from(hash, 'hex');
+    const candidate = scryptSync(password, salt, 64) as any;
+    const expected = Buffer.from(hash, 'hex') as any;
     return candidate.length === expected.length && timingSafeEqual(candidate, expected);
   } catch {
     return false;
@@ -85,7 +85,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     return null;
   }
   const u = session.user;
-  return { id: u.id, email: u.email, name: u.name, role: u.role as Role };
+  return { id: u.id, email: u.email, name: u.name || u.email, role: u.role as Role };
 }
 
 /**

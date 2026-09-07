@@ -102,10 +102,10 @@ export async function PATCH(
       sendStatusUpdate({
         userId: app.user.id,
         email: app.user.email,
-        name: app.user.name,
+        name: app.user.name || app.user.email,
         applicationId: app.id,
-        applicationNumber: app.applicationNumber,
-        competitionName: app.competition.name,
+        applicationNumber: app.applicationNumber || '',
+        competitionName: app.competition?.name || 'Турнир',
         status,
         statusLabel: STATUS_LABELS[status] || status,
         comment: comment || null,

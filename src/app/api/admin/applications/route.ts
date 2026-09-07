@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { handle, ERR } from '@/lib/api';
 import { requireUser, scopedCompetitionIds } from '@/lib/auth';
-import { APPLICATION_STATUSES } from '@/lib/applications';
+import { APPLICATION_STATUSES, lazyExpireApplications } from '@/lib/applications';
 
 /**
  * GET /api/admin/applications
@@ -17,6 +17,7 @@ import { APPLICATION_STATUSES } from '@/lib/applications';
  */
 export async function GET(req: Request) {
   return handle(async () => {
+    await lazyExpireApplications();
     const user = await requireUser(['admin', 'organizer', 'viewer']);
     const scope = await scopedCompetitionIds(user);
 

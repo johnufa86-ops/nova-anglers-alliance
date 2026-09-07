@@ -5,7 +5,7 @@ import { calculatePointsForPlace } from '@/config/rating';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const user = await getCurrentUser(req);
+  const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const comp = await (db as any).competition.findUnique({

@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { validateBankDetails } from '@/lib/bank-validation';
 
 export async function GET(req: NextRequest) {
-  const user = await getCurrentUser(req);
+  const user = await getCurrentUser();
   if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await getCurrentUser(req);
+  const user = await getCurrentUser();
   if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

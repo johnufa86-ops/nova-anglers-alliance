@@ -1,14 +1,16 @@
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
+  pgPool: Pool | undefined
 }
 
 // ---------------------------------------------------------------------------
 // STAGE 4.1/5 — DATABASE_URL resolution.
-//
 // Песочница платформы предустанавливает шаблонный DATABASE_URL (SQLite file:...)
 // прямо в окружении процесса-супервизора. Переменная из окружения имеет
 // приоритет над .env при загрузке Next.js, поэтому схема postgresql
@@ -21,22 +23,47 @@ if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith('file:')) {
   if (existsSync(envPath)) {
     const match = readFileSync(envPath, 'utf8').match(/^DATABASE_URL=(.*)$/m)
     if (match) {
-      // тримим пробелы и опциональные кавычки (стандартный формат .env)
       const url = match[1].trim().replace(/^["']|["']$/g, '')
       if (url) process.env.DATABASE_URL = url
     }
   }
 }
 
-// Stage 4.1: query logging only in dev — in production it would leak
-// payloads into logs and add overhead.
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient(): PrismaClient {
+  const url = process.env.DATABASE_URL || ''
+  const isPostgres = url.startsWith('postgres') || url.startsWith('postgresql')
+
+  if (isPostgres) {
+    try {
+      // Try Pool first (adapter-pg v5), fallback to connectionString (v7)
+      let adapter: any
+      try {
+        const pool = globalForPrisma.pgPool ?? new Pool({ connectionString: url })
+        if (!globalForPrisma.pgPool) globalForPrisma.pgPool = pool
+        adapter = new PrismaPg(pool)
+      } catch {
+        adapter = new (PrismaPg as any)({ connectionString: url })
+      }
+      return new PrismaClient({
+        adapter,
+        log:
+          process.env.NODE_ENV === 'production'
+            ? ['error', 'warn']
+            : ['error', 'warn', 'query'],
+      })
+    } catch (e) {
+      console.warn('[db] failed to init pg adapter, fallback to default client', e)
+    }
+  }
+
+  return new PrismaClient({
     log:
       process.env.NODE_ENV === 'production'
         ? ['error', 'warn']
         : ['error', 'warn', 'query'],
   })
+}
+
+export const db = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db

@@ -29,8 +29,7 @@ export async function GET(
           },
           orderBy: { createdAt: 'asc' },
         },
-        history: {
-          include: { changedBy: { select: { name: true, role: true } } },
+        statusHistory: {
           orderBy: { createdAt: 'asc' },
         },
       },
@@ -54,8 +53,8 @@ export async function GET(
         applicationNumber: app.applicationNumber,
         status: app.status,
         statusLabel: STATUS_LABELS[app.status] || app.status,
-        entryType: app.entryType,
-        entryTypeLabel: ENTRY_TYPE_LABELS[app.entryType] || app.entryType,
+        entryType: app.entryType || 'athlete',
+        entryTypeLabel: ENTRY_TYPE_LABELS[app.entryType || 'athlete'] || app.entryType,
         submittedAt: app.submittedAt,
         updatedAt: app.updatedAt,
         reviewedAt: app.reviewedAt,
@@ -89,13 +88,13 @@ export async function GET(
             sportsCategory: p.athlete.sportsCategory,
           },
         })),
-        history: app.history.map((h: any) => ({
+        history: (app as any).statusHistory.map((h: any) => ({
           id: h.id,
           oldStatus: h.oldStatus,
           newStatus: h.newStatus,
           newStatusLabel: STATUS_LABELS[h.newStatus] || h.newStatus,
           oldStatusLabel: h.oldStatus ? STATUS_LABELS[h.oldStatus] || h.oldStatus : null,
-          changedBy: h.changedBy ? `${h.changedBy.name} (${h.changedBy.role})` : 'Система',
+          changedBy: h.changedById ? `User ${h.changedById}` : 'Система',
           comment: h.comment,
           createdAt: h.createdAt,
         })),

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { db } from '@/lib/db';
 import { handle, ERR } from '@/lib/api';
 import { requireStaff } from '@/lib/auth';

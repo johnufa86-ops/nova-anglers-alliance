@@ -114,7 +114,7 @@ async function duplicateError(competitionId: string, contactEmail: string) {
   let name = '';
   try {
     name = duplicate
-      ? participantDisplayName(duplicate.entryType, JSON.parse(duplicate.rawPayload))
+      ? participantDisplayName(duplicate.entryType || 'athlete', JSON.parse(duplicate.rawPayload || '{}'))
       : '';
   } catch {}
   return ERR.DUPLICATE({
@@ -313,12 +313,12 @@ export async function POST(req: Request) {
               participants: {
                 create: participantIds.map((p) => ({ athleteId: p.athleteId, role: p.role })),
               },
-              history: {
+              statusHistory: {
                 create: [{ oldStatus: null, newStatus: 'submitted', comment: 'Заявка подана через сайт' }],
               },
             },
             include: { participants: true },
-          });
+          } as any);
         },
         { timeout: 15_000 }
       );
@@ -350,8 +350,8 @@ export async function POST(req: Request) {
         email: sessionUser.email,
         name: sessionUser.name,
         applicationId: created.id,
-        applicationNumber: created.applicationNumber,
-        competitionName: competition.name,
+        applicationNumber: created.applicationNumber || '',
+        competitionName: competition.name || competition.slug,
         status: 'submitted',
         statusLabel: 'Заявка принята',
       }).catch((e) => console.error('[applications] notify failed:', e?.message));

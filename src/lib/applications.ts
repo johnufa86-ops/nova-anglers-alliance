@@ -55,6 +55,36 @@ export function canTransition(from: string, to: string): boolean {
  * safety net. Do not generate numbers outside a transaction.
  */
 
+/** 48 часов — таймаут для ленивого истечения заявок (ТЗ §2.5). */
+export const APPLICATION_EXPIRE_HOURS = 48;
+export const APPLICATION_EXPIRE_MS = APPLICATION_EXPIRE_HOURS * 3600_000;
+
+/**
+ * Ленивое истечение: заявки в статусах pending/submitted/under_review,
+ * созданные более 48ч назад, помечаются как expired.
+ * Вызывается при чтении списков, не требует крона.
+ */
+export async function lazyExpireApplications(): Promise<number> {
+  try {
+    const { db } = await import('@/lib/db');
+    const cutoff = new Date(Date.now() - APPLICATION_EXPIRE_MS);
+    const res = await db.application.updateMany({
+      where: {
+        status: { in: ['pending', 'submitted', 'under_review', 'draft'] },
+        createdAt: { lt: cutoff },
+      },
+      data: { status: 'expired' },
+    });
+    if (res.count > 0) {
+      console.log(`[applications] lazy-expired ${res.count} applications older than ${APPLICATION_EXPIRE_HOURS}h`);
+    }
+    return res.count;
+  } catch (e) {
+    console.warn('[applications] lazyExpire failed', (e as any)?.message);
+    return 0;
+  }
+}
+
 /** Public display name for an entry (athlete or team application). */
 export function participantDisplayName(entryType: string, payload: any): string {
   if (entryType === 'team') return payload?.name || 'Экипаж';

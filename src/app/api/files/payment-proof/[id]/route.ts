@@ -5,7 +5,7 @@ import { getPrivateFileStream } from '@/lib/storage';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: paymentId } = await params;
-  const user = await getCurrentUser(req);
+  const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const payment = await (db as any).payment.findUnique({

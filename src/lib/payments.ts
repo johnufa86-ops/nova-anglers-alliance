@@ -74,7 +74,7 @@ export async function providerCreatePayment(opts: {
   const res = await fetch('https://api.cloudpayments.ru/v1/orders/create', {
     method: 'POST',
     headers: {
-      Authorization: `Basic ${Buffer.from(`${CP_PUBLIC_ID}:${CP_API_SECRET}`).toString('base64')}`,
+      Authorization: `Basic ${Buffer.from(`${CP_PUBLIC_ID}:${CP_API_SECRET}` as any).toString('base64')}`,
       'Content-Type': 'application/json',
       'Idempotence-Key': opts.paymentId, // повторный вызов не создаёт второй счёт
     },
@@ -115,10 +115,10 @@ export function verifyWebhookSignature(rawBody: Buffer, headerValue: string | nu
   if (!headerValue) return false;
   const secret = PAYMENTS_DRIVER === 'mock' ? MOCK_SECRET : CP_API_SECRET;
   if (!secret) return false;
-  const expected = createHmac('sha256', secret).update(rawBody).digest('base64');
+  const expected = createHmac('sha256', secret).update(rawBody as any).digest('base64');
   const given = headerValue.trim();
   if (given.length !== expected.length) return false;
-  return timingSafeEqual(Buffer.from(given), Buffer.from(expected));
+  return timingSafeEqual(Buffer.from(given) as any, Buffer.from(expected) as any);
 }
 
 /**

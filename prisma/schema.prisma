@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 enum Role {
@@ -21,6 +22,10 @@ enum ApplicationStatus {
   rejected
   cancelled
   expired
+  submitted
+  under_review
+  needs_changes
+  withdrawn
 }
 
 enum PaymentStatus {
@@ -35,60 +40,97 @@ enum DocumentStatus {
   pending
   approved
   rejected
+  expired
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Core auth
+// ─────────────────────────────────────────────────────────────────────────────
 model User {
-  id               String   @id @default(uuid())
-  email            String   @unique
-  passwordHash     String
-  role             Role     @default(USER)
-  emailVerified    Boolean  @default(false)
-  verificationToken String?
-  resetToken       String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  email                String   @unique
+  passwordHash         String
+  role                 String   @default("USER")
+  name                 String?  @default("User")
+  emailVerified        Boolean  @default(false)
+  verificationToken    String?
+  resetToken           String?
+  notificationsEnabled Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  athlete          Athlete?
+  athlete              Athlete?
   organizerAssignments OrganizerAssignment[]
+  sessions             Session[]
+  emailVerifications   EmailVerification[]
+  emailLogs            EmailLog[]
+  applications         Application[]
+  documents            Document[]
 }
 
-model Athlete {
-  id              String   @id @default(uuid())
-  userId          String?  @unique
-  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  firstName       String
-  lastName        String
-  middleName      String?
-  birthDate       DateTime?
-  gender          String?
-  city            String?
-  club            String?
-  sportsCategory  String?
-  phone           String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 
-  applications    Application[]
-  documents       Document[]
-  results         CompetitionResult[]
-  ratingEntries   RatingEntry[]
+  @@index([userId])
 }
 
+model OrganizerAssignment {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+
+  @@unique([userId, competitionId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Competitions & related
+// ─────────────────────────────────────────────────────────────────────────────
 model Competition {
   id                  String   @id @default(uuid())
   slug                String   @unique
-  title               String
-  description         String?
-  discipline          String?
-  category            String?
-  location            String?
+  // New-style fields (Stage 6.5)
+  title               String   @default("Tournament")
+  description         String?  @default("")
+  discipline          String?  @default("spinning")
+  category            String?  @default("open")
+  location            String?  @default("")
   date                DateTime?
   registrationDeadline DateTime?
-  maxParticipants     Int?
+  maxParticipants     Int?     @default(100)
   fee                 Float?   @default(0)
   status              String   @default("upcoming")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  // Old-style fields (Stage 4-6, supabase/schema.sql) — optional for compat
+  name                String?  @default("")
+  shortName           String?  @default("")
+  disciplineLabel     String?  @default("")
+  entryType           String?  @default("both")
+  region              String?  @default("")
+  startDate           DateTime?
+  endDate             DateTime?
+  dateLabel           String?  @default("")
+  registrationOpenAt  DateTime?
+  registrationCloseAt DateTime?
+  maxEntries          Int?     @default(0)
+  format              String?  @default("")
+  prizeFund           String?  @default("")
+  days                Int?     @default(1)
+  pointsMultiplier    String?  @default("×1.0")
+  organizer           String?  @default("NOVA Anglers Alliance")
+  contact             String?  @default("")
+  content             String?  @default("{}")
+  entryFee            Int?     @default(0)
 
   applications        Application[]
   results             CompetitionResult[]
@@ -97,67 +139,191 @@ model Competition {
   paymentDetails      PaymentDetails?
 }
 
-model OrganizerAssignment {
-  id             String      @id @default(uuid())
-  userId         String
-  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  competitionId  String
-  competition    Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  assignedAt     DateTime    @default(now())
+model Team {
+  id        String   @id @default(uuid())
+  name      String
+  region    String   @default("")
+  club      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([userId, competitionId])
+  members      TeamMember[]
+  applications Application[]
 }
 
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  athleteId String
+  athlete   Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+
+  @@unique([teamId, athleteId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Athletes
+// ─────────────────────────────────────────────────────────────────────────────
+model Athlete {
+  id             String   @id @default(uuid())
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstName      String
+  lastName       String
+  middleName     String?
+  displayName    String?  @default("")
+  birthDate      DateTime?
+  gender         String?
+  city           String?
+  club           String?
+  sportsCategory String?
+  phone          String?
+  email          String?
+  region         String?  @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  applications            Application[]
+  documents               Document[]
+  results                 CompetitionResult[]
+  ratingEntries           RatingEntry[]
+  teamMembers             TeamMember[]
+  applicationParticipants ApplicationParticipant[]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Applications (merged old + new)
+// ─────────────────────────────────────────────────────────────────────────────
 model Application {
-  id             String            @id @default(uuid())
-  athleteId      String
-  athlete        Athlete           @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  competitionId  String
-  competition    Competition       @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  status         ApplicationStatus @default(pending)
-  fee            Float?            @default(0)
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id                String   @id @default(uuid())
+  // New simplified (Stage 6.5)
+  athleteId         String?
+  athlete           Athlete? @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  competitionId     String
+  competition       Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  status            String   @default("pending")
+  fee               Float?   @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  payment        Payment?
+  // Old full (Stage 4-6)
+  applicationNumber String?  @unique
+  entryType         String?  @default("athlete")
+  contactEmail      String?
+  contactPhone      String?
+  accessToken       String?
+  teamId            String?
+  team              Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rawPayload        String?  @default("{}")
+  notes             String?  @default("")
+  source            String?  @default("web")
+  submittedAt       DateTime? @default(now())
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  comment           String?
+
+  // Relations
+  payment           Payment?
+  participants      ApplicationParticipant[]
+  statusHistory     ApplicationStatusHistory[]
+  documents         ApplicationDocument[]
+
+  @@index([competitionId])
+  @@index([contactEmail])
+  @@index([userId])
 }
 
-model Payment {
-  id              String        @id @default(uuid())
-  applicationId   String        @unique
-  application     Application   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  amount          Float
-  currency        String        @default("RUB")
-  status          PaymentStatus @default(pending)
-  
-  transactionId   String?       @unique
-  provider        String?
-  
-  method          String        @default("online")
-  proofFileUrl    String?
-  proofStatus     String?
-  rejectReason    String?
-  confirmedById   String?
-  confirmedAt     DateTime?
+model ApplicationParticipant {
+  id            String   @id @default(uuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  athleteId     String
+  athlete       Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  role          String   @default("member")
+  createdAt     DateTime @default(now())
 
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  @@index([applicationId])
+}
+
+model ApplicationStatusHistory {
+  id            String   @id @default(uuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  oldStatus     String?
+  newStatus     String
+  changedById   String?
+  comment       String?
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+}
+
+model ApplicationDocument {
+  id            String   @id @default(uuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  filePath      String
+  fileName      String
+  documentType  String   @default("")
+  uploadedAt    DateTime @default(now())
+}
+
+model Counter {
+  key   String @id
+  value Int    @default(0)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Payments (merged)
+// ─────────────────────────────────────────────────────────────────────────────
+model Payment {
+  id            String   @id @default(uuid())
+  applicationId String   @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  amount        Float
+  currency      String   @default("RUB")
+  status        String   @default("pending")
+
+  // New Stage 6.5 fields
+  transactionId String?  @unique
+  provider      String?
+  method        String   @default("online")
+  proofFileUrl  String?
+  proofStatus   String?
+  rejectReason  String?
+  confirmedById String?
+  confirmedAt   DateTime?
+
+  // Old Stage 6 fields
+  providerId    String?
+  paidAt        DateTime?
+  refundReason  String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model PaymentDetails {
-  id              String       @id @default(uuid())
-  competitionId   String?      @unique
-  competition     Competition? @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  bankName        String
-  accountNumber   String
-  bik             String
-  inn             String?
-  recipientName   String
-  paymentPurpose  String
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  competitionId  String?      @unique
+  competition    Competition? @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  bankName       String
+  accountNumber  String
+  bik            String
+  inn            String?
+  recipientName  String
+  paymentPurpose String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Rating & Results
+// ─────────────────────────────────────────────────────────────────────────────
 model RatingEntry {
   id            String      @id @default(uuid())
   athleteId     String
@@ -185,14 +351,68 @@ model CompetitionResult {
   @@unique([athleteId, competitionId])
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Documents (merged)
+// ─────────────────────────────────────────────────────────────────────────────
 model Document {
-  id             String         @id @default(uuid())
-  athleteId      String
-  athlete        Athlete        @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  type           String
-  fileUrl        String
-  status         DocumentStatus @default(pending)
+  id              String   @id @default(uuid())
+  // New Stage 6.5 (athleteId)
+  athleteId       String?
+  athlete         Athlete? @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  // Old Stage 5 (userId)
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String
+  fileUrl         String
+  status          String   @default("pending")
   rejectionReason String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  // Old extra
+  fileName        String?  @default("")
+  fileSize        Int?     @default(0)
+  mimeType        String?  @default("")
+  rejectReason    String?
+  reviewedAt      DateTime?
+  reviewedById    String?
+  uploadedAt      DateTime? @default(now())
+  expiresAt       DateTime?
+  // New extra compat
+  fileKey         String?
+  sizeBytes       Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([athleteId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Email & verification
+// ─────────────────────────────────────────────────────────────────────────────
+model EmailVerification {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String    @unique
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model EmailLog {
+  id             String   @id @default(uuid())
+  idempotencyKey String   @unique
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  to             String
+  template       String
+  subject        String
+  body           String   @default("")
+  status         String   @default("pending")
+  error          String?
+  createdAt      DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }
