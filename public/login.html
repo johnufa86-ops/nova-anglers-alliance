@@ -104,6 +104,7 @@
   </div>
 </footer>
 
+<script src="js/api.js"></script>
 <script>
 (function () {
   const form = document.getElementById('loginForm');
@@ -111,7 +112,7 @@
   const loginLinkHeader = document.getElementById('loginLinkHeader');
 
   if (loginLinkHeader) {
-    // Дляlogin.html саму ссылку "Войти" в шапке делаем ссылкой на эту же страницу —
+    // Для login.html саму ссылку "Войти" в шапке делаем ссылкой на эту же страницу —
     // чтобы при навигации по сайту всегда было понятно, куда нажать.
     loginLinkHeader.textContent = 'Войти';
   }
@@ -138,35 +139,21 @@
     btn.textContent = 'Вход…';
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'same-origin',
-      });
+      const data = await NOVA_API.post('/api/auth/login', { email, password });
 
-      // Сервер ставит куки nova_session через Set-Cookie.
-      if (res.ok) {
-        // Успешный вход → редирект в кабинет спортсмена.
-        window.location.href = '/cabinet-applications.html';
-        return;
-      }
-
-      // Ошибка (401 / 403 / валидация) — сервер возвращает JSON с error.code/error.message.
-      let message = 'Ошибка входа. Проверьте e-mail и пароль.';
-      try {
-        const data = await res.json();
-        if (data && data.error && data.error.message) {
-          message = data.error.message;
-        }
-      } catch (_) {
-        // игнорируем — берём дефолтное сообщение
+      // Успешный вход → редирект в кабинет спортсмена.
+      window.location.href = '/cabinet-applications.html';
+      return;
+    } catch (e) {
+      // Ошибка (401 / 429 / валидация) — слой NOVA_API нормализует в { code, message, details }.
+      // 401 всегда означает «неверные учётные данные» для страницы входа.
+      let message = 'Неверный e-mail или пароль.';
+      if (e && e.status === 401) {
+        message = 'Неверный e-mail или пароль.';
+      } else if (e && e.message) {
+        message = e.message;
       }
       showError(message);
-    } catch (err) {
-      showError('Не удалось связаться с сервером. Проверьте подключение к интернету.');
     } finally {
       btn.disabled = false;
       btn.textContent = 'Войти';

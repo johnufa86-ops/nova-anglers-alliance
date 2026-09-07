@@ -147,6 +147,7 @@
   </div>
 </footer>
 
+<script src="js/api.js"></script>
 <script>
 (function () {
   let currentPage = 1;
@@ -168,8 +169,7 @@
 
     const url = '/api/rating?' + params.toString();
 
-    fetch(url, { credentials: 'same-origin' })
-      .then(function (response) { return response.json(); })
+    NOVA_API.get(url)
       .then(function (data) {
         if (data && data.data) {
           ratingData = data.data;
