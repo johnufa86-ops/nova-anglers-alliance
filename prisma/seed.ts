@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
-import bcrypt from 'bcryptjs';
+import { randomBytes, scryptSync } from 'crypto';
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
 import { existsSync, readFileSync } from 'fs';
@@ -30,7 +30,13 @@ const DEMO_PDF = new Uint8Array(Buffer.from(DEMO_PDF_BASE64, 'base64'));
 async function main() {
   console.log('🚀 Начинаю создание тестовых данных...');
 
-  const passwordHash = await bcrypt.hash('pass123', 10);
+  function hashPassword(password: string): string {
+    const salt = randomBytes(16).toString('hex');
+    const hash = scryptSync(password, salt, 64).toString('hex');
+    return `scrypt:${salt}:${hash}`;
+  }
+
+  const passwordHash = hashPassword('pass123');
   console.log('✅ Пароль захеширован');
 
   const admin = await db.user.upsert({

@@ -1,284 +1,696 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мои заявки — Кабинет спортсмена</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/style.css">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    .hidden {
-      display: none !important;
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .badge-success {
-      background-color: #d1fae5;
-      color: #065f46;
-    }
-    .badge-warning {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-    .badge-info {
-      background-color: #dbeafe;
-      color: #1e40af;
-    }
-    .badge-pending {
-      background-color: #f3f4f6;
-      color: #4b5563;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Мои заявки — Кабинет спортсмена — NOVA ANGLERS ALLIANCE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="icons/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="theme-color" content="#08090b" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* кастомизации под кабинет — поверх общих стилей style.css */
+  .cab-app {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .cab-app:hover {
+    border-color: var(--line-soft);
+  }
+  .cab-app-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .cab-app-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--pulse-2);
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .cab-app-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .cab-app-date {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .cab-app-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-soft);
+    flex-wrap: wrap;
+  }
+  .cab-app-fee {
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .cab-app-fee-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-2);
+  }
+  .cab-app-fee-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--core);
+  }
+
+  /* статус-пили */
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .status-pill.paid {
+    border-color: rgba(87, 230, 161, 0.3);
+    background: rgba(87, 230, 161, 0.06);
+    color: var(--ok);
+  }
+  .status-pill.under_review {
+    border-color: rgba(199, 166, 110, 0.4);
+    background: rgba(174, 136, 80, 0.08);
+    color: var(--pulse-2);
+  }
+  .status-pill.rejected {
+    border-color: rgba(255, 79, 109, 0.35);
+    background: rgba(255, 79, 109, 0.06);
+    color: var(--live);
+  }
+  .status-pill.pending {
+    border-color: var(--line);
+    color: var(--muted);
+  }
+  .status-pill.error {
+    border-color: rgba(255, 79, 109, 0.35);
+    background: rgba(255, 79, 109, 0.06);
+    color: var(--live);
+  }
+
+  /* модалка оплаты — сдвиг вправо как sheet */
+  .sheet {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 9, 11, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: flex-end;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .sheet.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .sheet-content {
+    width: 440px;
+    height: 100%;
+    background: var(--panel);
+    border-left: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.5);
+    transform: translateX(24px);
+    transition: transform 0.3s cubic-bezier(0.16, 0.8, 0.24, 1);
+  }
+  .sheet.open .sheet-content {
+    transform: translateX(0);
+  }
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sheet-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .sheet-sub {
+    font-size: 11px;
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+  .sheet-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .bank-card {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .bank-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .bank-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-2);
+    flex-shrink: 0;
+    min-width: 100px;
+  }
+  .bank-value {
+    text-align: right;
+    word-break: break-word;
+  }
+  .bank-value.mono {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--core-soft);
+    font-weight: 500;
+  }
+  .dropzone {
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .dropzone:hover,
+  .dropzone.dragover {
+    border-color: var(--pulse-2);
+    background: rgba(174, 136, 80, 0.05);
+  }
+  .dropzone-icon {
+    font-size: 22px;
+    color: var(--pulse-2);
+    margin-bottom: 4px;
+  }
+  .dropzone-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .dropzone-hint {
+    font-size: 11px;
+    color: var(--muted-2);
+    margin-top: 4px;
+  }
+  .dropzone-file {
+    font-size: 12px;
+    color: var(--core-soft);
+    margin-top: 6px;
+  }
+  .file-input {
+    display: none;
+  }
+  .upload-btn {
+    margin-top: 4px;
+    justify-content: center;
+  }
+  .empty-state {
+    text-align: center;
+    color: var(--muted-2);
+    padding: 48px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .error-state {
+    text-align: center;
+    color: var(--live);
+    padding: 48px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 79, 109, 0.3);
+    border-radius: var(--radius);
+    background: rgba(255, 79, 109, 0.04);
+  }
+  .loading-state {
+    text-align: center;
+    color: var(--muted-2);
+    padding: 48px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+</style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
-  <div class="max-w-5xl mx-auto py-8 px-4">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Мои заявки на турниры</h1>
-      <div class="space-x-3">
-        <a href="/" class="text-blue-600 hover:underline text-sm">← Главная</a>
-        <a href="/rating.html" class="text-blue-600 hover:underline text-sm">Рейтинг</a>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo">
+      <img class="mark" src="assets/icon-star.png" alt="NOVA" />
+      NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span>
+    </a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="index.html">Главная</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="login.html" class="login-link" id="loginNavLink">Войти</a>
+    </nav>
+    <div class="header-actions">
+      <a href="register.html" class="btn btn-primary btn-sm">Регистрация</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:140px; padding-bottom: 60px;">
+  <div style="max-width:var(--container); margin:0 auto;">
+    <div class="eyebrow">Кабинет спортсмена</div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:40px;">
+      <div>
+        <h1 class="page-hero h1" style="font-size:clamp(28px, 4vw, 42px);">Мои заявки</h1>
+        <p style="color:var(--muted); font-size:14.5px; margin-top:10px; max-width:440px; line-height:1.6;">
+          История регистраций на турниры NOVA. Здесь вы увидите статус каждой заявки и сможете загрузить чек оплаты.
+        </p>
       </div>
+      <a href="index.html" class="btn btn-ghost btn-sm" style="font-size:12px;">← Главная</a>
     </div>
 
-    <div id="applicationsContainer" class="space-y-4">
-      <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
-        <p class="text-gray-500">Загрузка ваших заявок...</p>
+    <div id="applicationsContainer">
+      <div class="loading-state">Загрузка заявок…</div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal -->
+<div id="paymentModal" class="sheet" role="dialog" aria-modal="true" aria-label="Оплата взноса">
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <div>
+        <div class="sheet-title">Оплата взноса</div>
+        <div class="sheet-sub">Форма подтверждения участия</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="closeModalBtn" style="padding:10px 16px; font-size:12px;">×</button>
+    </div>
+    <div class="sheet-body" style="gap:22px;">
+      <div class="bank-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:4px;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-2);">Реквизиты для перевода</span>
+          <button class="btn btn-ghost btn-sm" id="copyBankBtn" style="padding:5px 12px; font-size:11px; border-color:var(--line); color:var(--muted);">Скопировать</button>
+        </div>
+        <div class="bank-row"><span class="bank-label">Банк</span><span class="bank-value" id="valBank">—</span></div>
+        <div class="bank-row"><span class="bank-label">Счёт</span><span class="bank-value mono" id="valAccount">—</span></div>
+        <div class="bank-row"><span class="bank-label">БИК</span><span class="bank-value mono" id="valBik">—</span></div>
+        <div class="bank-row"><span class="bank-label">ИНН</span><span class="bank-value mono" id="valInn">—</span></div>
+        <div class="bank-row"><span class="bank-label">Получатель</span><span class="bank-value" id="valRecipient">—</span></div>
+        <div class="bank-row" style="padding-top:10px; border-top:1px solid var(--line-soft);">
+          <span class="bank-label">Назначение</span>
+          <span class="bank-value" id="valPurpose" style="font-weight:500;">—</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'JetBrains Mono', monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-2); margin-bottom:10px;">Загрузите чек об оплате</div>
+        <div class="dropzone" id="dropZone">
+          <div class="dropzone-icon">📎</div>
+          <div class="dropzone-label">Перетащите чек сюда или нажмите, чтобы выбрать</div>
+          <div class="dropzone-hint">Поддерживаются JPG, PNG, PDF · максимум 5 МБ</div>
+          <input type="file" id="proofFileInput" class="file-input" accept=".jpg,.jpeg,.png,.pdf" />
+        </div>
+        <div id="selectedFile" class="dropzone-file" style="display:none;"></div>
+      </div>
+
+      <button class="btn btn-primary" id="submitProofBtn" disabled style="width:100%; justify-content:center;">Отправить чек на проверку</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top" style="padding-bottom:40px; border-bottom:1px solid var(--line-soft);">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-compact.png" alt="" style="height:72px; margin-bottom:14px;" />
+        <p style="color:var(--muted); font-size:13px; line-height:1.7; max-width:320px;">
+          Рыболовный спорт нового уровня: соревнования, рейтинг, спортсмены и медиа.
+        </p>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted-2); margin-bottom:20px; font-family:'JetBrains Mono',monospace;">Рейтинг</h5>
+        <ul style="display:flex; flex-direction:column; gap:8px; list-style:none; padding:0; margin:0;">
+          <li style="padding:0;"><a href="rating.html" style="font-size:14px; color:var(--muted); transition:color 0.25s;">Рейтинг спортсменов</a></li>
+        </ul>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted-2); margin-bottom:20px; font-family:'JetBrains Mono',monospace;">Соревнования</h5>
+        <ul style="display:flex; flex-direction:column; gap:8px; list-style:none; padding:0; margin:0;">
+          <li style="padding:0;"><a href="competitions.html" style="font-size:14px; color:var(--muted); transition:color 0.25s;">Календарь турниров</a></li>
+        </ul>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted-2); margin-bottom:20px; font-family:'JetBrains Mono',monospace;">Альянс</h5>
+        <ul style="display:flex; flex-direction:column; gap:8px; list-style:none; padding:0; margin:0;">
+          <li style="padding:0;"><a href="alliance.html" style="font-size:14px; color:var(--muted); transition:color 0.25s;">О NOVA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom" style="padding-top:28px;">
+      <p style="font-size:12px; color:var(--muted-2);">© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" style="width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted);" aria-label="Instagram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+        </a>
+        <a href="#" style="width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted);" aria-label="Telegram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg>
+        </a>
+        <a href="#" style="width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted);" aria-label="VK">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg>
+        </a>
       </div>
     </div>
   </div>
+</footer>
 
-  <!-- Модальное окно оплаты -->
-  <div id="paymentModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 relative">
-      <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
-      <h3 class="text-xl font-bold mb-4">Оплата взноса участника</h3>
-      
-      <div id="bankDetailsSection" class="space-y-3">
-        <div class="bg-gray-50 p-4 rounded-lg text-sm border space-y-2">
-          <div><span class="text-gray-500">Банк:</span> <strong id="valBank">Загрузка...</strong></div>
-          <div><span class="text-gray-500">Счёт:</span> <strong id="valAccount"></strong></div>
-          <div><span class="text-gray-500">БИК:</span> <strong id="valBik"></strong></div>
-          <div><span class="text-gray-500">ИНН:</span> <strong id="valInn"></strong></div>
-          <div><span class="text-gray-500">Получатель:</span> <strong id="valRecipient"></strong></div>
-          <div class="pt-2 border-t"><span class="text-gray-500">Назначение:</span> <div id="valPurpose" class="font-medium text-gray-800 break-words mt-1"></div></div>
-        </div>
+<script>
+(function () {
+  // -------- открытие / закрытие модалки --------
+  const modal = document.getElementById('paymentModal');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const backdrop = modal; // клик по подложке закрывает
 
-        <button onclick="copyBankDetails()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg text-sm font-medium transition">
-          Скопировать реквизиты
-        </button>
+  let currentAppId = null;
+  let selectedFile = null;
 
-        <div class="mt-4">
-          <label class="block text-sm font-medium mb-1">Загрузите чек (JPG, PNG, PDF до 5 МБ):</label>
-          <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 cursor-pointer transition">
-            <p class="text-gray-500 text-sm">Перетащите чек сюда или нажмите для выбора</p>
-            <input type="file" id="proofFileInput" accept=".jpg,.jpeg,.png,.pdf" class="hidden">
-            <div id="selectedFileName" class="mt-2 text-xs font-semibold text-blue-600 hidden"></div>
-          </div>
-        </div>
+  function openModal(appId) {
+    currentAppId = appId;
+    selectedFile = null;
+    document.getElementById('selectedFile').style.display = 'none';
+    document.getElementById('submitProofBtn').disabled = true;
+    document.getElementById('proofFileInput').value = '';
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
 
-        <button id="btnSubmitProof" onclick="uploadProofFile()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition mt-3">
-          Отправить подтверждение
-        </button>
-      </div>
-    </div>
-  </div>
+    loadBankDetails();
+  }
 
-  <script>
-    // Глобальные переменные
-    let currentApplicationId = null;
-    let selectedFile = null;
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    currentAppId = null;
+    selectedFile = null;
+    document.getElementById('selectedFile').style.display = 'none';
+    document.getElementById('submitProofBtn').disabled = true;
+    document.getElementById('proofFileInput').value = '';
+  }
 
-    // Загрузка заявок при открытии страницы
-    async function loadApplications() {
-      try {
-        const response = await fetch('/api/me/applications');
-        const data = await response.json();
-        
-        const applications = data.applications || data.data || [];
-        const container = document.getElementById('applicationsContainer');
-        
-        if (applications.length === 0) {
-          container.innerHTML = `
-            <div class="bg-white rounded-xl shadow-sm border p-8 text-center">
-              <p class="text-gray-500 mb-4">У вас пока нет активных заявок.</p>
-              <a href="/" class="text-blue-600 hover:underline">Перейти к списку турниров</a>
-            </div>
-          `;
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  window.openPaymentModal = openModal;
+  window.closePaymentModal = closeModal;
+
+  // -------- выбор файла --------
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('proofFileInput');
+  const selectedFileEl = document.getElementById('selectedFile');
+  const submitBtn = document.getElementById('submitProofBtn');
+
+  dropZone.addEventListener('click', function () {
+    fileInput.click();
+  });
+
+  dropZone.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', function () {
+    dropZone.classList.remove('dragover');
+  });
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      selectedFile = files[0];
+      showSelectedFile(selectedFile);
+    }
+  });
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files.length > 0) {
+      selectedFile = fileInput.files[0];
+      showSelectedFile(selectedFile);
+    }
+  });
+
+  function showSelectedFile(file) {
+    selectedFileEl.textContent = 'Выбран: ' + file.name;
+    selectedFileEl.style.display = 'block';
+    submitBtn.disabled = false;
+  }
+
+  // -------- загрузка реквизитов --------
+  function loadBankDetails() {
+    fetch('/api/payment-details', { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (d) {
+        document.getElementById('valBank').textContent = d.bankName || '—';
+        document.getElementById('valAccount').textContent = d.accountNumber || '—';
+        document.getElementById('valBik').textContent = d.bik || '—';
+        document.getElementById('valInn').textContent = d.inn || '—';
+        document.getElementById('valRecipient').textContent = d.recipientName || '—';
+        document.getElementById('valPurpose').textContent = d.paymentPurpose || '—';
+      })
+      .catch(function (err) {
+        console.error('Ошибка загрузки реквизитов:', err);
+      });
+  }
+
+  document.getElementById('copyBankBtn').addEventListener('click', function () {
+    var text =
+      'Банк: ' + document.getElementById('valBank').textContent + '\n' +
+      'Счёт: ' + document.getElementById('valAccount').textContent + '\n' +
+      'БИК: ' + document.getElementById('valBik').textContent + '\n' +
+      'ИНН: ' + document.getElementById('valInn').textContent + '\n' +
+      'Получатель: ' + document.getElementById('valRecipient').textContent + '\n' +
+      'Назначение: ' + document.getElementById('valPurpose').textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        var btn = document.getElementById('copyBankBtn');
+        var orig = btn.textContent;
+        btn.textContent = 'Скопировано ✓';
+        setTimeout(function () { btn.textContent = orig; }, 2000);
+      }).catch(function () { alert('Не удалось скопировать реквизиты'); });
+    } else {
+      alert('Не удалось скопировать реквизиты');
+    }
+  });
+
+  // -------- отправка чека --------
+  submitBtn.addEventListener('click', function () {
+    if (!selectedFile) {
+      alert('Пожалуйста, выберите файл чека');
+      return;
+    }
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      alert('Файл слишком большой. Максимум — 5 МБ');
+      return;
+    }
+
+    var formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('applicationId', currentAppId);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Загрузка…';
+
+    fetch('/api/payments/upload-proof', {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin',
+    })
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().then(function (e) {
+            throw new Error(e.error || 'Ошибка загрузки чека');
+          });
+        }
+      })
+      .then(function () {
+        alert('Чек успешно загружен! Ожидайте проверки организатором.');
+        closeModal();
+        loadApplications();
+      })
+      .catch(function (err) {
+        alert('Ошибка: ' + (err.message || 'Не удалось загрузить чек'));
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить чек на проверку';
+      });
+  });
+
+  // -------- список заявок --------
+  function loadApplications() {
+    var container = document.getElementById('applicationsContainer');
+
+    fetch('/api/me/applications', { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var apps = data.applications || data.data || [];
+        if (apps.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">У вас пока нет заявок<br><a href="register.html" style="color:var(--core-soft); font-weight:600; display:inline-block; margin-top:16px; text-decoration:none; border-bottom:1px solid var(--core); padding-bottom:2px;">Зарегистрироваться на турнир</a></div>';
           return;
         }
+        container.innerHTML = apps.map(function (app) {
+          var payment = app.payment || {};
+          var fee = (app.competition && app.competition.entryFee != null)
+            ? app.competition.entryFee
+            : (app.fee || 0);
+          var competition = app.competition || {};
+          var title = competition.title || 'Турнир';
+          var dateLabel = competition.dateLabel || (competition.date ? new Date(competition.date).toLocaleDateString('ru-RU') : '');
+          var feeRub = fee >= 100 ? (fee / 100).toFixed(0) + ' ₽' : fee + ' ₽';
 
-        container.innerHTML = applications.map(app => {
-          const paymentStatus = app.payment?.status || 'pending';
-          const proofStatus = app.payment?.proofStatus || null;
-          
-          let statusBadge = '';
-          let actionButton = '';
+          var statusClass = '';
+          var statusText = '';
+          var statusPillHtml = '';
 
-          if (paymentStatus === 'paid' && proofStatus === 'confirmed') {
-            statusBadge = '<span class="badge badge-success">✓ Оплачено</span>';
-          } else if (proofStatus === 'awaiting_review') {
-            statusBadge = '<span class="badge badge-info">Чек на проверке</span>';
-          } else if (paymentStatus === 'pending') {
-            statusBadge = '<span class="badge badge-warning">Ожидает оплаты</span>';
-            actionButton = `<button onclick="openPaymentModal('${app.id}')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">Оплатить</button>`;
+          if (payment.status === 'paid' && payment.proofStatus === 'confirmed') {
+            statusClass = 'paid';
+            statusText = 'Оплачено';
+            statusPillHtml = '<span class="status-pill paid">✓ Оплачено</span>';
+          } else if (payment.proofStatus === 'awaiting_review') {
+            statusClass = 'under_review';
+            statusText = 'Чек на проверке';
+            statusPillHtml = '<span class="status-pill under_review">Чек на проверке</span>';
+          } else if (payment.status === 'paid' && payment.proofStatus === 'rejected') {
+            statusClass = 'rejected';
+            statusText = 'Чек отклонён';
+            statusPillHtml = '<span class="status-pill rejected">Чек отклонён</span>';
+          } else if (payment.status === 'failed') {
+            statusClass = 'error';
+            statusText = 'Оплата не прошла';
+            statusPillHtml = '<span class="status-pill error">Ошибка оплаты</span>';
+          } else if (payment.status === 'pending') {
+            statusClass = 'pending';
+            statusText = 'Ожидает оплаты';
+            statusPillHtml = '<span class="status-pill pending">Ожидает оплаты</span>';
+          } else {
+            statusClass = 'pending';
+            statusText = 'Ожидает оплаты';
+            statusPillHtml = '<span class="status-pill pending">Ожидает оплаты</span>';
           }
 
-          const date = app.competition?.date ? new Date(app.competition.date).toLocaleDateString('ru-RU') : 'Дата не указана';
-          const fee = app.competition?.fee || app.fee || 0;
+          var paymentAction = '';
+          if (payment.status === 'pending' || (!payment.status)) {
+            paymentAction = '<button class="btn btn-primary btn-sm" onclick="openPaymentModal(\'' + app.id + '\')" style="margin-left:auto;">Оплатить</button>';
+          }
 
-          return `
-            <div class="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition">
-              <div class="flex justify-between items-start mb-3">
-                <div>
-                  <h3 class="text-lg font-semibold mb-1">${app.competition?.title || 'Турнир'}</h3>
-                  <p class="text-sm text-gray-500">${date}</p>
-                </div>
-                ${statusBadge}
-              </div>
-              
-              <div class="flex justify-between items-center pt-4 border-t">
-                <div class="text-sm text-gray-600">
-                  <span class="font-semibold text-gray-900">${fee} ₽</span> — взнос участника
-                </div>
-                ${actionButton}
-              </div>
-            </div>
-          `;
+          return '' +
+            '<div class="cab-app">' +
+              '<div class="cab-app-head">' +
+                '<div>' +
+                  '<span class="cab-app-number">' + (app.applicationNumber || '') + '</span>' +
+                  '<h2 class="cab-app-title">' + title + '</h2>' +
+                  '<div class="cab-app-date">' + dateLabel + '</div>' +
+                '</div>' +
+                statusPillHtml +
+              '</div>' +
+              '<div class="cab-app-body">' +
+                '<div class="cab-app-fee">' +
+                  '<span class="cab-app-fee-label">Взнос</span>' +
+                  '<span class="cab-app-fee-value">' + feeRub + '</span>' +
+                '</div>' +
+                paymentAction +
+              '</div>' +
+            '</div>';
         }).join('');
-      } catch (error) {
-        console.error('Error loading applications:', error);
-        document.getElementById('applicationsContainer').innerHTML = `
-          <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-            <p class="text-red-700">Ошибка загрузки заявок. Проверьте консоль (F12).</p>
-          </div>
-        `;
-      }
-    }
-
-    // Открытие модального окна оплаты
-    async function openPaymentModal(applicationId) {
-      currentApplicationId = applicationId;
-      document.getElementById('paymentModal').classList.remove('hidden');
-      document.getElementById('paymentModal').classList.add('flex');
-      
-      // Загрузка реквизитов
-      try {
-        const response = await fetch('/api/payment-details');
-        if (response.ok) {
-          const details = await response.json();
-          document.getElementById('valBank').textContent = details.bankName || '—';
-          document.getElementById('valAccount').textContent = details.accountNumber || '—';
-          document.getElementById('valBik').textContent = details.bik || '—';
-          document.getElementById('valInn').textContent = details.inn || '—';
-          document.getElementById('valRecipient').textContent = details.recipientName || '—';
-          document.getElementById('valPurpose').textContent = details.paymentPurpose || '—';
-        }
-      } catch (error) {
-        console.error('Error loading payment details:', error);
-      }
-    }
-
-    // Закрытие модального окна
-    function closePaymentModal() {
-      document.getElementById('paymentModal').classList.add('hidden');
-      document.getElementById('paymentModal').classList.remove('flex');
-      currentApplicationId = null;
-      selectedFile = null;
-      document.getElementById('proofFileInput').value = '';
-      document.getElementById('selectedFileName').classList.add('hidden');
-    }
-
-    // Копирование реквизитов
-    function copyBankDetails() {
-      const text = `Банк: ${document.getElementById('valBank').textContent}
-Счёт: ${document.getElementById('valAccount').textContent}
-БИК: ${document.getElementById('valBik').textContent}
-ИНН: ${document.getElementById('valInn').textContent}
-Получатель: ${document.getElementById('valRecipient').textContent}
-Назначение: ${document.getElementById('valPurpose').textContent}`;
-      
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Реквизиты скопированы!');
+      })
+      .catch(function (err) {
+        console.error('Ошибка загрузки заявок:', err);
+        container.innerHTML = '<div class="error-state">Ошибка загрузки заявок. Проверьте подключение.</div>';
       });
-    }
+  }
 
-    // Обработка выбора файла
-    document.addEventListener('DOMContentLoaded', function() {
-      loadApplications();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadApplications);
+  } else {
+    loadApplications();
+  }
+})();
+</script>
 
-      const dropZone = document.getElementById('dropZone');
-      const fileInput = document.getElementById('proofFileInput');
-      const fileNameDisplay = document.getElementById('selectedFileName');
-
-      dropZone.addEventListener('click', () => fileInput.click());
-
-      dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('border-blue-500', 'bg-blue-50');
-      });
-
-      dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
-      });
-
-      dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          selectedFile = files[0];
-          fileNameDisplay.textContent = selectedFile.name;
-          fileNameDisplay.classList.remove('hidden');
-        }
-      });
-
-      fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-          selectedFile = e.target.files[0];
-          fileNameDisplay.textContent = selectedFile.name;
-          fileNameDisplay.classList.remove('hidden');
-        }
-      });
-    });
-
-    // Загрузка чека
-    async function uploadProofFile() {
-      if (!selectedFile) {
-        alert('Пожалуйста, выберите файл чека');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('applicationId', currentApplicationId);
-
-      try {
-        const response = await fetch('/api/payments/upload-proof', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok) {
-          alert('Чек успешно загружен! Ожидайте проверки организатором.');
-          closePaymentModal();
-          loadApplications();
-        } else {
-          const error = await response.json();
-          alert('Ошибка загрузки: ' + (error.error || 'Неизвестная ошибка'));
-        }
-      } catch (error) {
-        console.error('Error uploading proof:', error);
-        alert('Ошибка сети при загрузке файла');
-      }
-    }
-  </script>
+<style>
+  @media (max-width:860px) {
+    .foot-top { grid-template-columns: 1fr; }
+    .foot-col { padding-left:0; }
+  }
+</style>
 </body>
 </html>

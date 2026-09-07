@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Войти — NOVA ANGLERS ALLIANCE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#08090b">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo">
+      <img class="mark" src="assets/icon-star.png" alt="NOVA">
+      NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span>
+    </a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="index.html">Главная</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="login.html" class="login-link" id="loginLinkHeader">Войти</a>
+    </nav>
+    <div class="header-actions">
+      <a href="register.html" class="btn btn-primary btn-sm">Регистрация</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="wrap" style="padding-top:150px;padding-bottom:40px;">
+  <div style="max-width:440px;margin:0 auto;">
+    <div class="eyebrow">Личный кабинет</div>
+    <h1 style="font-size:clamp(28px,4vw,38px);font-weight:700;margin-bottom:8px;">Войти в кабинет</h1>
+    <p class="sub" style="margin-bottom:34px;max-width:380px;">У вас уже есть аккаунт? Введите e-mail и пароль.</p>
+
+    <div class="login-card">
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">E-mail</label>
+          <input
+            id="loginEmail"
+            type="email"
+            name="email"
+            autocomplete="email"
+            required
+            placeholder="you@example.com"
+          >
+        </div>
+        <div class="field">
+          <label for="loginPassword">Пароль</label>
+          <input
+            id="loginPassword"
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+            minlength="8"
+            placeholder="Ваш пароль"
+          >
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:6px;">
+          Войти
+        </button>
+        <div id="loginError" style="margin-top:18px;color:#ff8fa3;font-size:13.5px;display:none;line-height:1.5;"></div>
+      </form>
+
+      <div class="login-hint">
+        <p style="margin-bottom:10px;">
+          Нет аккаунта?
+          <a href="register.html" style="color:var(--core-soft);font-weight:600;">Зарегистрироваться</a>
+        </p>
+        <p style="color:var(--muted-2);">
+          Демо-доступ:<br class="hidden-login-hint">
+          <span class="mono" style="color:var(--muted);">athlete1@nova.ru</span><br>
+          <span class="mono" style="color:var(--muted);">pass123</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:34px;border-top:1px solid var(--line-soft);flex-wrap:wrap;gap:16px;">
+      <p style="font-size:12px;color:var(--muted-2);">© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const form = document.getElementById('loginForm');
+  const errorEl = document.getElementById('loginError');
+  const loginLinkHeader = document.getElementById('loginLinkHeader');
+
+  if (loginLinkHeader) {
+    // Дляlogin.html саму ссылку "Войти" в шапке делаем ссылкой на эту же страницу —
+    // чтобы при навигации по сайту всегда было понятно, куда нажать.
+    loginLinkHeader.textContent = 'Войти';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+      showError('Заполните все поля.');
+      return;
+    }
+
+    submitLogin(email, password);
+  });
+
+  async function submitLogin(email, password) {
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Вход…';
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'same-origin',
+      });
+
+      // Сервер ставит куки nova_session через Set-Cookie.
+      if (res.ok) {
+        // Успешный вход → редирект в кабинет спортсмена.
+        window.location.href = '/cabinet-applications.html';
+        return;
+      }
+
+      // Ошибка (401 / 403 / валидация) — сервер возвращает JSON с error.code/error.message.
+      let message = 'Ошибка входа. Проверьте e-mail и пароль.';
+      try {
+        const data = await res.json();
+        if (data && data.error && data.error.message) {
+          message = data.error.message;
+        }
+      } catch (_) {
+        // игнорируем — берём дефолтное сообщение
+      }
+      showError(message);
+    } catch (err) {
+      showError('Не удалось связаться с сервером. Проверьте подключение к интернету.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Войти';
+    }
+  }
+
+  function showError(msg) {
+    errorEl.textContent = msg || 'Ошибка входа. Проверьте e-mail и пароль.';
+    errorEl.style.display = 'block';
+  }
+})();
+</script>
+
+<style>
+  /* Стили уровня страницы — только то, что не попало в общий style.css */
+  .hidden-login-hint { display: none; }
+
+  @media (max-width: 640px) {
+    .hidden-login-hint { display: block; }
+  }
+</style>
+</body>
+</html>

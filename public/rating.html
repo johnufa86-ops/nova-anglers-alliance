@@ -1,232 +1,305 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Рейтинг спортсменов — Nova Anglers Alliance</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f9fafb;
-      color: #111827;
-      line-height: 1.6;
-    }
-    .container { max-width: 1152px; margin: 0 auto; padding: 2rem 1rem; }
-    .card {
-      background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      border: 1px solid #e5e7eb;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    h1 { font-size: 1.875rem; font-weight: 700; }
-    .text-sm { font-size: 0.875rem; }
-    .text-gray { color: #6b7280; }
-    .text-blue { color: #2563eb; }
-    .font-bold { font-weight: 700; }
-    .font-semibold { font-weight: 600; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
-    select, input {
-      width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      padding: 0.625rem 0.75rem;
-      font-size: 0.875rem;
-    }
-    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    thead { background-color: #f9fafb; border-bottom: 1px solid #e5e7eb; }
-    th { text-align: left; padding: 0.75rem 1rem; font-weight: 600; color: #4b5563; }
-    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; }
-    tr:hover { background-color: #f9fafb; }
-    .text-center { text-align: center; }
-    .text-right { text-align: right; }
-    .medal { font-size: 1.25rem; }
-    .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
-    .btn-page {
-      padding: 0.5rem 1rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      background: white;
-      font-size: 0.875rem;
-      cursor: pointer;
-    }
-    .btn-page:hover:not(:disabled) { background-color: #f9fafb; }
-    .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
-    a { color: #2563eb; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .hidden { display: none !important; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рейтинг спортсменов — NOVA ANGLERS ALLIANCE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#08090b">
+<link rel="stylesheet" href="style.css">
+<style>
+  .medal-silver { color: #c0c0c0; }
+  .medal-bronze { color: #cd7f32; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="flex-between" style="margin-bottom: 2rem;">
-      <div>
-        <h1>Рейтинг спортсменов</h1>
-        <p class="text-gray" style="margin-top: 0.25rem;">Официальная таблица начисления баллов сезона</p>
-      </div>
-      <a href="/">← Главная</a>
-    </div>
 
-    <div class="card">
-      <div class="grid-3">
-        <div>
-          <label>Сезон</label>
-          <select id="seasonFilter">
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="index.html">Главная</a>
+      <a href="rating.html" class="active">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="login.html" class="login-link" id="loginNavLink">Войти</a>
+    </nav>
+    <div class="header-actions">
+      <a href="register.html" class="btn btn-primary btn-sm">Регистрация</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="wrap" style="padding-top:140px;padding-bottom:48px;">
+  <div style="max-width:var(--container);margin:0 auto;">
+    <div class="eyebrow">Рейтинг NOVA</div>
+    <h1 style="font-size:clamp(28px,4vw,44px);font-weight:700;margin-bottom:10px;letter-spacing:-0.02em;">Рейтинг спортсменов</h1>
+    <p class="sub" style="max-width:460px;margin-bottom:40px;">Официальная таблица начисления очков сезона 2026. Каждый старт приближает к топ-3.</p>
+
+    <!-- Фильтры -->
+    <div class="admin-card" style="margin-bottom:36px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label for="seasonFilter" style="font-size:11px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);font-family:'JetBrains Mono',monospace;">Сезон</label>
+          <select id="seasonFilter" class="select-compact">
             <option value="2026">2026</option>
             <option value="2025">2025</option>
             <option value="2024">2024</option>
           </select>
         </div>
-        <div>
-          <label>Дисциплина</label>
-          <select id="disciplineFilter">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label for="disciplineFilter" style="font-size:11px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);font-family:'JetBrains Mono',monospace;">Дисциплина</label>
+          <select id="disciplineFilter" class="select-compact">
             <option value="">Все дисциплины</option>
             <option value="spinning">Спиннинг</option>
             <option value="feeder">Фидер</option>
             <option value="carp">Карп</option>
           </select>
         </div>
-        <div>
-          <label>Поиск по спортсмену</label>
-          <input type="text" id="searchInput" placeholder="Имя или фамилия...">
+        <div class="full" style="display:flex;flex-direction:column;gap:8px;">
+          <label for="searchInput" style="font-size:11px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);font-family:'JetBrains Mono',monospace;">Поиск по имени</label>
+          <input type="text" id="searchInput" class="admin-input" placeholder="Имя или фамилия..." style="width:100%;">
         </div>
       </div>
     </div>
 
-    <div class="card" style="padding: 0; overflow: hidden;">
-      <table>
+    <!-- Таблица -->
+    <div class="table-wrap" style="border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow-x:auto;">
+      <table class="admin-table" style="min-width:600px;">
         <thead>
           <tr>
-            <th style="width: 4rem;">#</th>
-            <th>Имя</th>
-            <th>Клуб / Город</th>
-            <th class="text-center">Турниров</th>
-            <th class="text-right">Очки</th>
+            <th style="width:48px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--muted-2);padding:16px 12px;">№</th>
+            <th style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--muted-2);padding:16px 18px;">Спортсмен</th>
+            <th style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--muted-2);padding:16px 18px;">Клуб / Город</th>
+            <th style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--muted-2);padding:16px 18px;">Турниров</th>
+            <th style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--muted-2);padding:16px 18px;width:90px;">Очки</th>
           </tr>
         </thead>
         <tbody id="ratingTableBody">
           <tr>
-            <td colspan="5" class="text-center text-gray" style="padding: 2rem;">Загрузка рейтинга...</td>
+            <td colspan="5" style="text-align:center;color:var(--muted-2);padding:48px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;border:none;">
+              Загрузка рейтинга…
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="pagination">
-      <p id="paginationInfo" class="text-sm text-gray">Страница 1</p>
-      <div style="display: flex; gap: 0.5rem;">
-        <button id="prevPage" onclick="changePage(-1)" class="btn-page" disabled>Назад</button>
-        <button id="nextPage" onclick="changePage(1)" class="btn-page" disabled>Вперед</button>
+    <!-- Пагинация -->
+    <div class="pagination" style="margin-top:32px;">
+      <span id="paginationInfo" style="color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;text-transform:uppercase;margin-right:auto;">Страница 1</span>
+      <button id="prevPage" class="btn btn-ghost btn-sm" style="padding:10px 16px;font-size:12px;" disabled>Назад</button>
+      <button id="nextPage" class="btn btn-ghost btn-sm" style="padding:10px 16px;font-size:12px;" disabled>Вперёд</button>
+    </div>
+
+    <!-- Статистика (опционально) -->
+    <div id="ratingSummary" style="display:none;margin-top:28px;padding:20px 0 4px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--muted-2);font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;text-transform:uppercase;">
+      <span id="totalAthletes">0</span> спортсменов в рейтинге · <span id="totalPoints">0</span> начислено очков
+    </div>
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top" style="padding-bottom:40px;border-bottom:1px solid var(--line-soft);">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-compact.png" alt="" style="height:72px;margin-bottom:14px;">
+        <p style="color:var(--muted);font-size:13px;line-height:1.7;max-width:320px;">
+          Рыболовный спорт нового уровня: соревнования, рейтинг, спортсмены и медиа.
+        </p>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:20px;font-family:'JetBrains Mono',monospace;">Рейтинг</h5>
+        <ul style="display:flex;flex-direction:column;gap:8px;">
+          <li style="padding:0;"><a href="rating.html" style="font-size:14px;color:var(--muted);transition:color 0.25s;">Рейтинг спортсменов</a></li>
+        </ul>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:20px;font-family:'JetBrains Mono',monospace;">Соревнования</h5>
+        <ul style="display:flex;flex-direction:column;gap:8px;">
+          <li style="padding:0;"><a href="competitions.html" style="font-size:14px;color:var(--muted);transition:color 0.25s;">Календарь турниров</a></li>
+        </ul>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:20px;font-family:'JetBrains Mono',monospace;">Альянс</h5>
+        <ul style="display:flex;flex-direction:column;gap:8px;">
+          <li style="padding:0;"><a href="alliance.html" style="font-size:14px;color:var(--muted);transition:color 0.25s;">О NOVA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom" style="padding-top:28px;flex-wrap:wrap;gap:16px;">
+      <p style="font-size:12px;color:var(--muted-2);">© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" style="width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:all 0.3s;color:var(--muted);" aria-label="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" style="width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:all 0.3s;color:var(--muted);" aria-label="Telegram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" style="width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:all 0.3s;color:var(--muted);" aria-label="VK"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
       </div>
     </div>
   </div>
+</footer>
 
-  <script>
-    let currentPage = 1;
-    const pageSize = 20;
-    let totalEntries = 0;
-    let ratingData = [];
+<script>
+(function () {
+  let currentPage = 1;
+  const pageSize = 20;
+  let totalEntries = 0;
+  let ratingData = [];
 
-    async function loadRating() {
-      try {
-        const season = document.getElementById('seasonFilter').value;
-        const discipline = document.getElementById('disciplineFilter').value;
-        const search = document.getElementById('searchInput').value;
+  function loadRating() {
+    const season = document.getElementById('seasonFilter').value;
+    const discipline = document.getElementById('disciplineFilter').value;
+    const search = document.getElementById('searchInput').value.trim();
 
-        const params = new URLSearchParams({
-          season,
-          page: currentPage.toString(),
-          limit: pageSize.toString(),
-        });
-        if (discipline) params.append('discipline', discipline);
-        if (search) params.append('search', search);
+    const params = new URLSearchParams();
+    params.append('season', season);
+    params.append('page', String(currentPage));
+    params.append('limit', String(pageSize));
+    if (discipline) params.append('discipline', discipline);
+    if (search) params.append('search', search);
 
-        const response = await fetch(`/api/rating?${params}`);
-        const data = await response.json();
-        
-        ratingData = data.data || [];
-        totalEntries = data.total || ratingData.length;
-        
-        renderTable();
-      } catch (error) {
-        console.error('Error loading rating:', error);
-        document.getElementById('ratingTableBody').innerHTML = `
-          <tr>
-            <td colspan="5" class="text-center" style="padding: 2rem; color: #ef4444;">Ошибка загрузки рейтинга</td>
-          </tr>
-        `;
-      }
-    }
+    const url = '/api/rating?' + params.toString();
 
-    function renderTable() {
-      const tbody = document.getElementById('ratingTableBody');
-      
-      if (ratingData.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="text-center text-gray" style="padding: 2rem;">Нет данных для отображения</td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = ratingData.map((entry, index) => {
-        const place = (currentPage - 1) * pageSize + index + 1;
-        const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : place === 3 ? '🥉' : place;
-        
-        return `
-          <tr>
-            <td><span class="medal">${medal}</span></td>
-            <td class="font-semibold">${entry.athlete?.firstName || ''} ${entry.athlete?.lastName || ''}</td>
-            <td class="text-gray">${entry.athlete?.club || ''} • ${entry.athlete?.city || ''}</td>
-            <td class="text-center">${entry.competitionsCount || 1}</td>
-            <td class="text-right font-bold">${entry.points || 0}</td>
-          </tr>
-        `;
-      }).join('');
-
-      updatePagination();
-    }
-
-    function updatePagination() {
-      const totalPages = Math.ceil(totalEntries / pageSize);
-      document.getElementById('paginationInfo').textContent = `Страница ${currentPage} (Всего участников: ${totalEntries})`;
-      document.getElementById('prevPage').disabled = currentPage <= 1;
-      document.getElementById('nextPage').disabled = currentPage >= totalPages;
-    }
-
-    function changePage(delta) {
-      currentPage += delta;
-      loadRating();
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      loadRating();
-      
-      document.getElementById('seasonFilter').addEventListener('change', () => {
-        currentPage = 1;
-        loadRating();
+    fetch(url, { credentials: 'same-origin' })
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        if (data && data.data) {
+          ratingData = data.data;
+          totalEntries = data.total || ratingData.length;
+          renderTable();
+          updatePaginationStats();
+        } else {
+          renderEmpty();
+        }
+      })
+      .catch(function (error) {
+        console.error('Ошибка загрузки рейтинга:', error);
+        renderError();
       });
-      
-      document.getElementById('disciplineFilter').addEventListener('change', () => {
-        currentPage = 1;
-        loadRating();
-      });
-      
-      let searchTimeout;
-      document.getElementById('searchInput').addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          currentPage = 1;
-          loadRating();
-        }, 300);
-      });
-    });
-  </script>
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('ratingTableBody');
+
+    if (!ratingData || ratingData.length === 0) {
+      tbody.innerHTML =
+        '<tr>' +
+          '<td colspan="5" style="text-align:center;color:var(--muted-2);padding:48px 20px;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;">Нет данных для отображения</td>' +
+        '</tr>';
+      return;
+    }
+
+    let html = '';
+    for (let i = 0; i < ratingData.length; i++) {
+      const entry = ratingData[i];
+      const globalPlace = (currentPage - 1) * pageSize + i + 1;
+      const athlete = entry.athlete || {};
+      const name = (athlete.firstName || '') + ' ' + (athlete.lastName || '');
+      const club = athlete.club || '';
+      const city = athlete.city || '';
+      const placeStr = globalPlace <= 3 ? ['', '🥇', '🥈', '🥉'][globalPlace] || '' : '';
+      const medalClass = globalPlace === 2 ? 'medal-silver' : globalPlace === 3 ? 'medal-bronze' : '';
+      const placeHtml = globalPlace <= 3
+        ? '<td style="text-align:center;font-family:\'JetBrains Mono\',monospace;font-weight:700;font-size:18px;color:' + (globalPlace === 1 ? 'var(--core-soft)' : globalPlace === 2 ? 'var(--muted-2)' : 'var(--pulse-2)') + ';padding:16px 12px;">' + placeStr + '</td>'
+        : '<td style="text-align:center;font-family:\'JetBrains Mono\',monospace;font-weight:600;color:var(--muted-2);padding:16px 12px;">' + globalPlace + '</td>';
+
+      const pts = entry.points != null ? entry.points : 0;
+      const comps = entry.competitionsCount != null ? entry.competitionsCount : 0;
+
+      html +=
+        '<tr>' +
+          placeHtml +
+          '<td style="font-weight:500;color:var(--text);padding:14px 18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;">' + (name || '—') + '</td>' +
+          '<td style="color:var(--muted);font-size:13.5px;padding:14px 18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;">' + (club || city ? (club + (city ? ', ' + city : '') ) : '—')  + '</td>' +
+          '<td style="text-align:center;color:var(--muted-2);font-family:\'JetBrains Mono\',monospace;font-size:13px;padding:14px 18px;">' + comps + '</td>' +
+          '<td style="text-align:right;color:var(--core-soft);font-family:\'JetBrains Mono\',monospace;font-weight:600;font-size:15px;padding:14px 18px;">' + pts.toLocaleString('ru-RU') + '</td>' +
+        '</tr>';
+    }
+    tbody.innerHTML = html;
+  }
+
+  function renderEmpty() {
+    const tbody = document.getElementById('ratingTableBody');
+    tbody.innerHTML =
+      '<tr>' +
+        '<td colspan="5" style="text-align:center;color:var(--muted-2);padding:48px 20px;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;">Нет данных для отображения</td>' +
+      '</tr>';
+  }
+
+  function renderError() {
+    const tbody = document.getElementById('ratingTableBody');
+    tbody.innerHTML =
+      '<tr>' +
+        '<td colspan="5" style="text-align:center;color:#ff8fa3;padding:48px 20px;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;">Ошибка загрузки рейтинга</td>' +
+      '</tr>';
+  }
+
+  function updatePaginationStats() {
+    document.getElementById('paginationInfo').textContent = 'Страница ' + currentPage;
+    document.getElementById('prevPage').disabled = currentPage <= 1;
+    document.getElementById('nextPage').disabled = currentPage >= Math.ceil(totalEntries / pageSize);
+    document.getElementById('totalAthletes').textContent = totalEntries;
+    document.getElementById('totalPoints').textContent = ratingData.reduce((acc, entry) => acc + (entry.points || 0), 0);
+    document.getElementById('ratingSummary').style.display = 'block';
+  }
+
+  function changePage(delta) {
+    const target = currentPage + delta;
+    const maxPage = Math.max(1, Math.ceil(totalEntries / pageSize));
+    if (target < 1 || target > maxPage) return;
+    currentPage = target;
+    loadRating();
+  }
+
+  function onFilterChange() {
+    currentPage = 1;
+    loadRating();
+  }
+
+  document.getElementById('seasonFilter').addEventListener('change', onFilterChange);
+  document.getElementById('disciplineFilter').addEventListener('change', onFilterChange);
+
+  let searchDebounceTimer = null;
+  document.getElementById('searchInput').addEventListener('input', function () {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(onFilterChange, 300);
+  });
+
+  document.getElementById('prevPage').addEventListener('click', function () { changePage(-1); });
+  document.getElementById('nextPage').addEventListener('click', function () { changePage(1); });
+
+  // Загрузка при старте
+  loadRating();
+})();
+</script>
+
+<!-- Inline-стили для responsive-подвала (нейронно к style.css) -->
+<style>
+  @media (max-width: 860px) {
+    .foot-top { grid-template-columns: 1fr; }
+    .foot-col { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    .admin-table th, .admin-table td {
+      padding: 12px 12px;
+      font-size: 13px;
+    }
+    #ratingTableBody td {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      max-width: none;
+    }
+  }
+</style>
+
 </body>
 </html>

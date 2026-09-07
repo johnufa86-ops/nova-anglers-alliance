@@ -1,5 +1,4 @@
 import { randomBytes } from 'crypto';
-import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { handle, ERR, rateLimit } from '@/lib/api';
 import {
@@ -175,15 +174,10 @@ export async function POST(req: Request) {
         async (tx) => {
           // 2a. lock the competition row — serializes concurrent submissions
           //     for this competition (PostgreSQL SELECT ... FOR UPDATE).
-          const locked = await tx.$queryRaw<LockedCompetitionRow[]>(
-            Prisma.sql`
-              SELECT "id", "status", "entryType", "maxEntries",
-                     "registrationOpenAt", "registrationCloseAt"
-              FROM "competitions"
-              WHERE "id" = ${competition.id}
-              FOR UPDATE
-            `
-          );
+          const locked = (await tx.$queryRaw(
+            `SELECT "id", "status", "entryType", "maxEntries", "registrationOpenAt", "registrationCloseAt" FROM "competitions" WHERE "id" = $1 FOR UPDATE`,
+            [competition.id]
+          )) as LockedCompetitionRow[];
           const comp = locked[0];
           if (!comp) throw ERR.NOT_FOUND('Турнир не найден');
 
@@ -328,16 +322,18 @@ export async function POST(req: Request) {
       if (e instanceof DuplicateDetected) {
         throw await duplicateError(competition.id, contactEmail);
       }
-      // 2d-backstop: the partial unique index is the hard DB guarantee.
-      // The FOR UPDATE lock already serializes same-competition submissions,
-      // so this only fires for direct-DB writes bypassing the API.
-      if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === 'P2002' &&
-        String(e.meta?.target ?? '').includes('applications_active_contact_uniq')
-      ) {
-        throw await duplicateError(competition.id, contactEmail);
-      }
+          // 2d-backstop: the partial unique index is the hard DB guarantee.
+          // The FOR UPDATE lock already serializes same-competition submissions,
+          // so this only fires for direct-DB writes bypassing the API.
+          if (
+            typeof e === 'object' &&
+            e !== null &&
+            'code' in e &&
+            (e as any).code === 'P2002' &&
+            String((e as any).meta?.target ?? '').includes('applications_active_contact_uniq')
+          ) {
+            throw await duplicateError(competition.id, contactEmail);
+          }
       throw e;
     }
 

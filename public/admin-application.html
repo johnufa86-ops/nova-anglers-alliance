@@ -1,208 +1,320 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Модерация заявки — Админ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f9fafb;
-      color: #111827;
-      line-height: 1.6;
-    }
-    .container { max-width: 896px; margin: 0 auto; padding: 2rem 1rem; }
-    .card {
-      background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      border: 1px solid #e5e7eb;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    h1 { font-size: 1.5rem; font-weight: 700; }
-    h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
-    h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; }
-    .text-sm { font-size: 0.875rem; }
-    .text-gray { color: #6b7280; }
-    .text-blue { color: #2563eb; }
-    .font-bold { font-weight: 700; }
-    .space-y > * + * { margin-top: 0.5rem; }
-    .badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .badge-blue { background-color: #dbeafe; color: #1e40af; }
-    .badge-green { background-color: #d1fae5; color: #065f46; }
-    .badge-red { background-color: #fee2e2; color: #991b1b; }
-    .btn {
-      padding: 0.625rem 1rem;
-      border-radius: 0.5rem;
-      font-weight: 500;
-      font-size: 0.875rem;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      flex: 1;
-    }
-    .btn-green { background-color: #16a34a; color: white; }
-    .btn-green:hover { background-color: #15803d; }
-    .btn-red { background-color: #dc2626; color: white; }
-    .btn-red:hover { background-color: #b91c1c; }
-    .btn-group { display: flex; gap: 0.75rem; }
-    .hidden { display: none !important; }
-    a { color: #2563eb; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    img { max-width: 100%; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Модерация заявки — NOVA ANGLERS ALLIANCE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#08090b">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="flex-between" style="margin-bottom: 1.5rem;">
-      <h1>Модерация заявки</h1>
-      <a href="/">← Главная</a>
-    </div>
 
-    <div id="applicationDetails">
-      <div class="card">
-        <p class="text-gray">Загрузка данных заявки...</p>
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="index.html">Главная</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="login.html" class="login-link" id="loginNavLink">Войти</a>
+    </nav>
+    <div class="header-actions">
+      <a href="login.html" class="btn btn-primary btn-sm" style="padding:11px 20px;font-size:12px;">Войти</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="wrap" style="padding-top:140px;padding-bottom:48px;">
+  <div style="max-width:var(--container);margin:0 auto;">
+    <div class="eyebrow">Кабинет организатора</div>
+    <h1 style="font-size:clamp(28px,4vw,42px);font-weight:700;text-transform:uppercase;margin-bottom:8px;">Модерация заявки</h1>
+    <p style="color:var(--muted);font-size:15px;max-width:480px;line-height:1.6;margin-bottom:40px;">Проверка заявки и подтверждение оплаты взноса.</p>
+
+    <div id="applicationDetails" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="admin-card" style="background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:32px;">
+        <div style="text-align:center;color:var(--muted-2);padding:48px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;">
+          Загрузка данных заявки…
+        </div>
       </div>
     </div>
   </div>
+</main>
 
-  <script>
-    async function loadApplication() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const applicationId = urlParams.get('id');
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top" style="padding-bottom:40px;border-bottom:1px solid var(--line-soft);">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-compact.png" alt="" style="height:72px;margin-bottom:14px;">
+        <p style="color:var(--muted);font-size:13px;line-height:1.7;max-width:320px;">Рыболовный спорт нового уровня: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:20px;font-family:'JetBrains Mono',monospace;">Рейтинг</h5>
+        <ul style="display:flex;flex-direction:column;gap:8px;">
+          <li style="padding:0;"><a href="rating.html" style="font-size:14px;color:var(--muted);transition:color 0.25s;">Рейтинг спортсменов</a></li>
+        </ul>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:20px;font-family:'JetBrains Mono',monospace;">Соревнования</h5>
+        <ul style="display:flex;flex-direction:column;gap:8px;">
+          <li style="padding:0;"><a href="competitions.html" style="font-size:14px;color:var(--muted);transition:color 0.25s;">Календарь турниров</a></li>
+        </ul>
+      </div>
+      <div class="foot-col" style="padding-left:40px;">
+        <h5 style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:20px;font-family:'JetBrains Mono',monospace;">Альянс</h5>
+        <ul style="display:flex;flex-direction:column;gap:8px;">
+          <li style="padding:0;"><a href="alliance.html" style="font-size:14px;color:var(--muted);transition:color 0.25s;">О NOVA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom" style="padding-top:28px;flex-wrap:wrap;gap:16px;">
+      <p style="font-size:12px;color:var(--muted-2);">© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" style="width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:all 0.3s;color:var(--muted);" aria-label="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" style="width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:all 0.3s;color:var(--muted);" aria-label="Telegram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="#" style="width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;width:34px;height:34px;transition:all 0.3s;color:var(--muted);" aria-label="VK"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-      if (!applicationId) {
-        document.getElementById('applicationDetails').innerHTML = `
-          <div class="card" style="background-color: #fef2f2; border-color: #fecaca;">
-            <p style="color: #991b1b; text-align: center;">Не указан ID заявки</p>
-          </div>
-        `;
-        return;
-      }
+<script>
+(function () {
+  var applicationId = new URLSearchParams(window.location.search).get('id');
 
-      try {
-        const response = await fetch(`/api/applications/${applicationId}`);
+  function loadApplication() {
+    if (!applicationId) {
+      document.getElementById('applicationDetails').innerHTML =
+        '<div class="admin-card" style="background:rgba(255,79,109,0.04);border:1px solid rgba(255,79,109,0.3);border-radius:4px;padding:28px;text-align:center;">' +
+          '<p style="color:var(--live);font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;">Не указан ID заявки</p>' +
+          '<p style="color:var(--muted);font-size:13.5px;margin-top:12px;">Передайте id заявки в параметре <span style="font-family:\'JetBrains Mono\',monospace;color:var(--muted-2);">?id=...</span></p>' +
+        '</div>';
+      return;
+    }
+
+    var container = document.getElementById('applicationDetails');
+
+    fetch('/api/applications/' + encodeURIComponent(applicationId), { credentials: 'same-origin' })
+      .then(function (response) {
         if (!response.ok) throw new Error('Application not found');
-        
-        const app = await response.json();
-        const container = document.getElementById('applicationDetails');
+        return response.json();
+      })
+      .then(function (app) {
+        var athlete = app.athlete || {};
+        var competition = app.competition || {};
+        var payment = app.payment || {};
 
-        const athlete = app.athlete || {};
-        const competition = app.competition || {};
-        const payment = app.payment || {};
+        var name = (athlete.firstName || '') + ' ' + (athlete.lastName || '');
+        var cleanName = name.replace(/  +/g, ' ').trim() || '—';
 
-        let proofStatusBadge = '';
+        var dateStr = competition.date
+          ? new Date(competition.date).toLocaleDateString('ru-RU')
+          : '—';
+
+        var fee = (app.fee || 0);
+        var feeStr = fee >= 100 ? (fee / 100).toFixed(0) + ' ₽' : fee + ' ₽';
+
+        var statusLabel = competition.title || 'Турнир';
+
+        var proofStatusBadge = '';
         if (payment.proofStatus === 'awaiting_review') {
-          proofStatusBadge = '<span class="badge badge-blue">Чек на проверке</span>';
+          proofStatusBadge =
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid rgba(199,166,110,0.4);background:rgba(174,136,80,0.08);color:var(--pulse-2);">' +
+              '<span style="width:6px;height:6px;border-radius:50%;background:var(--pulse-2);box-shadow:0 0 6px var(--pulse-2);"></span>' +
+              'Чек на проверке' +
+            '</span>';
         } else if (payment.proofStatus === 'confirmed') {
-          proofStatusBadge = '<span class="badge badge-green">✓ Оплачено</span>';
+          proofStatusBadge =
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid rgba(87,230,161,0.3);background:rgba(87,230,161,0.06);color:var(--ok);">' +
+              '✓ Оплачено' +
+            '</span>';
         } else if (payment.proofStatus === 'rejected') {
-          proofStatusBadge = '<span class="badge badge-red">Отклонено</span>';
-        }
-
-        container.innerHTML = `
-          <div class="card">
-            <h2>Информация о заявке</h2>
-            <div class="space-y text-sm">
-              <p><span class="text-gray">Турнир:</span> <span class="font-bold">${competition.title || '—'}</span></p>
-              <p><span class="text-gray">Спортсмен:</span> <span class="font-bold">${athlete.firstName || ''} ${athlete.lastName || ''}</span></p>
-              <p><span class="text-gray">Дата:</span> ${competition.date ? new Date(competition.date).toLocaleDateString('ru-RU') : '—'}</p>
-              <p><span class="text-gray">Взнос:</span> <span class="font-bold">${app.fee || 0} ₽</span></p>
-              <p style="padding-top: 0.5rem;"><span class="text-gray">Статус оплаты:</span> ${proofStatusBadge}</p>
-            </div>
-          </div>
-
-          ${payment.proofFileUrl ? `
-          <div class="card">
-            <h3>Чек оплаты</h3>
-            <div style="margin-bottom: 1rem;">
-              <img src="${payment.proofFileUrl}" alt="Чек оплаты" style="max-width: 28rem;" onerror="this.parentElement.innerHTML='<p class=\\'text-gray\\'>Файл чека недоступен</p>'">
-            </div>
-            <a href="${payment.proofFileUrl}" target="_blank" class="text-sm">Открыть в новой вкладке</a>
-          </div>
-          ` : ''}
-
-          ${payment.proofStatus === 'awaiting_review' ? `
-          <div class="card">
-            <h3>Действия модератора</h3>
-            <div class="btn-group">
-              <button onclick="confirmPayment('${applicationId}')" class="btn btn-green">
-                ✓ Подтвердить оплату
-              </button>
-              <button onclick="rejectPayment('${applicationId}')" class="btn btn-red">
-                ✗ Отклонить чек
-              </button>
-            </div>
-          </div>
-          ` : ''}
-        `;
-      } catch (error) {
-        console.error('Error loading application:', error);
-        document.getElementById('applicationDetails').innerHTML = `
-          <div class="card" style="background-color: #fef2f2; border-color: #fecaca;">
-            <p style="color: #991b1b; text-align: center;">Ошибка загрузки заявки</p>
-          </div>
-        `;
-      }
-    }
-
-    async function confirmPayment(applicationId) {
-      if (!confirm('Подтвердить оплату и завершить проверку?')) return;
-
-      try {
-        const response = await fetch('/api/payments/confirm', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ applicationId }),
-        });
-
-        if (response.ok) {
-          alert('Оплата подтверждена!');
-          window.location.reload();
+          proofStatusBadge =
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,79,109,0.35);background:rgba(255,79,109,0.06);color:var(--live);">' +
+              '✗ Отклонено' +
+            '</span>';
+        } else if (payment.status === 'paid') {
+          proofStatusBadge =
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid rgba(87,230,161,0.3);background:rgba(87,230,161,0.06);color:var(--ok);">' +
+              '✓ Оплачено' +
+            '</span>';
+        } else if (payment.status === 'failed') {
+          proofStatusBadge =
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,79,109,0.35);background:rgba(255,79,109,0.06);color:var(--live);">' +
+              '✗ Оплата не прошла' +
+            '</span>';
         } else {
-          const error = await response.json();
-          alert('Ошибка: ' + (error.error || 'Неизвестная ошибка'));
+          proofStatusBadge =
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid var(--line);color:var(--muted);">' +
+              'Ожидает оплаты' +
+            '</span>';
         }
-      } catch (error) {
-        console.error('Error confirming payment:', error);
-        alert('Ошибка сети');
-      }
+
+        var proofFileHtml = '';
+        if (payment.proofFileUrl) {
+          proofFileHtml =
+            '<div class="admin-card" style="background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:28px;">' +
+              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.09em;color:var(--pulse-2);margin-bottom:16px;">Чек оплаты</div>' +
+              '<div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;">' +
+                '<div style="flex:1;min-width:200px;">' +
+                  '<img src="' + payment.proofFileUrl + '" alt="Чек оплаты" style="width:100%;max-width:420px;border:1px solid var(--line);border-radius:4px;background:#000;" onerror="this.parentElement.innerHTML=\'<p style=\\\'color:var(--muted-2);font-family:\\\'\'JetBrains Mono\\\',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;\\\'\'>Файл чека недоступен</p>\'">' +
+                '</div>' +
+                '<a href="' + payment.proofFileUrl + '" target="_blank" style="color:var(--core-soft);font-size:13px;font-weight:500;text-decoration:none;border-bottom:1px solid var(--core);padding-bottom:2px;transition:color 0.25s;display:inline-block;">Открыть в новой вкладке →</a>' +
+              '</div>' +
+            '</div>';
+        }
+
+        var actionsHtml = '';
+        if (payment.proofStatus === 'awaiting_review') {
+          actionsHtml =
+            '<div class="admin-card" style="background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:28px;">' +
+              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.09em;color:var(--pulse-2);margin-bottom:16px;">Действия модератора</div>' +
+              '<div style="display:flex;gap:12px;flex-wrap:wrap;">' +
+                '<button type="button" class="btn btn-ghost btn-sm" style="padding:13px 20px;font-size:12px;border-color:rgba(87,230,161,0.3);color:var(--ok);background:rgba(87,230,161,0.06);" onclick="confirmPayment(\'' + applicationId + '\')">' +
+                  '✓ Подтвердить оплату' +
+                '</button>' +
+                '<button type="button" class="btn btn-ghost btn-sm" style="padding:13px 20px;font-size:12px;border-color:rgba(255,79,109,0.3);color:var(--live);background:rgba(255,79,109,0.06);" onclick="rejectPayment(\'' + applicationId + '\')">' +
+                  '✗ Отклонить чек' +
+                '</button>' +
+              '</div>' +
+            '</div>';
+        }
+
+        container.innerHTML =
+          '<div class="admin-card" style="background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:32px;">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.09em;color:var(--pulse-2);margin-bottom:20px;">Информация о заявке</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px 32px;">' +
+              '<div style="display:flex;flex-direction:column;gap:6px;">' +
+                '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);">Турнир</span>' +
+                '<span style="font-weight:600;font-size:15px;color:var(--text);">' + statusLabel + '</span>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:6px;">' +
+                '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);">Спортсмен</span>' +
+                '<span style="font-weight:600;font-size:15px;color:var(--text);">' + cleanName + '</span>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:6px;">' +
+                '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);">Дата</span>' +
+                '<span style="font-size:14px;color:var(--text);">' + dateStr + '</span>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:6px;">' +
+                '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);">Взнос</span>' +
+                '<span style="font-weight:600;font-size:15px;color:var(--core-soft);font-family:\'JetBrains Mono\',monospace;">' + feeStr + '</span>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:6px;">' +
+                '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted-2);">Статус оплаты</span>' +
+                '<div>' + proofStatusBadge + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          proofFileHtml +
+          actionsHtml;
+      })
+      .catch(function (error) {
+        console.error('Ошибка загрузки заявки:', error);
+        document.getElementById('applicationDetails').innerHTML =
+          '<div class="admin-card" style="background:rgba(255,79,109,0.04);border:1px solid rgba(255,79,109,0.3);border-radius:4px;padding:28px;text-align:center;">' +
+            '<p style="color:var(--live);font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;">Ошибка загрузки заявки</p>' +
+            '<p style="color:var(--muted);font-size:13.5px;margin-top:12px;">Невозможно загрузить данные заявки. Проверьте подключение к серверу.</p>' +
+          '</div>';
+      });
+  }
+
+  window.confirmPayment = function (applicationId) {
+    if (!confirm('Подтвердить оплату и завершить проверку?')) return;
+
+    var btn = event && event.target ? event.target : null;
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Подтверждение…';
     }
 
-    async function rejectPayment(applicationId) {
-      if (!confirm('Отклонить чек и запросить повторную загрузку?')) return;
-
-      try {
-        const response = await fetch('/api/payments/reject', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ applicationId }),
-        });
-
-        if (response.ok) {
-          alert('Чек отклонён. Спортсмен получит уведомление.');
-          window.location.reload();
-        } else {
-          const error = await response.json();
-          alert('Ошибка: ' + (error.error || 'Неизвестная ошибка'));
+    fetch('/api/payments/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationId: applicationId }),
+      credentials: 'same-origin',
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          return response.json().then(function (err) {
+            throw new Error(err.error || 'Неизвестная ошибка');
+          });
         }
-      } catch (error) {
-        console.error('Error rejecting payment:', error);
-        alert('Ошибка сети');
-      }
+      })
+      .then(function () {
+        alert('Оплата подтверждена!');
+        window.location.reload();
+      })
+      .catch(function (error) {
+        console.error('Ошибка подтверждения:', error);
+        alert('Ошибка: ' + (error.message || 'Неизвестная ошибка'));
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '✓ Подтвердить оплату';
+        }
+      });
+  };
+
+  window.rejectPayment = function (applicationId) {
+    if (!confirm('Отклонить чек и запросить повторную загрузку?')) return;
+
+    var btn = event && event.target ? event.target : null;
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Отклонение…';
     }
 
+    fetch('/api/payments/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationId: applicationId }),
+      credentials: 'same-origin',
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          return response.json().then(function (err) {
+            throw new Error(err.error || 'Неизвестная ошибка');
+          });
+        }
+      })
+      .then(function () {
+        alert('Чек отклонён. Спортсмен получит уведомление.');
+        window.location.reload();
+      })
+      .catch(function (error) {
+        console.error('Ошибка отклонения:', error);
+        alert('Ошибка: ' + (error.message || 'Неизвестная ошибка'));
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '✗ Отклонить чек';
+        }
+      });
+  };
+
+  if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadApplication);
-  </script>
+  } else {
+    loadApplication();
+  }
+})();
+</script>
+
+<style>
+  /* Адаптивность подвала */
+  @media (max-width: 860px) {
+    .foot-top { grid-template-columns: 1fr; }
+    .foot-col { padding-left: 0; }
+  }
+</style>
+
 </body>
 </html>
