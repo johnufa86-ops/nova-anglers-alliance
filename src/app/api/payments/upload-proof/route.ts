@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
 
     // Сохраняем файл
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    const buffer = Buffer.from(bytes) as any;
+    await writeFile(filePath, buffer as any);
 
     // Обновляем платёж в базе
     const payment = await (db as any).payment.update({

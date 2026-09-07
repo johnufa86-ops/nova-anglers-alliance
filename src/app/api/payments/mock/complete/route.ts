@@ -46,8 +46,8 @@ export async function POST(req: Request) {
       fields.Reason = 'Тестовое отклонение';
     }
 
-    const rawBody = Buffer.from(JSON.stringify(fields), 'utf8');
-    const signature = createHmac('sha256', 'mock-secret-dev-only').update(rawBody).digest('base64');
+    const rawBody = Buffer.from(JSON.stringify(fields), 'utf8') as any;
+    const signature = createHmac('sha256', 'mock-secret-dev-only').update(rawBody as any).digest('base64');
 
     let result;
     try {
