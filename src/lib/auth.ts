@@ -85,7 +85,9 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     return null;
   }
   const u = session.user;
-  return { id: u.id, email: u.email, name: u.name || u.email, role: u.role as Role };
+  const rawRole = (u.role || '').toLowerCase();
+  const role: Role = (['admin', 'organizer', 'viewer', 'athlete'].includes(rawRole) ? rawRole : 'athlete') as Role;
+  return { id: u.id, email: u.email, name: u.name || u.email, role };
 }
 
 /**
