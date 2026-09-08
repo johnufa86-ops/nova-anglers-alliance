@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Nova Anglers Alliance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .auth-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .auth-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 56px;
+      width: 100%;
+      max-width: 480px;
+    }
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      text-decoration: none;
+    }
+    .auth-logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+    }
+    .auth-logo-sub {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .auth-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .auth-subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .auth-field label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .auth-field input {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 14px 16px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      transition: border-color 0.3s;
+    }
+    .auth-field input:focus {
+      outline: none;
+      border-color: var(--core);
+    }
+    .auth-error {
+      background: rgba(255, 79, 109, 0.1);
+      border: 1px solid var(--live);
+      border-radius: 2px;
+      padding: 12px 16px;
+      color: var(--live);
+      font-size: 14px;
+      display: none;
+    }
+    .auth-error.show {
+      display: block;
+    }
+    .auth-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .auth-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .auth-footer a {
+      color: var(--core);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-footer a:hover {
+      color: var(--core-soft);
+    }
+    @media (max-width: 640px) {
+      .auth-card {
+        padding: 32px 24px;
+      }
+      .auth-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <a href="/" class="auth-logo">
+        <img src="/logo.svg" alt="Nova Anglers Alliance" style="width: 40px; height: 40px;">
+        <div>
+          <div class="auth-logo-text">Nova Anglers Alliance</div>
+          <div class="auth-logo-sub">Личный кабинет</div>
+        </div>
+      </a>
+
+      <h1 class="auth-title">Вход</h1>
+      <p class="auth-subtitle">Войдите для доступа к заявкам, документам и рейтингу</p>
+
+      <div id="authError" class="auth-error"></div>
+
+      <form id="loginForm" class="auth-form">
+        <div class="auth-field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+        </div>
+
+        <div class="auth-field">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Войти</button>
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        Нет аккаунта? <a href="/register.html">Зарегистрироваться</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorBox = document.getElementById('authError');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      errorBox.classList.remove('show');
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        showError('Укажите e-mail и пароль');
+        return;
+      }
+
+      try {
+        const data = await NOVA_API.post('/api/auth/login', { email, password });
+        
+        // Успешный вход — редирект в кабинет
+        window.location.href = '/cabinet-applications.html';
+      } catch (err) {
+        showError(err.message || 'Неверный e-mail или пароль');
+      }
+    });
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.add('show');
+    }
+  </script>
+</body>
+</html>
