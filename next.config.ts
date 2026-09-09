@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       { source: '/admin/application', destination: '/admin-application.html' },
       { source: '/admin/competition/:slug', destination: '/admin-competition.html?slug=:slug' },
       { source: '/admin/payment-details', destination: '/admin-payment-details.html' },
+      { source: '/admin/content', destination: '/admin-content.html' },
       { source: '/register', destination: '/register.html' },
       { source: '/login', destination: '/login.html' },
       { source: '/cabinet', destination: '/cabinet.html' },

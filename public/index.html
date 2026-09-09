@@ -46,18 +46,18 @@
     <img src="assets/logo-compact.png" alt="">
   </div>
   <div class="wrap">
-    <div class="hero-eyebrow"><span class="dot"></span>СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА</div>
-    <h1 class="hero-title">Рыболовный спорт.<br><span class="accent">Новый уровень.</span></h1>
-    <p class="hero-sub">NOVA Anglers Alliance объединяет спортсменов, команды и соревнования в единую рыболовную спортивную систему.</p>
+    <div class="hero-eyebrow" id="homeHeroEyebrow"><span class="dot"></span>СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА</div>
+    <h1 class="hero-title" id="homeHeroTitle"><span id="homeTitleMain">Рыболовный спорт.</span><br><span class="accent" id="homeTitleAccent">Новый уровень.</span></h1>
+    <p class="hero-sub" id="homeHeroSub">NOVA Anglers Alliance объединяет спортсменов, команды и соревнования в единую рыболовную спортивную систему.</p>
     <div class="hero-cta">
-      <a href="competitions.html" class="btn btn-primary">Ближайшие соревнования</a>
-      <a href="contacts.html" class="btn btn-ghost">Стать участником</a>
+      <a href="competitions.html" class="btn btn-primary" id="homeCtaPrimary">Ближайшие соревнования</a>
+      <a href="contacts.html" class="btn btn-ghost" id="homeCtaSecondary">Стать участником</a>
     </div>
     <div class="hero-stats">
-      <div class="stat"><b class="mono" data-count="482">0</b><span>Спортсменов</span></div>
-      <div class="stat"><b class="mono" data-count="37">0</b><span>Экипажей</span></div>
-      <div class="stat"><b class="mono" data-count="19">0</b><span>Турниров в сезоне</span></div>
-      <div class="stat"><b class="mono" data-count="12">0</b><span>Регионов</span></div>
+      <div class="stat"><b class="mono" id="homeStatAthletes" data-count="482">0</b><span>Спортсменов</span></div>
+      <div class="stat"><b class="mono" id="homeStatCrews" data-count="37">0</b><span>Экипажей</span></div>
+      <div class="stat"><b class="mono" id="homeStatTournaments" data-count="19">0</b><span>Турниров в сезоне</span></div>
+      <div class="stat"><b class="mono" id="homeStatRegions" data-count="12">0</b><span>Регионов</span></div>
     </div>
   </div>
   <div class="scroll-cue"><span>SCROLL</span><span class="line"></span></div>
@@ -476,6 +476,48 @@ if(!reduceMotion){
     if(rings) rings.style.transform = `translateY(${-50+y*0.06}%)`;
   }, {passive:true});
 }
+
+/* ---------- dynamic CMS sync ---------- */
+(async function syncHomeContent(){
+  try {
+    const res = await fetch('/api/settings/home');
+    if(!res.ok) return;
+    const data = await res.json();
+    const s = data?.settings;
+    if(!s) return;
+
+    const eb = document.getElementById('homeHeroEyebrow');
+    if(eb && s.eyebrow) eb.innerHTML = `<span class="dot"></span>${s.eyebrow}`;
+
+    const tm = document.getElementById('homeTitleMain');
+    const ta = document.getElementById('homeTitleAccent');
+    if(tm && s.title) tm.textContent = s.title;
+    if(ta && s.titleAccent) ta.textContent = s.titleAccent;
+
+    const sub = document.getElementById('homeHeroSub');
+    if(sub && s.sub) sub.textContent = s.sub;
+
+    const pBtn = document.getElementById('homeCtaPrimary');
+    if(pBtn){
+      if(s.ctaPrimaryText) pBtn.textContent = s.ctaPrimaryText;
+      if(s.ctaPrimaryUrl) pBtn.href = s.ctaPrimaryUrl;
+    }
+    const sBtn = document.getElementById('homeCtaSecondary');
+    if(sBtn){
+      if(s.ctaSecondaryText) sBtn.textContent = s.ctaSecondaryText;
+      if(s.ctaSecondaryUrl) sBtn.href = s.ctaSecondaryUrl;
+    }
+
+    const aEl = document.getElementById('homeStatAthletes');
+    const cEl = document.getElementById('homeStatCrews');
+    const tEl = document.getElementById('homeStatTournaments');
+    const rEl = document.getElementById('homeStatRegions');
+    if(aEl && s.statAthletes){ aEl.dataset.count = s.statAthletes; aEl.textContent = s.statAthletes; }
+    if(cEl && s.statCrews){ cEl.dataset.count = s.statCrews; cEl.textContent = s.statCrews; }
+    if(tEl && s.statTournaments){ tEl.dataset.count = s.statTournaments; tEl.textContent = s.statTournaments; }
+    if(rEl && s.statRegions){ rEl.dataset.count = s.statRegions; rEl.textContent = s.statRegions; }
+  } catch(e){}
+})();
 </script>
 </body>
 </html>

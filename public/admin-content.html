@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Редактор главной страницы — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
+.form-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 28px;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+.form-card h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-card p.card-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+.field-group {
+  margin-bottom: 18px;
+}
+.field-group label {
+  display: block;
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field-group input, .field-group textarea {
+  width: 100%;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14.5px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.field-group input:focus, .field-group textarea:focus {
+  border-color: var(--pulse);
+}
+.field-group textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+.preview-box {
+  background: radial-gradient(circle at 50% 0%, #123056 0%, #08090b 70%);
+  border: 1px solid var(--line);
+  padding: 32px;
+  border-radius: var(--radius);
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.preview-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .2em;
+  color: var(--pulse-2);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.preview-eyebrow::before {
+  content: ""; width: 14px; height: 1px; background: var(--pulse-2); display: block;
+}
+.preview-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.preview-title .accent {
+  color: var(--pulse);
+}
+.preview-sub {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 600px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.preview-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 640px) {
+  .preview-stats { grid-template-columns: repeat(2, 1fr); }
+}
+.preview-stat b {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  color: var(--text);
+}
+.preview-stat span {
+  font-size: 12px;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<div id="loginView" style="display:none;">
+  <div class="login-wrap">
+    <div style="text-align:center;margin-bottom:30px;">
+      <img src="/assets/logo-full.png" alt="NOVA Anglers Alliance" style="height:64px;margin:0 auto;">
+    </div>
+    <div class="login-card">
+      <h1>Требуется вход</h1>
+      <p class="sub">Войдите под учётной записью администратора для редактирования контента.</p>
+      <a href="/login" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px;">Перейти ко входу</a>
+    </div>
+  </div>
+</div>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <div class="eyebrow">Управление сайтом</div>
+          <h1 class="admin-title">Редактор главной страницы</h1>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Открыть главную ↗</a>
+          <button type="button" class="btn btn-primary btn-sm" id="saveBtnTop">Сохранить изменения</button>
+        </div>
+      </div>
+      <p class="admin-sub" style="margin-bottom:28px;">Тексты, заголовки и показатели сезона, которые видят все посетители сайта.</p>
+
+      <form id="contentForm">
+        
+        <!-- КАРТОЧКА 1: БАННЕР HERO -->
+        <div class="form-card">
+          <h2>1. Главный баннер (Hero-блок)</h2>
+          <p class="card-desc">Первый экран сайта. Формирует первое впечатление участников и зрителей.</p>
+
+          <div class="field-group">
+            <label for="f_eyebrow">Верхняя надпись (Eyebrow)</label>
+            <input type="text" id="f_eyebrow" placeholder="СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА">
+          </div>
+
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label for="f_title">Основной заголовок (Строка 1)</label>
+              <input type="text" id="f_title" placeholder="Рыболовный спорт.">
+            </div>
+            <div class="field-group">
+              <label for="f_titleAccent">Акцентный заголовок золотом (Строка 2)</label>
+              <input type="text" id="f_titleAccent" placeholder="Новый уровень.">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="f_sub">Подзаголовок / Описание лиги</label>
+            <textarea id="f_sub" rows="3" placeholder="NOVA Anglers Alliance объединяет спортсменов..."></textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label for="f_ctaPrimaryText">Кнопка 1: Текст</label>
+              <input type="text" id="f_ctaPrimaryText" placeholder="Ближайшие соревнования">
+            </div>
+            <div class="field-group">
+              <label for="f_ctaPrimaryUrl">Кнопка 1: Ссылка</label>
+              <input type="text" id="f_ctaPrimaryUrl" placeholder="/competitions">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label for="f_ctaSecondaryText">Кнопка 2: Текст</label>
+              <input type="text" id="f_ctaSecondaryText" placeholder="Стать участником">
+            </div>
+            <div class="field-group">
+              <label for="f_ctaSecondaryUrl">Кнопка 2: Ссылка</label>
+              <input type="text" id="f_ctaSecondaryUrl" placeholder="/contacts">
+            </div>
+          </div>
+        </div>
+
+        <!-- КАРТОЧКА 2: СТАТИСТИКА СЕЗОНА -->
+        <div class="form-card">
+          <h2>2. Статистика лиги (Цифры на главной)</h2>
+          <p class="card-desc">Ключевые показатели на первом экране. При загрузке страницы анимируются счетчиками.</p>
+
+          <div class="form-grid-2" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+            <div class="field-group">
+              <label for="f_statAthletes">Спортсменов</label>
+              <input type="text" id="f_statAthletes" placeholder="482">
+            </div>
+            <div class="field-group">
+              <label for="f_statCrews">Экипажей</label>
+              <input type="text" id="f_statCrews" placeholder="37">
+            </div>
+            <div class="field-group">
+              <label for="f_statTournaments">Турниров в сезоне</label>
+              <input type="text" id="f_statTournaments" placeholder="19">
+            </div>
+            <div class="field-group">
+              <label for="f_statRegions">Регионов</label>
+              <input type="text" id="f_statRegions" placeholder="12">
+            </div>
+          </div>
+        </div>
+
+        <!-- КАРТОЧКА 3: ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР -->
+        <div class="form-card">
+          <h2>Предварительный просмотр (Live Preview)</h2>
+          <p class="card-desc">Так баннер будет выглядеть на реальном сайте после сохранения.</p>
+
+          <div class="preview-box">
+            <div class="preview-eyebrow" id="prev_eyebrow">СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА</div>
+            <div class="preview-title">
+              <span id="prev_title">Рыболовный спорт.</span><br>
+              <span class="accent" id="prev_titleAccent">Новый уровень.</span>
+            </div>
+            <p class="preview-sub" id="prev_sub">NOVA Anglers Alliance объединяет спортсменов...</p>
+
+            <div style="display:flex;gap:12px;margin-bottom:20px;">
+              <span class="btn btn-primary btn-sm" id="prev_ctaPrimary">Ближайшие соревнования</span>
+              <span class="btn btn-ghost btn-sm" id="prev_ctaSecondary">Стать участником</span>
+            </div>
+
+            <div class="preview-stats">
+              <div class="preview-stat"><b id="prev_statAthletes">482</b><span>Спортсменов</span></div>
+              <div class="preview-stat"><b id="prev_statCrews">37</b><span>Экипажей</span></div>
+              <div class="preview-stat"><b id="prev_statTournaments">19</b><span>Турниров в сезоне</span></div>
+              <div class="preview-stat"><b id="prev_statRegions">12</b><span>Регионов</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:50px;">
+          <button type="button" class="btn btn-ghost" id="resetBtn">Сбросить к значениям по умолчанию</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Сохранить изменения</button>
+        </div>
+
+      </form>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script>
+const fields = [
+  'eyebrow', 'title', 'titleAccent', 'sub',
+  'ctaPrimaryText', 'ctaPrimaryUrl', 'ctaSecondaryText', 'ctaSecondaryUrl',
+  'statAthletes', 'statCrews', 'statTournaments', 'statRegions'
+];
+
+function updatePreview() {
+  fields.forEach(f => {
+    const input = document.getElementById('f_' + f);
+    const prev = document.getElementById('prev_' + f);
+    if (input && prev) {
+      prev.textContent = input.value || input.placeholder || '';
+    }
+  });
+}
+
+fields.forEach(f => {
+  const el = document.getElementById('f_' + f);
+  if (el) {
+    el.addEventListener('input', updatePreview);
+  }
+});
+
+async function loadContent() {
+  try {
+    const res = await NOVA_API.get('/api/admin/content/home');
+    const s = res?.settings || {};
+    fields.forEach(f => {
+      const el = document.getElementById('f_' + f);
+      if (el && s[f] !== undefined) {
+        el.value = s[f];
+      }
+    });
+    updatePreview();
+  } catch (e) {
+    NOVAAdminUI.toast(e.message || 'Ошибка загрузки настроек', 'error');
+  }
+}
+
+async function saveContent(e) {
+  if (e) e.preventDefault();
+  const btn1 = document.getElementById('saveBtn');
+  const btn2 = document.getElementById('saveBtnTop');
+  btn1.disabled = true; btn1.textContent = 'Сохранение…';
+  if (btn2) { btn2.disabled = true; btn2.textContent = 'Сохранение…'; }
+
+  const payload = {};
+  fields.forEach(f => {
+    const el = document.getElementById('f_' + f);
+    if (el) payload[f] = el.value.trim();
+  });
+
+  try {
+    const res = await NOVA_API.request('PUT', '/api/admin/content/home', { settings: payload });
+    NOVAAdminUI.toast('Настройки главной страницы успешно сохранены!');
+  } catch (err) {
+    NOVAAdminUI.toast(err.message || 'Не удалось сохранить настройки', 'error');
+  } finally {
+    btn1.disabled = false; btn1.textContent = 'Сохранить изменения';
+    if (btn2) { btn2.disabled = false; btn2.textContent = 'Сохранить изменения'; }
+  }
+}
+
+document.getElementById('contentForm').addEventListener('submit', saveContent);
+document.getElementById('saveBtnTop').addEventListener('click', () => saveContent());
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('Сбросить поля к исходным текстам по умолчанию?')) {
+    document.getElementById('f_eyebrow').value = 'СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА';
+    document.getElementById('f_title').value = 'Рыболовный спорт.';
+    document.getElementById('f_titleAccent').value = 'Новый уровень.';
+    document.getElementById('f_sub').value = 'NOVA Anglers Alliance объединяет спортсменов, команды и соревнования в единую рыболовную спортивную систему.';
+    document.getElementById('f_ctaPrimaryText').value = 'Ближайшие соревнования';
+    document.getElementById('f_ctaPrimaryUrl').value = '/competitions';
+    document.getElementById('f_ctaSecondaryText').value = 'Стать участником';
+    document.getElementById('f_ctaSecondaryUrl').value = '/contacts';
+    document.getElementById('f_statAthletes').value = '482';
+    document.getElementById('f_statCrews').value = '37';
+    document.getElementById('f_statTournaments').value = '19';
+    document.getElementById('f_statRegions').value = '12';
+    updatePreview();
+  }
+});
+
+(async function init() {
+  const user = await NOVAAdmin.me();
+  if (user && (user.role === 'admin' || user.role === 'organizer')) {
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('adminShell').style.display = 'flex';
+    NOVAAdminUI.mountShell('content', user);
+    await loadContent();
+  } else {
+    document.getElementById('loginView').style.display = 'block';
+  }
+})();
+</script>
+</body>
+</html>

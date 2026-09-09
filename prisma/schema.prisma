@@ -416,3 +416,9 @@ model EmailLog {
   @@index([userId, createdAt])
   @@index([createdAt])
 }
+
+model SiteSetting {
+  key       String   @id
+  value     String   @default("")
+  updatedAt DateTime @updatedAt
+}
