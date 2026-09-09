@@ -1,71 +1,157 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Управление соревнованием — Админка</title>
-  <link rel="stylesheet" href="/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карточка соревнования — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+.admin-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 28px;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+.admin-card h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-card p.card-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.status-box {
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+.status-box.ok {
+  background: rgba(87,230,161,0.12);
+  border: 1px solid rgba(87,230,161,0.3);
+  color: #57e6a1;
+}
+.status-box.err {
+  background: rgba(255,79,109,0.12);
+  border: 1px solid rgba(255,79,109,0.3);
+  color: #ff4f6d;
+}
+</style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
-  <div class="max-w-4xl mx-auto py-8 px-4">
-    <div class="flex items-center justify-between mb-6">
-      <h1 id="competitionTitle" class="text-2xl font-bold">Карточка соревнования</h1>
-      <a href="/admin.html" class="text-blue-600 hover:underline">← Назад</a>
-    </div>
+<body>
 
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-6">
+<div class="admin-shell" id="adminShell">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
         <div>
-          <h2 class="text-lg font-bold text-gray-900">Рейтинг турнира</h2>
-          <p class="text-sm text-gray-500 mt-0.5">Начисление очков участникам согласно протоколу мест</p>
+          <div style="margin-bottom:8px;display:flex;gap:10px;">
+            <a href="/admin/competitions" class="btn btn-ghost btn-sm">← Ко всем соревнованиям</a>
+            <a href="/admin" class="btn btn-ghost btn-sm">В дашборд</a>
+          </div>
+          <div class="eyebrow">Турнир</div>
+          <h1 class="admin-title" id="competitionTitle">Карточка соревнования</h1>
         </div>
-        <button id="btnCalculateRating" onclick="triggerRatingCalculation()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+        <div style="display:flex;gap:10px;">
+          <a id="publicCompLink" href="#" target="_blank" class="btn btn-ghost btn-sm">Открыть на сайте ↗</a>
+        </div>
+      </div>
+      <p class="admin-sub" id="competitionSub" style="margin-bottom:24px;">Управление рейтингом, протоколами и заявками этапа.</p>
+
+      <div class="admin-card">
+        <h2>Рейтинг турнира</h2>
+        <p class="card-desc">Начисление очков участникам согласно итоговому протоколу мест.</p>
+        <button id="btnCalculateRating" onclick="triggerRatingCalculation()" class="btn btn-primary btn-sm">
           Рассчитать рейтинг
         </button>
+        <div id="ratingCalcStatus" style="display:none;" class="status-box"></div>
       </div>
 
-      <div id="ratingCalcStatus" class="hidden text-sm p-4 rounded-lg"></div>
     </div>
-  </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug') || window.location.pathname.split('/').pop();
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const slug = urlParams.get('slug') || window.location.pathname.split('/').pop();
 
-    async function triggerRatingCalculation() {
-      const btn = document.getElementById('btnCalculateRating');
-      const statusBox = document.getElementById('ratingCalcStatus');
-      btn.disabled = true;
-      btn.textContent = 'Выполняется расчёт...';
-      statusBox.className = 'hidden';
+async function init() {
+  const user = await NOVAAdminUI.guard('competitions', ['view']);
+  if (!user) return;
 
-      try {
-        const res = await fetch(`/api/admin/competitions/${slug}/calculate-rating`, {
-          method: 'POST'
-        });
-        const data = await res.json();
-        statusBox.classList.remove('hidden');
-
-        if (!res.ok) {
-          statusBox.className = 'text-sm p-4 rounded-lg bg-red-50 text-red-700 border border-red-200';
-          statusBox.textContent = data.error || 'Ошибка при пересчёте рейтинга';
-        } else {
-          statusBox.className = 'text-sm p-4 rounded-lg bg-green-50 text-green-700 border border-green-200';
-          statusBox.innerHTML = `
-            <strong>Рейтинг успешно рассчитан!</strong><br>
-            Сезон: <strong>${data.season}</strong><br>
-            Обработано участников: <strong>${data.calculatedCount}</strong>
-          `;
-        }
-      } catch (err) {
-        statusBox.className = 'text-sm p-4 rounded-lg bg-red-50 text-red-700 border border-red-200';
-        statusBox.textContent = 'Сетевая ошибка при обращении к серверу.';
-        statusBox.classList.remove('hidden');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Рассчитать рейтинг';
+  document.getElementById('publicCompLink').href = `/competition/${slug}`;
+  try {
+    const res = await fetch(`/api/admin/competitions/${slug}`, { credentials: 'same-origin' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.competition) {
+        document.getElementById('competitionTitle').textContent = data.competition.name || data.competition.title || 'Соревнование';
+        document.getElementById('competitionSub').textContent = `${data.competition.dateLabel || ''} · ${data.competition.location || ''}`;
       }
     }
-  </script>
+  } catch (e) {}
+}
+
+async function triggerRatingCalculation() {
+  const btn = document.getElementById('btnCalculateRating');
+  const statusBox = document.getElementById('ratingCalcStatus');
+  btn.disabled = true;
+  btn.textContent = 'Выполняется расчёт...';
+  statusBox.style.display = 'none';
+
+  try {
+    const res = await fetch(`/api/admin/competitions/${slug}/calculate-rating`, {
+      method: 'POST',
+      credentials: 'same-origin'
+    });
+    const data = await res.json();
+    statusBox.style.display = 'block';
+
+    if (!res.ok) {
+      statusBox.className = 'status-box err';
+      statusBox.textContent = data.error || 'Ошибка при пересчёте рейтинга';
+    } else {
+      statusBox.className = 'status-box ok';
+      statusBox.innerHTML = `
+        <strong>Рейтинг успешно рассчитан!</strong><br>
+        Сезон: <strong>${data.season}</strong><br>
+        Обработано участников: <strong>${data.calculatedCount}</strong>
+      `;
+    }
+  } catch (err) {
+    statusBox.className = 'status-box err';
+    statusBox.textContent = 'Сетевая ошибка при обращении к серверу.';
+    statusBox.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Рассчитать рейтинг';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>

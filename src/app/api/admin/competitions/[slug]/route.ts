@@ -179,9 +179,25 @@ export async function DELETE(
     });
     if (!c) throw ERR.NOT_FOUND('Соревнование не найдено');
 
-    if (c._count.applications > 0) {
-      throw ERR.VALIDATION(null, `Нельзя удалить соревнование, на которое уже подано ${c._count.applications} заявок. Измените его статус на «archived» или удалите заявки.`);
+    // Cascade delete any applications and related records for this competition
+    const apps = await db.application.findMany({
+      where: { competitionId: c.id },
+      select: { id: true },
+    });
+    const appIds = apps.map((a) => a.id);
+
+    if (appIds.length > 0) {
+      await db.applicationStatusHistory.deleteMany({ where: { applicationId: { in: appIds } } });
+      await db.applicationParticipant.deleteMany({ where: { applicationId: { in: appIds } } });
+      await db.applicationDocument.deleteMany({ where: { applicationId: { in: appIds } } });
+      await db.payment.deleteMany({ where: { applicationId: { in: appIds } } });
+      await db.application.deleteMany({ where: { id: { in: appIds } } });
     }
+
+    await db.organizerAssignment.deleteMany({ where: { competitionId: c.id } });
+    await db.ratingEntry.deleteMany({ where: { competitionId: c.id } });
+    await db.competitionResult.deleteMany({ where: { competitionId: c.id } });
+    await db.paymentDetails.deleteMany({ where: { competitionId: c.id } });
 
     await db.competition.delete({ where: { id: c.id } });
     return Response.json({ ok: true, deletedSlug: slug });

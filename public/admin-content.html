@@ -192,6 +192,9 @@
 
       <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:20px;">
         <div>
+          <div style="margin-bottom:8px;">
+            <a href="/admin" class="btn btn-ghost btn-sm">← В дашборд</a>
+          </div>
           <div class="eyebrow">Управление сайтом</div>
           <h1 class="admin-title">Редактор контента сайта</h1>
         </div>
@@ -414,6 +417,7 @@
 
 <script src="/common.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
 <script src="/js/admin-ui.js"></script>
 <script>
 // TAB SWITCHING
@@ -551,15 +555,11 @@ document.getElementById('resetHomeBtn').addEventListener('click', () => {
 });
 
 (async function init() {
-  const user = await NOVAAdmin.me();
-  if (user && (user.role === 'admin' || user.role === 'organizer')) {
-    document.getElementById('loginView').style.display = 'none';
-    document.getElementById('adminShell').style.display = 'flex';
-    NOVAAdminUI.mountShell('content', user);
-    await loadAllContent();
-  } else {
-    document.getElementById('loginView').style.display = 'block';
-  }
+  const user = await NOVAAdminUI.guard('content', ['view']);
+  if (!user) return;
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('adminShell').style.display = 'flex';
+  await loadAllContent();
 })();
 </script>
 </body>

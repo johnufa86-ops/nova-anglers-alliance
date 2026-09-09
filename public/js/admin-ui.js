@@ -44,6 +44,7 @@ window.NOVAAdminUI = (function () {
           ${links.map(([href, label, key]) => `<a href="${href}" class="${active === key ? 'active' : ''}">${label}</a>`).join('')}
         </nav>
         <div class="admin-user">
+          <a href="/" target="_blank" class="btn btn-ghost btn-sm" style="margin-right:4px;">На сайт ↗</a>
           <span><b>${esc(user.name)}</b> · ${esc(NOVAAdmin.ROLE_LABELS[user.role] || user.role)}</span>
           <button type="button" class="btn btn-ghost btn-sm" id="adminLogout">Выйти</button>
         </div>

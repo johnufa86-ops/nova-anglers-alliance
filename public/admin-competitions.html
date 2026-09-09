@@ -186,6 +186,9 @@
 
       <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
         <div>
+          <div style="margin-bottom:8px;">
+            <a href="/admin" class="btn btn-ghost btn-sm">← В дашборд</a>
+          </div>
           <div class="eyebrow">Календарь и сетка</div>
           <h1 class="admin-title">Управление соревнованиями</h1>
         </div>
@@ -334,6 +337,7 @@
 
 <script src="/common.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
 <script src="/js/admin-ui.js"></script>
 <script>
 let CURRENT_USER = null;
@@ -401,6 +405,7 @@ function renderCompetitions() {
         <td style="text-align:right;">
           <button class="btn btn-ghost btn-sm" onclick="editComp('${c.slug}')" style="margin-right:4px;">Редактировать</button>
           <a href="/admin/competition/${c.slug}" class="btn btn-ghost btn-sm" style="margin-right:4px;">Заявки</a>
+          <button class="btn btn-ghost btn-sm" onclick="deleteCompDirect('${c.slug}')" style="margin-right:4px;color:#ff6b81;">Удалить</button>
           <a href="/competition/${c.slug}" target="_blank" class="btn btn-ghost btn-sm">Сайт ↗</a>
         </td>
       </tr>
@@ -556,6 +561,22 @@ document.getElementById('btnDeleteComp').addEventListener('click', async () => {
     NOVAAdminUI.toast(err.message, 'error');
   }
 });
+
+window.deleteCompDirect = async function(slug) {
+  if (!confirm(`Вы уверены, что хотите удалить турнир «${slug}»?`)) return;
+  try {
+    const res = await fetch(`/api/admin/competitions/${slug}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error?.message || data.message || 'Ошибка удаления');
+    NOVAAdminUI.toast('Соревнование удалено', 'ok');
+    await loadCompetitions();
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  }
+};
 
 document.addEventListener('DOMContentLoaded', init);
 </script>

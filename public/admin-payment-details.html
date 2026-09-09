@@ -1,105 +1,246 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Управление реквизитами — Панель организатора</title>
-  <link rel="stylesheet" href="/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Банковские реквизиты — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+.form-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 28px;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+.form-card h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-card p.card-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+.field-group {
+  margin-bottom: 18px;
+}
+.field-group label {
+  display: block;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field-group input, .field-group textarea {
+  width: 100%;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14.5px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.field-group input:focus, .field-group textarea:focus {
+  border-color: var(--pulse);
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
+.info-notice {
+  background: rgba(75, 163, 255, 0.08);
+  border: 1px solid rgba(75, 163, 255, 0.25);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: var(--text);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+</style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
-  <div class="max-w-4xl mx-auto py-10 px-4">
-    <div class="flex items-center justify-between mb-8">
-      <h1 class="text-2xl font-bold">Банковские реквизиты</h1>
-      <a href="/admin.html" class="text-blue-600 hover:underline">← Назад в админку</a>
-    </div>
+<body>
 
-    <div class="bg-white rounded-xl shadow p-6 mb-8 border border-gray-100">
-      <h2 class="text-lg font-semibold mb-4">Глобальные реквизиты организации</h2>
-      <form id="detailsForm" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Наименование банка</label>
-          <input type="text" id="bankName" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="ПАО СБЕРБАНК">
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">Расчетный счет (20 цифр)</label>
-            <input type="text" id="accountNumber" maxlength="20" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="40802810000000000000">
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">БИК (9 цифр)</label>
-            <input type="text" id="bik" maxlength="9" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="044525225">
-          </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">ИНН (10 или 12 цифр)</label>
-            <input type="text" id="inn" maxlength="12" class="w-full border rounded-lg p-2.5 text-sm" placeholder="7701234567">
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Получатель платежа</label>
-            <input type="text" id="recipientName" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="Федерация рыболовного спорта">
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Шаблон назначения платежа</label>
-          <input type="text" id="paymentPurpose" required class="w-full border rounded-lg p-2.5 text-sm" placeholder="Целевой взнос за участие в турнире">
-        </div>
-        <div id="formErrors" class="text-red-600 text-sm hidden"></div>
-        <div id="formSuccess" class="text-green-600 text-sm hidden">Реквизиты успешно сохранены!</div>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm hover:bg-blue-700 transition">
-          Сохранить реквизиты
-        </button>
-      </form>
-    </div>
-  </div>
+<div class="admin-shell" id="adminShell">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
 
-  <script>
-    async function loadDetails() {
-      const res = await fetch('/api/admin/payment-details');
-      if (res.ok) {
-        const json = await res.json();
-        if (json.data) {
-          document.getElementById('bankName').value = json.data.bankName || '';
-          document.getElementById('accountNumber').value = json.data.accountNumber || '';
-          document.getElementById('bik').value = json.data.bik || '';
-          document.getElementById('inn').value = json.data.inn || '';
-          document.getElementById('recipientName').value = json.data.recipientName || '';
-          document.getElementById('paymentPurpose').value = json.data.paymentPurpose || '';
-        }
-      }
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
+        <div>
+          <div style="margin-bottom:8px;">
+            <a href="/admin" class="btn btn-ghost btn-sm">← В дашборд</a>
+          </div>
+          <div class="eyebrow">Финансы и оплата</div>
+          <h1 class="admin-title">Банковские реквизиты</h1>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="saveBtnTop">Сохранить реквизиты</button>
+      </div>
+      <p class="admin-sub" style="margin-bottom:24px;">Реквизиты расчётного счёта для формирования квитанций и оплаты стартовых взносов спортсменами.</p>
+
+      <div class="info-notice">
+        💡 Эти данные отображаются в личном кабинете спортсмена на шаге оплаты взноса за участие в соревнованиях. Убедитесь в корректности БИК и 20-значного расчётного счёта.
+      </div>
+
+      <div class="form-card">
+        <h2>Реквизиты организации</h2>
+        <p class="card-desc">Глобальные банковские реквизиты NOVA Anglers Alliance.</p>
+
+        <form id="detailsForm">
+          <div class="field-group">
+            <label for="recipientName">Получатель платежа (Юр. лицо / ИП) *</label>
+            <input type="text" id="recipientName" required placeholder="ООО «Альянс Рыболовов» или ИП Иванов И.И.">
+          </div>
+
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label for="inn">ИНН организации (10 или 12 цифр)</label>
+              <input type="text" id="inn" maxlength="12" placeholder="7701234567" pattern="\d{10}|\d{12}">
+            </div>
+            <div class="field-group">
+              <label for="bik">БИК банка (9 цифр) *</label>
+              <input type="text" id="bik" maxlength="9" required placeholder="044525225" pattern="\d{9}">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="bankName">Наименование банка получателя *</label>
+            <input type="text" id="bankName" required placeholder="ПАО СБЕРБАНК г. Москва">
+          </div>
+
+          <div class="field-group">
+            <label for="accountNumber">Расчётный счёт (ровно 20 цифр) *</label>
+            <input type="text" id="accountNumber" maxlength="20" required placeholder="40702810000000000000" pattern="\d{20}">
+          </div>
+
+          <div class="field-group">
+            <label for="paymentPurpose">Шаблон назначения платежа *</label>
+            <input type="text" id="paymentPurpose" required placeholder="Целевой взнос за участие в соревнованиях NOVA Anglers Alliance (без НДС)">
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:24px;">
+            <button type="submit" class="btn btn-primary" id="saveBtn">Сохранить изменения</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script>
+let CURRENT_USER = null;
+
+async function init() {
+  CURRENT_USER = await NOVAAdminUI.guard('payment-details', ['view']);
+  if (!CURRENT_USER) return;
+  loadDetails();
+}
+
+async function loadDetails() {
+  try {
+    const res = await fetch('/api/admin/payment-details', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('Не удалось загрузить реквизиты');
+    const json = await res.json();
+    if (json && json.data) {
+      document.getElementById('recipientName').value = json.data.recipientName || '';
+      document.getElementById('inn').value = json.data.inn || '';
+      document.getElementById('bik').value = json.data.bik || '';
+      document.getElementById('bankName').value = json.data.bankName || '';
+      document.getElementById('accountNumber').value = json.data.accountNumber || '';
+      document.getElementById('paymentPurpose').value = json.data.paymentPurpose || '';
     }
+  } catch (err) {
+    NOVAAdminUI.toast('Ошибка загрузки: ' + err.message, 'error');
+  }
+}
 
-    document.getElementById('detailsForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const errBox = document.getElementById('formErrors');
-      const succBox = document.getElementById('formSuccess');
-      errBox.classList.add('hidden');
-      succBox.classList.add('hidden');
+async function saveDetails(e) {
+  if (e) e.preventDefault();
+  const acc = document.getElementById('accountNumber').value.trim();
+  const bik = document.getElementById('bik').value.trim();
+  const inn = document.getElementById('inn').value.trim();
 
-      const payload = {
-        bankName: document.getElementById('bankName').value,
-        accountNumber: document.getElementById('accountNumber').value,
-        bik: document.getElementById('bik').value,
-        inn: document.getElementById('inn').value,
-        recipientName: document.getElementById('recipientName').value,
-        paymentPurpose: document.getElementById('paymentPurpose').value,
-      };
+  if (acc.length !== 20 || !/^\d{20}$/.test(acc)) {
+    NOVAAdminUI.toast('Расчётный счёт должен содержать ровно 20 цифр', 'error');
+    return;
+  }
+  if (bik.length !== 9 || !/^\d{9}$/.test(bik)) {
+    NOVAAdminUI.toast('БИК должен содержать ровно 9 цифр', 'error');
+    return;
+  }
+  if (inn && !/^(\d{10}|\d{12})$/.test(inn)) {
+    NOVAAdminUI.toast('ИНН должен состоять из 10 или 12 цифр', 'error');
+    return;
+  }
 
-      const res = await fetch('/api/admin/payment-details', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        errBox.textContent = data.error || 'Ошибка при сохранении';
-        errBox.classList.remove('hidden');
-      } else {
-        succBox.classList.remove('hidden');
-      }
+  const payload = {
+    recipientName: document.getElementById('recipientName').value.trim(),
+    inn: inn || null,
+    bik,
+    bankName: document.getElementById('bankName').value.trim(),
+    accountNumber: acc,
+    paymentPurpose: document.getElementById('paymentPurpose').value.trim(),
+  };
+
+  const btn = document.getElementById('saveBtn');
+  const btnTop = document.getElementById('saveBtnTop');
+  btn.disabled = true; btn.textContent = 'Сохранение…';
+  btnTop.disabled = true; btnTop.textContent = 'Сохранение…';
+
+  try {
+    const res = await fetch('/api/admin/payment-details', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload)
     });
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error || 'Ошибка при сохранении реквизитов');
+    }
+    NOVAAdminUI.toast('Реквизиты успешно сохранены!', 'ok');
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Сохранить изменения';
+    btnTop.disabled = false; btnTop.textContent = 'Сохранить реквизиты';
+  }
+}
 
-    loadDetails();
-  </script>
+document.getElementById('detailsForm').addEventListener('submit', saveDetails);
+document.getElementById('saveBtnTop').addEventListener('click', saveDetails);
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
