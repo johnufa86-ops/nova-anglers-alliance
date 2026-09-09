@@ -47,7 +47,7 @@
       <div>
         <div class="eyebrow">Команды NOVA</div>
         <h1>Экипажи и клубы</h1>
-        <p class="sub">37 экипажей и десятки клубов со всей страны развивают рыболовный спорт вместе с Альянсом.</p>
+        <p class="sub">Экипажи и спортивные клубы со всей страны, выступающие в турнирах Альянса.</p>
       </div>
       <div class="page-hero-meta">
         <div><span>Экипажей</span><b class="mono" id="statCrews">0</b></div>
@@ -59,7 +59,7 @@
 
 <section>
   <div class="wrap reveal">
-    <div class="tabs">
+    <div class="tabs" id="teamTabs">
       <button class="tab-btn active" data-tab="crews">Экипажи</button>
       <button class="tab-btn" data-tab="clubs">Клубы</button>
     </div>
@@ -104,33 +104,87 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 <script>
-document.getElementById('statCrews').textContent = NOVA_DATA.teams.filter(t=>t.type==='crew').length;
-document.getElementById('statClubs').textContent = NOVA_DATA.teams.filter(t=>t.type==='club').length;
+let currentTeams = Array.isArray(NOVA_DATA.teams) ? NOVA_DATA.teams : [];
+let currentTab = 'crews';
 
-function renderTeams(tab){
+function updateStats() {
+  const crews = currentTeams.filter(t => t.type === 'crew');
+  const clubs = currentTeams.filter(t => t.type === 'club');
+  document.getElementById('statCrews').textContent = crews.length;
+  document.getElementById('statClubs').textContent = clubs.length;
+}
+
+function renderTeams(tab) {
+  currentTab = tab;
   const type = tab === 'crews' ? 'crew' : 'club';
-  const list = NOVA_DATA.teams.filter(t=>t.type===type).sort((a,b)=>b.rating-a.rating);
-  document.getElementById('teamGrid').innerHTML = list.length ? list.map(t=>{
-    const memberCount = t.athleteIds.length;
-    const memberLabel = memberCount ? `${memberCount} ${memberCount===1?'спортсмен':'спортсмена'}` : 'Состав уточняется';
+  const list = currentTeams.filter(t => t.type === type).sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  const grid = document.getElementById('teamGrid');
+
+  if (currentTeams.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;padding:60px 24px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:8px;">
+        <div style="font-size:20px;font-weight:700;margin-bottom:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;">
+          Регистрация экипажей и клубов открыта
+        </div>
+        <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;text-transform:none;line-height:1.6;font-family:'Manrope',sans-serif;">
+          Составы команд сезона 2026 формируются по итогам заявочной кампании на предстоящие турниры.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="competitions.html" class="btn btn-primary btn-sm">Календарь турниров</a>
+          <a href="contacts.html" class="btn btn-ghost btn-sm">Подать заявку на участие</a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;">${emptyState('В этой категории пока нет зарегистрированных команд')}</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(t => {
+    const memberCount = (t.athleteIds || []).length;
+    const memberLabel = memberCount ? `${memberCount} ${memberCount === 1 ? 'спортсмен' : 'спортсмена'}` : 'Состав формируется';
+    const initials = t.initials || (t.name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'TM');
     return `
-    <a href="team.html?id=${t.id}" class="ath-card" style="display:block;">
-      <div class="ath-photo" style="background:linear-gradient(150deg,#1a1d22,#0e0f13);">${t.initials}</div>
+    <a href="team.html?id=${encodeURIComponent(t.id)}" class="ath-card" style="display:block;text-decoration:none;color:inherit;">
+      <div class="ath-photo" style="background:linear-gradient(150deg,#1a1d22,#0e0f13);">${initials}</div>
       <div class="ath-info">
         <b>${t.name}</b><div class="team">${memberLabel} · ${t.region}</div>
-        <div class="pts"><b class="mono">${t.rating.toLocaleString('ru-RU')}</b><span>очков</span></div>
+        <div class="pts"><b class="mono">${(t.rating || 0).toLocaleString('ru-RU')}</b><span>очков</span></div>
       </div>
     </a>`;
-  }).join('') : emptyState('Пока нет команд в этой категории');
+  }).join('');
 }
-renderTeams('crews');
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+
+async function initTeams() {
+  updateStats();
+  renderTeams('crews');
+
+  try {
+    const res = await fetch('/api/teams');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.teams)) {
+        currentTeams = data.teams;
+        window.NOVA_DATA.teams = data.teams;
+        updateStats();
+        renderTeams(currentTab);
+      }
+    }
+  } catch (e) {
+    console.warn('Could not fetch teams from API, using local data', e);
+  }
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderTeams(btn.dataset.tab);
   });
 });
-</script>
+
+initTeams();
 </body>
 </html>

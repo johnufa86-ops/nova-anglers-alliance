@@ -7,10 +7,10 @@ export const DEFAULT_HOME_SETTINGS = {
   ctaPrimaryUrl: '/competitions',
   ctaSecondaryText: 'Стать участником',
   ctaSecondaryUrl: '/contacts',
-  statAthletes: '482',
-  statCrews: '37',
-  statTournaments: '19',
-  statRegions: '12',
+  statAthletes: '0',
+  statCrews: '0',
+  statTournaments: '5',
+  statRegions: '0',
 };
 
 export type HomeSettings = typeof DEFAULT_HOME_SETTINGS;

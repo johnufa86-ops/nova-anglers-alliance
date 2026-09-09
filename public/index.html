@@ -54,10 +54,10 @@
       <a href="contacts.html" class="btn btn-ghost" id="homeCtaSecondary">Стать участником</a>
     </div>
     <div class="hero-stats">
-      <div class="stat"><b class="mono" id="homeStatAthletes" data-count="482">0</b><span>Спортсменов</span></div>
-      <div class="stat"><b class="mono" id="homeStatCrews" data-count="37">0</b><span>Экипажей</span></div>
-      <div class="stat"><b class="mono" id="homeStatTournaments" data-count="19">0</b><span>Турниров в сезоне</span></div>
-      <div class="stat"><b class="mono" id="homeStatRegions" data-count="12">0</b><span>Регионов</span></div>
+      <div class="stat"><b class="mono" id="homeStatAthletes" data-count="0">0</b><span>Спортсменов</span></div>
+      <div class="stat"><b class="mono" id="homeStatCrews" data-count="0">0</b><span>Экипажей</span></div>
+      <div class="stat"><b class="mono" id="homeStatTournaments" data-count="5">5</b><span>Турниров в сезоне</span></div>
+      <div class="stat"><b class="mono" id="homeStatRegions" data-count="0">0</b><span>Регионов</span></div>
     </div>
   </div>
   <div class="scroll-cue"><span>SCROLL</span><span class="line"></span></div>
@@ -105,25 +105,23 @@
   <div class="wrap reveal">
     <div class="eyebrow">NOVA Live</div>
     <div class="section-head">
-      <h2>Последний турнир</h2>
-      <p class="sub">NOVA CUP — Дон. Финальный этап зимней серии, 210 спортсменов, 3 дня соревнований.</p>
+      <h2>Открытие сезона 2026</h2>
+      <p class="sub">Сезон 2026 открывается кубком NOVA CUP — Волга в Астраханской области. Прямые включения с воды, протоколы взвешивания и оперативные результаты этапов будут публиковаться здесь.</p>
     </div>
     <div class="live-panel">
       <div class="live-top">
-        <div class="live-badge"><span class="dot"></span>ЗАВЕРШЁН · ИТОГОВЫЙ ПРОТОКОЛ</div>
-        <div class="live-meta mono">NOVA CUP — ДОН · 08–10.03.2026</div>
+        <div class="live-badge"><span class="dot"></span>СКОРО СТАРТ · 13–15 ИЮНЯ 2026</div>
+        <div class="live-meta mono">NOVA CUP — ВОЛГА · АСТРАХАНЬ</div>
       </div>
-      <table class="live-table">
-        <thead><tr><th>#</th><th>Спортсмен / Экипаж</th><th>Регион</th><th style="text-align:right">Очки</th></tr></thead>
-        <tbody>
-          <tr><td class="pos-cell top">01</td><td>Артём Волков</td><td>Ростовская обл.</td><td class="pts-cell">2 480<span class="trend-up">▲</span></td></tr>
-          <tr><td class="pos-cell top">02</td><td>Экипаж «Меридиан»</td><td>Краснодарский край</td><td class="pts-cell">2 415<span class="trend-up">▲</span></td></tr>
-          <tr><td class="pos-cell top">03</td><td>Игорь Шахов</td><td>Волгоградская обл.</td><td class="pts-cell">2 390<span class="trend-down">▼</span></td></tr>
-          <tr><td class="pos-cell">04</td><td>Дарья Соколова</td><td>Астраханская обл.</td><td class="pts-cell">2 301</td></tr>
-          <tr><td class="pos-cell">05</td><td>Экипаж «Нордвест»</td><td>Ленинградская обл.</td><td class="pts-cell">2 264<span class="trend-up">▲</span></td></tr>
-        </tbody>
-      </table>
-      <div class="live-footer"><a href="competition.html?id=nova-don-winter#results" class="btn btn-ghost btn-sm">Смотреть результаты</a></div>
+      <div style="padding: 40px 24px; text-align: center;">
+        <p style="color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto 20px; line-height: 1.6;">
+          Турнирная таблица и начисление рейтинговых очков будут обновляться в режиме реального времени по ходу соревнований.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="competition.html?id=nova-cup-volga" class="btn btn-primary btn-sm">Информация о кубке</a>
+          <a href="competitions.html" class="btn btn-ghost btn-sm">Календарь всех стартов</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -348,21 +346,27 @@ function updateNextCard(){
 updateNextCard();
 
 /* ---------- rating preview (top 5 athletes) — from NOVA_DATA ---------- */
+/* ---------- rating preview (top 5 athletes / teams) ---------- */
 let currentTab = 'athletes';
 function renderRating(tab){
   currentTab = tab;
   const list = document.getElementById('ratingList');
-  const key = tab === 'athletes' ? 'athletes' : 'teams';
-  let data;
+  let data = [];
   if(tab === 'athletes'){
-    data = [...NOVA_DATA.athletes].sort((a,b)=>b.rating-a.rating).slice(0,5)
-      .map(a=>({name:a.name, team:a.region, pts:a.rating, href:`athlete.html?id=${a.id}`}));
+    data = [...(NOVA_DATA.athletes || [])].sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,5)
+      .map(a=>({name:a.name, team:a.region, pts:a.rating||0, href:`athlete.html?id=${encodeURIComponent(a.id)}`}));
   } else {
     const type = tab === 'crews' ? 'crew' : 'club';
-    data = NOVA_DATA.teams.filter(t=>t.type===type).sort((a,b)=>b.rating-a.rating).slice(0,5)
-      .map(t=>({name:t.name, team:t.region, pts:t.rating, href:`team.html?id=${t.id}`}));
+    data = (NOVA_DATA.teams || []).filter(t=>t.type===type).sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,5)
+      .map(t=>({name:t.name, team:t.region, pts:t.rating||0, href:`team.html?id=${encodeURIComponent(t.id)}`}));
   }
-  const maxPts = data[0].pts;
+
+  if(!data.length){
+    list.innerHTML = `<div class="empty-state" style="padding:36px 16px;margin:12px 0;">Рейтинг сезона 2026 формируется по итогам предстоящих стартов</div>`;
+    return;
+  }
+
+  const maxPts = data[0].pts || 1;
   list.innerHTML = data.map((d,i)=>`
     <a href="${d.href}" class="rating-row" style="text-decoration:none;color:inherit;">
       <div class="rank-orbit orbit" style="width:52px;height:52px;">
@@ -387,7 +391,7 @@ let currentFilter = 'all';
 function renderCal(filter){
   currentFilter = filter || currentFilter;
   const grid = document.getElementById('calGrid');
-  const items = NOVA_DATA.competitions
+  const items = (NOVA_DATA.competitions || [])
     .filter(c => c.stage !== 'finished')
     .filter(c => currentFilter==='all' || c.discipline === currentFilter)
     .slice(0,6);
@@ -402,36 +406,81 @@ document.querySelectorAll('.filter-btn').forEach(btn=>{
   });
 });
 
-/* ---------- athletes preview (top 4) — from NOVA_DATA ---------- */
+/* ---------- athletes preview (top 4) ---------- */
 function renderAthletes(){
-  const athPreview = [...NOVA_DATA.athletes].sort((a,b)=>b.rating-a.rating).slice(0,4);
-  document.getElementById('athGrid').innerHTML = athPreview.map((a,i)=>`
-    <a href="athlete.html?id=${a.id}" class="ath-card" style="display:block;text-decoration:none;color:inherit;">
+  const athPreview = [...(NOVA_DATA.athletes || [])].sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,4);
+  const grid = document.getElementById('athGrid');
+  if(!athPreview.length){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:36px 20px;">Список участников сезона 2026 формируется. <a href="competitions.html" style="color:var(--pulse);text-decoration:none;margin-left:6px;">Подать заявку →</a></div>`;
+    return;
+  }
+  grid.innerHTML = athPreview.map((a,i)=>`
+    <a href="athlete.html?id=${encodeURIComponent(a.id)}" class="ath-card" style="display:block;text-decoration:none;color:inherit;">
       <div class="ath-photo" style="background:linear-gradient(150deg,#1a1d22,#0e0f13);">
-        <span class="rank-flag mono">#${i+1}</span>${a.initials}
+        <span class="rank-flag mono">#${i+1}</span>${a.initials || 'NA'}
       </div>
       <div class="ath-info">
         <b>${a.name}</b><div class="team">${a.region}</div>
-        <div class="pts"><b class="mono">${a.rating.toLocaleString('ru-RU')}</b><span>очков</span></div>
+        <div class="pts"><b class="mono">${(a.rating||0).toLocaleString('ru-RU')}</b><span>очков</span></div>
       </div>
     </a>`).join('');
 }
 renderAthletes();
 
-/* ---------- news preview (latest 4) — from NOVA_DATA ---------- */
-function renderNews(){
-  const newsPreview = NOVA_DATA.news.slice(0,4);
-  document.getElementById('newsGrid').innerHTML = newsPreview.map(n=>`
-    <a href="article.html?id=${n.id}" class="news-card" style="display:flex;text-decoration:none;color:inherit;">
-      <div class="news-img"><span class="news-cat">${n.category}</span></div>
+/* ---------- news preview (latest 4) — from API or NOVA_DATA ---------- */
+async function renderNews(){
+  let items = NOVA_DATA.news || [];
+  try {
+    const res = await fetch('/api/news');
+    if(res.ok){
+      const data = await res.json();
+      if(data && Array.isArray(data.news) && data.news.length > 0){
+        items = data.news;
+      }
+    }
+  } catch(e){}
+  const newsPreview = (items || []).slice(0,4);
+  const grid = document.getElementById('newsGrid');
+  if(!newsPreview.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;">${emptyState('Новостей пока нет')}</div>`;
+    return;
+  }
+  grid.innerHTML = newsPreview.map(n=>{
+    const bgStyle = n.coverImage ? ` style="background-image:url('${n.coverImage}');background-size:cover;background-position:center;"` : '';
+    const dateStr = n.publishedAt ? new Date(n.publishedAt).toLocaleDateString('ru-RU') : (n.date || '');
+    return `
+    <a href="article.html?id=${encodeURIComponent(n.slug || n.id)}" class="news-card" style="display:flex;text-decoration:none;color:inherit;">
+      <div class="news-img"${bgStyle}><span class="news-cat">${n.category || 'Новости'}</span></div>
       <div class="news-body">
-        <span class="news-date mono">${n.date}</span>
+        <span class="news-date mono">${dateStr}</span>
         <h4>${n.title}</h4>
-        <p>${n.excerpt}</p>
+        <p>${n.excerpt || ''}</p>
       </div>
-    </a>`).join('');
+    </a>`;
+  }).join('');
 }
 renderNews();
+
+/* dynamic sync for athletes & teams */
+async function syncAthletesAndTeams(){
+  try {
+    const [athRes, teamRes] = await Promise.all([
+      fetch('/api/athletes').catch(() => null),
+      fetch('/api/teams').catch(() => null),
+    ]);
+    if (athRes && athRes.ok) {
+      const d = await athRes.json();
+      if (d && Array.isArray(d.athletes)) window.NOVA_DATA.athletes = d.athletes;
+    }
+    if (teamRes && teamRes.ok) {
+      const d = await teamRes.json();
+      if (d && Array.isArray(d.teams)) window.NOVA_DATA.teams = d.teams;
+    }
+  } catch(e){}
+  renderRating(currentTab);
+  renderAthletes();
+}
+syncAthletesAndTeams();
 
 /* свежие данные соревнований с сервера — перерисовываем живые блоки */
 NOVACompetitions.onRefresh(() => {

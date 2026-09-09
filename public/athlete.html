@@ -131,8 +131,8 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 <script>
-const id = NOVA.qs('id') || 'volkov';
-const a = NOVA.athlete(id);
+const id = NOVA.qs('id');
+const a = id ? NOVA.athlete(id) : null;
 
 if(!a){
   document.getElementById('profileRoot').style.display = 'none';

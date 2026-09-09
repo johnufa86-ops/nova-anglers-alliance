@@ -103,37 +103,94 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 <script>
-document.getElementById('statCount').textContent = NOVA_DATA.athletes.length;
-const regions = [...new Set(NOVA_DATA.athletes.map(a=>a.region))].sort();
-document.getElementById('statRegions').textContent = regions.length;
-document.getElementById('regionFilters').insertAdjacentHTML('beforeend',
-  regions.map(r=>`<button class="filter-btn" data-region="${r}">${r}</button>`).join(''));
+let currentAthletes = Array.isArray(NOVA_DATA.athletes) ? NOVA_DATA.athletes : [];
 
-function renderAthletes(region){
-  const sorted = [...NOVA_DATA.athletes].sort((a,b)=>b.rating-a.rating);
-  const filtered = region === 'all' ? sorted : sorted.filter(a=>a.region===region);
-  document.getElementById('athGrid').innerHTML = filtered.length ? filtered.map(a=>{
+function updateStatsAndFilters() {
+  document.getElementById('statCount').textContent = currentAthletes.length;
+  const regions = [...new Set(currentAthletes.map(a => a.region).filter(Boolean))].sort();
+  document.getElementById('statRegions').textContent = regions.length;
+
+  const filtersEl = document.getElementById('regionFilters');
+  if (regions.length === 0) {
+    filtersEl.style.display = 'none';
+  } else {
+    filtersEl.style.display = 'flex';
+    filtersEl.innerHTML = '<button class="filter-btn active" data-region="all">Все регионы</button>' +
+      regions.map(r => `<button class="filter-btn" data-region="${r}">${r}</button>`).join('');
+  }
+}
+
+function renderAthletes(region = 'all') {
+  const sorted = [...currentAthletes].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  const filtered = region === 'all' ? sorted : sorted.filter(a => a.region === region);
+  const grid = document.getElementById('athGrid');
+
+  if (currentAthletes.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;padding:60px 24px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:8px;">
+        <div style="font-size:20px;font-weight:700;margin-bottom:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;">
+          Регистрация участников сезона 2026 открыта
+        </div>
+        <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;text-transform:none;line-height:1.6;font-family:'Manrope',sans-serif;">
+          Список спортсменов и регионов формируется по мере подтверждения заявок на турниры Альянса. Вы можете подать заявку на участие в соревнованиях или зарегистрироваться в системе.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="competitions.html" class="btn btn-primary btn-sm">Календарь соревнований</a>
+          <a href="register.html" class="btn btn-ghost btn-sm">Регистрация участника</a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;">${emptyState('В этом регионе пока нет спортсменов NOVA')}</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(a => {
     const rank = sorted.indexOf(a) + 1;
     return `
-    <a href="athlete.html?id=${a.id}" class="ath-card" style="display:block;">
+    <a href="athlete.html?id=${encodeURIComponent(a.id)}" class="ath-card" style="display:block;text-decoration:none;color:inherit;">
       <div class="ath-photo" style="background:linear-gradient(150deg,#1a1d22,#0e0f13);">
-        <span class="rank-flag mono">#${rank}</span>${a.initials}
+        <span class="rank-flag mono">#${rank}</span>${a.initials || 'NA'}
       </div>
       <div class="ath-info">
         <b>${a.name}</b><div class="team">${a.region}</div>
-        <div class="pts"><b class="mono">${a.rating.toLocaleString('ru-RU')}</b><span>очков</span></div>
+        <div class="pts"><b class="mono">${(a.rating || 0).toLocaleString('ru-RU')}</b><span>очков</span></div>
       </div>
     </a>`;
-  }).join('') : emptyState('В этом регионе пока нет спортсменов NOVA');
+  }).join('');
 }
-renderAthletes('all');
-document.getElementById('regionFilters').addEventListener('click', e=>{
+
+async function initAthletes() {
+  updateStatsAndFilters();
+  renderAthletes('all');
+
+  try {
+    const res = await fetch('/api/athletes');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.athletes)) {
+        currentAthletes = data.athletes;
+        window.NOVA_DATA.athletes = data.athletes;
+        updateStatsAndFilters();
+        renderAthletes('all');
+      }
+    }
+  } catch (e) {
+    console.warn('Could not fetch athletes from API, using local data', e);
+  }
+}
+
+document.getElementById('regionFilters').addEventListener('click', e => {
   const btn = e.target.closest('.filter-btn');
-  if(!btn) return;
-  document.querySelectorAll('#regionFilters .filter-btn').forEach(b=>b.classList.remove('active'));
+  if (!btn) return;
+  document.querySelectorAll('#regionFilters .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderAthletes(btn.dataset.region);
 });
+
+initAthletes();
 </script>
 </body>
 </html>

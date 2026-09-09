@@ -132,8 +132,8 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 <script>
-const id = NOVA.qs('id') || 'meridian';
-const t = NOVA.team(id);
+const id = NOVA.qs('id');
+const t = id ? NOVA.team(id) : null;
 
 if(!t){
   document.getElementById('profileRoot').style.display = 'none';
