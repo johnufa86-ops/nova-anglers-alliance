@@ -141,8 +141,12 @@
     try {
       const data = await NOVA_API.post('/api/auth/login', { email, password });
 
-      // Успешный вход → редирект в кабинет спортсмена.
-      window.location.href = '/cabinet-applications.html';
+      const role = (data?.user?.role || '').toLowerCase();
+      if (role === 'admin' || role === 'organizer') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/cabinet';
+      }
       return;
     } catch (e) {
       // Ошибка (401 / 429 / валидация) — слой NOVA_API нормализует в { code, message, details }.
