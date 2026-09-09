@@ -86,3 +86,105 @@ export async function GET(
     });
   });
 }
+
+/**
+ * PUT /api/admin/competitions/:slug — update competition details.
+ */
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  return handle(async () => {
+    await requireUser(['admin', 'organizer']);
+    const { slug } = await params;
+
+    const c = await db.competition.findUnique({ where: { slug } });
+    if (!c) throw ERR.NOT_FOUND('Соревнование не найдено');
+
+    let body: any;
+    try {
+      body = await req.json();
+    } catch {
+      throw ERR.VALIDATION(null, 'Некорректный запрос');
+    }
+
+    const data: any = {};
+    if (body.title !== undefined || body.name !== undefined) {
+      const t = String(body.title ?? body.name).trim();
+      data.title = t;
+      data.name = t;
+    }
+    if (body.shortTitle !== undefined || body.shortName !== undefined) {
+      data.shortName = String(body.shortTitle ?? body.shortName).trim();
+    }
+    if (body.description !== undefined) data.description = String(body.description).trim();
+    if (body.discipline !== undefined) data.discipline = String(body.discipline).trim();
+    if (body.disciplineLabel !== undefined) data.disciplineLabel = String(body.disciplineLabel).trim();
+    if (body.location !== undefined) data.location = String(body.location).trim();
+    if (body.region !== undefined) data.region = String(body.region).trim();
+    if (body.status !== undefined) data.status = String(body.status).trim();
+    if (body.prizeFund !== undefined) data.prizeFund = String(body.prizeFund).trim();
+    if (body.dateLabel !== undefined) data.dateLabel = String(body.dateLabel).trim();
+    if (body.organizer !== undefined) data.organizer = String(body.organizer).trim();
+    if (body.contact !== undefined) data.contact = String(body.contact).trim();
+
+    if (body.startDate !== undefined) {
+      const d = new Date(body.startDate);
+      data.startDate = d;
+      data.date = d;
+    }
+    if (body.endDate !== undefined) {
+      data.endDate = new Date(body.endDate);
+    }
+    if (body.registrationOpenAt !== undefined) {
+      data.registrationOpenAt = body.registrationOpenAt ? new Date(body.registrationOpenAt) : null;
+    }
+    if (body.registrationCloseAt !== undefined) {
+      data.registrationCloseAt = body.registrationCloseAt ? new Date(body.registrationCloseAt) : null;
+    }
+    if (body.maxEntries !== undefined || body.maxParticipants !== undefined) {
+      const m = parseInt(body.maxEntries ?? body.maxParticipants, 10);
+      data.maxEntries = m;
+      data.maxParticipants = m;
+    }
+    if (body.fee !== undefined || body.entryFee !== undefined) {
+      const f = parseFloat(body.fee ?? body.entryFee);
+      data.fee = f;
+      data.entryFee = Math.round(f);
+    }
+
+    const updated = await db.competition.update({
+      where: { id: c.id },
+      data,
+    });
+
+    return Response.json({ ok: true, competition: updated });
+  });
+}
+
+/**
+ * DELETE /api/admin/competitions/:slug — delete competition if no applications.
+ */
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  return handle(async () => {
+    await requireUser(['admin']);
+    const { slug } = await params;
+
+    const c = await db.competition.findUnique({
+      where: { slug },
+      include: { _count: { select: { applications: true } } },
+    });
+    if (!c) throw ERR.NOT_FOUND('Соревнование не найдено');
+
+    if (c._count.applications > 0) {
+      throw ERR.VALIDATION(null, `Нельзя удалить соревнование, на которое уже подано ${c._count.applications} заявок. Измените его статус на «archived» или удалите заявки.`);
+    }
+
+    await db.competition.delete({ where: { id: c.id } });
+    return Response.json({ ok: true, deletedSlug: slug });
+  });
+}
+

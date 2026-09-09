@@ -78,3 +78,40 @@ function competitionCardHTML(c){
 function emptyState(text){
   return `<div class="empty-state">${text}</div>`;
 }
+
+/* ---------- sync global footer, brand & socials from DB settings ---------- */
+(async function syncGlobalSettings() {
+  try {
+    const res = await fetch('/api/settings/contacts');
+    if (!res.ok) return;
+    const data = await res.json();
+    const s = data?.settings;
+    if (!s) return;
+
+    if (s.brandDesc) {
+      const descEl = document.querySelector('.foot-brand p');
+      if (descEl) descEl.textContent = s.brandDesc;
+    }
+    if (s.copyright) {
+      const copyEl = document.querySelector('.foot-bottom p');
+      if (copyEl) copyEl.textContent = s.copyright;
+    }
+    if (s.emailGeneral) {
+      const emailLinks = document.querySelectorAll('a[href^="mailto:info@"]');
+      emailLinks.forEach(el => {
+        el.href = 'mailto:' + s.emailGeneral;
+        el.textContent = s.emailGeneral;
+      });
+    }
+    if (s.telegramUrl) {
+      const tg = document.querySelector('.foot-social a[aria-label="Telegram"]');
+      if (tg) { tg.href = s.telegramUrl; tg.target = '_blank'; tg.rel = 'noopener'; }
+    }
+    if (s.vkUrl) {
+      const vk = document.querySelector('.foot-social a[aria-label="VK"]');
+      if (vk) { vk.href = s.vkUrl; vk.target = '_blank'; vk.rel = 'noopener'; }
+    }
+  } catch (e) {
+    // Non-blocking fallback
+  }
+})();

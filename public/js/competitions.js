@@ -21,7 +21,11 @@ window.NOVACompetitions = (function () {
 
   function mergeIntoDemo(list) {
     if (!Array.isArray(list) || !window.NOVA_DATA) return;
-    NOVA_DATA.competitions = list;
+    if (list.length > 0) {
+      const dbMap = new Map(list.map(c => [c.id, c]));
+      const demoRemaining = (NOVA_DATA.competitions || []).filter(c => !dbMap.has(c.id));
+      NOVA_DATA.competitions = [...list, ...demoRemaining];
+    }
   }
 
   /** Fetch fresh competitions; resolves to true when fresh data applied. */

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Управление соревнованиями — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+.table-wrap {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 20px;
+}
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.comp-table th {
+  background: rgba(255,255,255,0.02);
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--line);
+}
+.comp-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+}
+.comp-table tr:hover td {
+  background: rgba(255,255,255,0.015);
+}
+.stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.stage-pill.upcoming {
+  background: rgba(75,163,255,0.12);
+  color: #4ba3ff;
+  border: 1px solid rgba(75,163,255,0.25);
+}
+.stage-pill.live {
+  background: rgba(87,230,161,0.12);
+  color: #57e6a1;
+  border: 1px solid rgba(87,230,161,0.25);
+}
+.stage-pill.finished {
+  background: rgba(255,255,255,0.06);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+.cat-badge {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--pulse-2);
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 10, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transform: translateY(15px);
+  transition: transform 0.2s ease;
+}
+.modal-backdrop.open .modal-card {
+  transform: translateY(0);
+}
+.modal-header {
+  padding: 20px 26px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+  color: var(--text);
+}
+.modal-body {
+  padding: 26px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-footer {
+  padding: 16px 26px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.01);
+}
+.field-group {
+  margin-bottom: 18px;
+}
+.field-group label {
+  display: block;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field-group input, .field-group select, .field-group textarea {
+  width: 100%;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  border-radius: var(--radius);
+  outline: none;
+  box-sizing: border-box;
+}
+.field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+  border-color: var(--pulse);
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <div class="eyebrow">Календарь и сетка</div>
+          <h1 class="admin-title">Управление соревнованиями</h1>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="/competitions" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Открыть календарь ↗</a>
+          <button type="button" class="btn btn-primary btn-sm" id="btnCreateComp">+ Добавить турнир</button>
+        </div>
+      </div>
+      <p class="admin-sub" style="margin-bottom:28px;">Создание этапов, настройка дат, взносов, лимитов мест и статусов регистрации.</p>
+
+      <div id="compsLoading" style="padding:40px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+        Загрузка списка турниров...
+      </div>
+
+      <div id="compsList" style="display:none;">
+        <div class="table-wrap">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th style="width:35%;">Турнир</th>
+                <th>Дисциплина</th>
+                <th>Даты и место</th>
+                <th>Участники</th>
+                <th>Статус</th>
+                <th style="text-align:right;">Действия</th>
+              </tr>
+            </thead>
+            <tbody id="compsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<!-- MODAL FOR CREATE / EDIT -->
+<div class="modal-backdrop" id="compModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalTitle">Новый турнир</h2>
+      <button type="button" class="btn btn-ghost btn-sm" id="btnModalClose" style="padding:4px 10px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="compForm">
+        <input type="hidden" id="editCompSlug">
+
+        <div class="field-group">
+          <label for="m_title">Полное название соревнования *</label>
+          <input type="text" id="m_title" required placeholder="Например: Кубок Nova Anglers Alliance — Волга 2026">
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_shortTitle">Короткое название (для карточек)</label>
+            <input type="text" id="m_shortTitle" placeholder="NOVA CUP — Волга">
+          </div>
+          <div class="field-group">
+            <label for="m_slug">URL-адрес (Slug)</label>
+            <input type="text" id="m_slug" placeholder="nova-cup-volga-2026">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_discipline">Дисциплина</label>
+            <select id="m_discipline">
+              <option value="spinning">Спиннинг с лодок</option>
+              <option value="trout">Форель (Area / Stream)</option>
+              <option value="feeder">Фидер (Донная ловля)</option>
+              <option value="ice">Зимняя блесна / Мормышка</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="m_status">Статус турнира</label>
+            <select id="m_status">
+              <option value="upcoming">Предстоящий (Upcoming)</option>
+              <option value="live">Идёт прямо сейчас (Live)</option>
+              <option value="finished">Завершён (Finished)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_region">Регион проведения</label>
+            <input type="text" id="m_region" placeholder="Астраханская область">
+          </div>
+          <div class="field-group">
+            <label for="m_location">Локация / Водоём / База</label>
+            <input type="text" id="m_location" placeholder="р. Волга, база «Золотой Судак»">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_startDate">Дата старта</label>
+            <input type="date" id="m_startDate">
+          </div>
+          <div class="field-group">
+            <label for="m_endDate">Дата финала</label>
+            <input type="date" id="m_endDate">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_maxEntries">Лимит участников / экипажей</label>
+            <input type="number" id="m_maxEntries" placeholder="100" value="100">
+          </div>
+          <div class="field-group">
+            <label for="m_fee">Взнос за участие (руб.)</label>
+            <input type="number" id="m_fee" placeholder="5000" value="0">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_prizeFund">Призовой фонд</label>
+            <input type="text" id="m_prizeFund" placeholder="1 500 000 ₽">
+          </div>
+          <div class="field-group">
+            <label for="m_dateLabel">Текстовая подпись дат</label>
+            <input type="text" id="m_dateLabel" placeholder="13–15 июня 2026">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="m_description">Описание турнира и регламент (кратко)</label>
+          <textarea id="m_description" rows="3" placeholder="Главный этап сезона..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnDeleteComp" style="display:none;color:#ff6b81;">Удалить</button>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnModalCancel">Отмена</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnSaveComp">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script>
+let CURRENT_USER = null;
+let COMPS = [];
+
+async function init() {
+  CURRENT_USER = await NOVAAdminUI.guard('competitions', ['view']);
+  if (!CURRENT_USER) return;
+  loadCompetitions();
+}
+
+async function loadCompetitions() {
+  document.getElementById('compsLoading').style.display = 'block';
+  document.getElementById('compsList').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/admin/competitions', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('Не удалось загрузить соревнования');
+    const data = await res.json();
+    COMPS = data.competitions || [];
+    renderCompetitions();
+  } catch (err) {
+    NOVAAdminUI.toast('Ошибка загрузки: ' + err.message, 'error');
+  } finally {
+    document.getElementById('compsLoading').style.display = 'none';
+    document.getElementById('compsList').style.display = 'block';
+  }
+}
+
+function renderCompetitions() {
+  const tbody = document.getElementById('compsTableBody');
+  if (!COMPS.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">В базе пока нет соревнований</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = COMPS.map(c => {
+    const title = c.title || c.name || 'Турнир NOVA';
+    const place = c.location || c.region || '—';
+    const dates = c.dateLabel || (c.startDate ? new Date(c.startDate).toLocaleDateString('ru-RU') : '—');
+    const appsCount = c._count?.applications || 0;
+    const maxEntries = c.maxEntries || c.maxParticipants || '—';
+    const stage = c.status || 'upcoming';
+    const stageLabels = { upcoming: 'Предстоящий', live: '● Идёт сейчас', finished: 'Завершён' };
+
+    return `
+      <tr>
+        <td>
+          <div style="font-weight:600;color:var(--text);margin-bottom:4px;">${NOVAAdminUI.esc(title)}</div>
+          <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;">/${NOVAAdminUI.esc(c.slug)}</div>
+        </td>
+        <td><span class="cat-badge">${NOVAAdminUI.esc(c.disciplineLabel || c.discipline || 'Спиннинг')}</span></td>
+        <td>
+          <div style="font-size:13.5px;color:var(--text);">${NOVAAdminUI.esc(dates)}</div>
+          <div style="font-size:12px;color:var(--muted);">${NOVAAdminUI.esc(place)}</div>
+        </td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:13px;">
+          <b>${appsCount}</b> / ${maxEntries}
+        </td>
+        <td>
+          <span class="stage-pill ${stage}">
+            ${stageLabels[stage] || stage}
+          </span>
+        </td>
+        <td style="text-align:right;">
+          <button class="btn btn-ghost btn-sm" onclick="editComp('${c.slug}')" style="margin-right:4px;">Редактировать</button>
+          <a href="/admin/competition/${c.slug}" class="btn btn-ghost btn-sm" style="margin-right:4px;">Заявки</a>
+          <a href="/competition/${c.slug}" target="_blank" class="btn btn-ghost btn-sm">Сайт ↗</a>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function openModal(comp = null) {
+  const modal = document.getElementById('compModal');
+  const title = document.getElementById('modalTitle');
+  const deleteBtn = document.getElementById('btnDeleteComp');
+
+  if (comp) {
+    title.textContent = 'Редактировать турнир';
+    document.getElementById('editCompSlug').value = comp.slug;
+    document.getElementById('m_title').value = comp.title || comp.name || '';
+    document.getElementById('m_shortTitle').value = comp.shortName || comp.shortTitle || '';
+    document.getElementById('m_slug').value = comp.slug || '';
+    document.getElementById('m_slug').disabled = true;
+    document.getElementById('m_discipline').value = comp.discipline || 'spinning';
+    document.getElementById('m_status').value = comp.status || 'upcoming';
+    document.getElementById('m_region').value = comp.region || '';
+    document.getElementById('m_location').value = comp.location || '';
+    document.getElementById('m_maxEntries').value = comp.maxEntries || comp.maxParticipants || 100;
+    document.getElementById('m_fee').value = comp.fee || comp.entryFee || 0;
+    document.getElementById('m_prizeFund').value = comp.prizeFund || '';
+    document.getElementById('m_dateLabel').value = comp.dateLabel || '';
+    document.getElementById('m_description').value = comp.description || '';
+
+    if (comp.startDate) {
+      document.getElementById('m_startDate').value = new Date(comp.startDate).toISOString().slice(0, 10);
+    } else {
+      document.getElementById('m_startDate').value = '';
+    }
+    if (comp.endDate) {
+      document.getElementById('m_endDate').value = new Date(comp.endDate).toISOString().slice(0, 10);
+    } else {
+      document.getElementById('m_endDate').value = '';
+    }
+
+    deleteBtn.style.display = 'block';
+  } else {
+    title.textContent = 'Новый турнир';
+    document.getElementById('editCompSlug').value = '';
+    document.getElementById('compForm').reset();
+    document.getElementById('m_slug').disabled = false;
+    deleteBtn.style.display = 'none';
+  }
+
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('compModal').classList.remove('open');
+}
+
+window.editComp = function(slug) {
+  const c = COMPS.find(x => x.slug === slug);
+  if (c) openModal(c);
+};
+
+document.getElementById('btnCreateComp').addEventListener('click', () => openModal(null));
+document.getElementById('btnModalClose').addEventListener('click', closeModal);
+document.getElementById('btnModalCancel').addEventListener('click', closeModal);
+
+document.getElementById('btnSaveComp').addEventListener('click', async () => {
+  const editSlug = document.getElementById('editCompSlug').value;
+  const title = document.getElementById('m_title').value.trim();
+  if (!title) {
+    NOVAAdminUI.toast('Укажите название соревнования', 'error');
+    return;
+  }
+
+  const payload = {
+    title,
+    shortTitle: document.getElementById('m_shortTitle').value.trim(),
+    slug: document.getElementById('m_slug').value.trim(),
+    discipline: document.getElementById('m_discipline').value,
+    status: document.getElementById('m_status').value,
+    region: document.getElementById('m_region').value.trim(),
+    location: document.getElementById('m_location').value.trim(),
+    maxEntries: parseInt(document.getElementById('m_maxEntries').value, 10) || 100,
+    fee: parseFloat(document.getElementById('m_fee').value) || 0,
+    prizeFund: document.getElementById('m_prizeFund').value.trim(),
+    dateLabel: document.getElementById('m_dateLabel').value.trim(),
+    description: document.getElementById('m_description').value.trim(),
+  };
+
+  const startVal = document.getElementById('m_startDate').value;
+  if (startVal) payload.startDate = new Date(startVal).toISOString();
+  const endVal = document.getElementById('m_endDate').value;
+  if (endVal) payload.endDate = new Date(endVal).toISOString();
+
+  const discLabels = {
+    spinning: 'Спиннинг с лодок',
+    trout: 'Форель (Area)',
+    feeder: 'Донная ловля (Фидер)',
+    ice: 'Зимняя блесна'
+  };
+  payload.disciplineLabel = discLabels[payload.discipline] || 'Спиннинг';
+
+  const saveBtn = document.getElementById('btnSaveComp');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Сохранение...';
+
+  try {
+    const url = editSlug ? `/api/admin/competitions/${editSlug}` : '/api/admin/competitions';
+    const method = editSlug ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || 'Ошибка сохранения турнира');
+    }
+
+    NOVAAdminUI.toast(editSlug ? 'Турнир обновлён' : 'Турнир успешно добавлен', 'ok');
+    closeModal();
+    await loadCompetitions();
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Сохранить';
+  }
+});
+
+document.getElementById('btnDeleteComp').addEventListener('click', async () => {
+  const editSlug = document.getElementById('editCompSlug').value;
+  if (!editSlug) return;
+
+  if (!confirm('Вы уверены, что хотите удалить это соревнование?')) return;
+
+  try {
+    const res = await fetch(`/api/admin/competitions/${editSlug}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Не удалось удалить соревнование');
+    }
+
+    NOVAAdminUI.toast('Соревнование удалено', 'ok');
+    closeModal();
+    await loadCompetitions();
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -78,26 +78,31 @@ export function serializePublicCompetition(
     content = JSON.parse(c.content || '{}');
   } catch {}
   const pad = (n: number) => String(n).padStart(2, '0');
-  const d = new Date(c.startDate);
+  const startRaw = (c as any).startDate || (c as any).date;
+  const endRaw = (c as any).endDate || (c as any).date;
+  const d = startRaw ? new Date(startRaw) : new Date();
+  const e = endRaw ? new Date(endRaw) : d;
+  const dateStartStr = isNaN(d.getTime()) ? '' : `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const dateEndStr = isNaN(e.getTime()) ? '' : `${e.getFullYear()}-${pad(e.getMonth() + 1)}-${pad(e.getDate())}`;
+  const title = (c as any).title || (c as any).name || 'Соревнование NOVA';
+  const shortTitle = (c as any).shortName || (c as any).title || (c as any).name || 'NOVA CUP';
+
   return {
     id: c.slug,
-    title: c.name,
-    shortTitle: c.shortName || c.name,
+    title,
+    shortTitle,
     stage: STAGE_BY_STATUS[c.status] || 'upcoming',
     registration: registrationState(c),
-    dateLabel: c.dateLabel,
-    dateStart: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
-    dateEnd: (() => {
-      const e = new Date(c.endDate);
-      return `${e.getFullYear()}-${pad(e.getMonth() + 1)}-${pad(e.getDate())}`;
-    })(),
-    region: c.region,
-    place: c.location,
-    discipline: c.discipline,
-    disciplineLabel: c.disciplineLabel,
-    format: c.format,
-    entryType: c.entryType,
-    organizer: c.organizer,
+    dateLabel: c.dateLabel || ((c as any).date ? new Date((c as any).date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }) : ''),
+    dateStart: dateStartStr,
+    dateEnd: dateEndStr,
+    region: c.region || '',
+    place: c.location || '',
+    discipline: c.discipline || 'spinning',
+    disciplineLabel: c.disciplineLabel || 'Спиннинг с лодок',
+    format: c.format || '',
+    entryType: c.entryType || 'both',
+    organizer: c.organizer || 'NOVA Anglers Alliance',
     contact: c.contact,
     participants: counts.active,
     approvedCount: counts.approved,

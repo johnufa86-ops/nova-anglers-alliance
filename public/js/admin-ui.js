@@ -30,7 +30,9 @@ window.NOVAAdminUI = (function () {
     const links = [
       ['/admin', 'Дашборд', 'dashboard'],
       ['/admin/applications', 'Заявки', 'applications'],
-      ['/admin/content', 'Редактор главной', 'content'],
+      ['/admin/competitions', 'Соревнования', 'competitions'],
+      ['/admin/news', 'Новости', 'news'],
+      ['/admin/content', 'Контент сайта', 'content'],
       ['/admin/payment-details', 'Реквизиты', 'payment-details'],
     ];
     return `

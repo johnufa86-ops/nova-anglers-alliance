@@ -422,3 +422,21 @@ model SiteSetting {
   value     String   @default("")
   updatedAt DateTime @updatedAt
 }
+
+model NewsArticle {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  category    String   @default("Новости")
+  excerpt     String   @default("")
+  body        String   @default("")
+  coverImage  String?  @default("")
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, publishedAt])
+  @@index([slug])
+}
+

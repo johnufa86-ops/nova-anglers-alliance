@@ -60,7 +60,7 @@
 <div id="contentRoot">
 <section>
   <div class="wrap reveal">
-    <div class="news-img" style="border-radius:4px;margin-bottom:36px;max-width:900px;"></div>
+    <div id="aCover" class="news-img" style="border-radius:4px;margin-bottom:36px;max-width:900px;display:none;"></div>
     <div class="prose" id="aBody" style="max-width:820px;"></div>
     <div id="aLinks" style="margin-top:32px;display:flex;gap:14px;flex-wrap:wrap;"></div>
   </div>
@@ -104,28 +104,97 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 <script>
-const id = NOVA.qs('id') || NOVA_DATA.news[0].id;
-const n = NOVA.byId(NOVA_DATA.news, id);
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 
-if(!n){
+function renderArticle(n) {
+  document.getElementById('notFound').style.display = 'none';
+  document.getElementById('articleRoot').style.display = 'block';
+  document.getElementById('contentRoot').style.display = 'block';
+
+  document.getElementById('pageTitle').textContent = n.title + ' — NOVA ANGLERS ALLIANCE';
+  if (n.excerpt) {
+    document.getElementById('pageDescription').setAttribute('content', n.excerpt.slice(0, 160));
+  }
+  document.getElementById('bcTitle').textContent = n.title;
+  document.getElementById('aCat').textContent = n.category || 'Новости';
+  document.getElementById('aTitle').textContent = n.title;
+  document.getElementById('aDate').textContent = formatDate(n.publishedAt || n.date);
+
+  const cover = document.getElementById('aCover');
+  if (n.coverImage) {
+    cover.style.display = 'block';
+    cover.style.backgroundImage = `url('${n.coverImage}')`;
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+  } else {
+    cover.style.display = 'none';
+  }
+
+  // Support formatting: split paragraphs by double newline
+  const paragraphs = (n.body || '').split(/\n\n+/).filter(Boolean);
+  document.getElementById('aBody').innerHTML = paragraphs.length
+    ? paragraphs.map(p => `<p style="line-height:1.75;margin-bottom:1.5em;color:var(--text);">${NOVAAdminUI ? NOVAAdminUI.esc(p) : p}</p>`).join('')
+    : `<p>${n.excerpt || ''}</p>`;
+
+  const links = [];
+  if (n.competitionId && typeof NOVA !== 'undefined') {
+    const c = NOVA.competition(n.competitionId);
+    if (c) links.push(`<a href="competition.html?id=${c.id}" class="btn btn-ghost btn-sm">Турнир: ${c.shortTitle}</a>`);
+  }
+  if (n.athleteId && typeof NOVA !== 'undefined') {
+    const a = NOVA.athlete(n.athleteId);
+    if (a) links.push(`<a href="athlete.html?id=${a.id}" class="btn btn-ghost btn-sm">Профиль: ${a.name}</a>`);
+  }
+  if (n.teamId && typeof NOVA !== 'undefined') {
+    const t = NOVA.team(n.teamId);
+    if (t) links.push(`<a href="team.html?id=${t.id}" class="btn btn-ghost btn-sm">Команда: ${t.name}</a>`);
+  }
+  document.getElementById('aLinks').innerHTML = links.join('');
+}
+
+function showNotFound() {
   document.getElementById('articleRoot').style.display = 'none';
   document.getElementById('contentRoot').style.display = 'none';
   document.getElementById('notFound').style.display = 'block';
-} else {
-  document.getElementById('pageTitle').textContent = n.title + ' — NOVA ANGLERS ALLIANCE';
-  document.getElementById('pageDescription').setAttribute('content', n.excerpt.slice(0,160));
-  document.getElementById('bcTitle').textContent = n.title;
-  document.getElementById('aCat').textContent = n.category;
-  document.getElementById('aTitle').textContent = n.title;
-  document.getElementById('aDate').textContent = n.date;
-  document.getElementById('aBody').innerHTML = `<p>${n.body}</p>`;
-
-  const links = [];
-  if(n.competitionId){ const c = NOVA.competition(n.competitionId); if(c) links.push(`<a href="competition.html?id=${c.id}" class="btn btn-ghost btn-sm">Турнир: ${c.shortTitle}</a>`); }
-  if(n.athleteId){ const a = NOVA.athlete(n.athleteId); if(a) links.push(`<a href="athlete.html?id=${a.id}" class="btn btn-ghost btn-sm">Профиль: ${a.name}</a>`); }
-  if(n.teamId){ const t = NOVA.team(n.teamId); if(t) links.push(`<a href="team.html?id=${t.id}" class="btn btn-ghost btn-sm">Команда: ${t.name}</a>`); }
-  document.getElementById('aLinks').innerHTML = links.join('');
 }
+
+async function loadArticle() {
+  const param = (typeof NOVA !== 'undefined' ? NOVA.qs('id') || NOVA.qs('slug') : null) ||
+    new URLSearchParams(window.location.search).get('id') ||
+    new URLSearchParams(window.location.search).get('slug');
+
+  if (param) {
+    try {
+      const res = await fetch(`/api/news/${encodeURIComponent(param)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.article) {
+          renderArticle(data.article);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Dynamic article fetch failed, trying fallback', e);
+    }
+  }
+
+  // Fallback to static NOVA_DATA
+  const targetId = param || (typeof NOVA_DATA !== 'undefined' && NOVA_DATA.news[0]?.id);
+  const fallback = typeof NOVA !== 'undefined' && typeof NOVA_DATA !== 'undefined' ? NOVA.byId(NOVA_DATA.news, targetId) : null;
+
+  if (fallback) {
+    renderArticle(fallback);
+  } else {
+    showNotFound();
+  }
+}
+
+loadArticle();
 </script>
 </body>
 </html>

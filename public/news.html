@@ -95,30 +95,72 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 <script>
-const cats = [...new Set(NOVA_DATA.news.map(n=>n.category))];
-document.getElementById('catFilters').insertAdjacentHTML('beforeend',
-  cats.map(c=>`<button class="filter-btn" data-cat="${c}">${c}</button>`).join(''));
+let newsItems = [];
 
-function renderNews(cat){
-  const items = cat === 'all' ? NOVA_DATA.news : NOVA_DATA.news.filter(n=>n.category===cat);
-  document.getElementById('newsGrid').innerHTML = items.length ? items.map((n,i)=>`
-    <a href="article.html?id=${n.id}" class="news-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
-      <div class="news-img"><span class="news-cat">${n.category}</span></div>
+function getCoverStyle(item) {
+  if (item.coverImage) {
+    return `background-image: url('${item.coverImage}'); background-size: cover; background-position: center;`;
+  }
+  return '';
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function renderNews(cat) {
+  const items = cat === 'all' ? newsItems : newsItems.filter(n => n.category === cat);
+  document.getElementById('newsGrid').innerHTML = items.length ? items.map((n) => `
+    <a href="article.html?id=${encodeURIComponent(n.slug || n.id)}" class="news-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
+      <div class="news-img" style="${getCoverStyle(n)}"><span class="news-cat">${n.category || 'Новости'}</span></div>
       <div class="news-body">
-        <span class="news-date mono">${n.date}</span>
+        <span class="news-date mono">${formatDate(n.publishedAt || n.date)}</span>
         <h4>${n.title}</h4>
-        <p>${n.excerpt}</p>
+        <p>${n.excerpt || ''}</p>
       </div>
     </a>`).join('') : emptyState('Новостей в этой категории пока нет');
 }
-renderNews('all');
-document.getElementById('catFilters').addEventListener('click', e=>{
+
+function setupFilters() {
+  const cats = [...new Set(newsItems.map(n => n.category).filter(Boolean))];
+  const container = document.getElementById('catFilters');
+  container.innerHTML = '<button class="filter-btn active" data-cat="all">Все</button>' +
+    cats.map(c => `<button class="filter-btn" data-cat="${c}">${c}</button>`).join('');
+}
+
+async function initNews() {
+  try {
+    const res = await fetch('/api/news');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.news && data.news.length > 0) {
+        newsItems = data.news;
+      }
+    }
+  } catch (e) {
+    console.warn('API news failed, using fallback data', e);
+  }
+
+  if (!newsItems.length && typeof NOVA_DATA !== 'undefined' && NOVA_DATA.news) {
+    newsItems = NOVA_DATA.news;
+  }
+
+  setupFilters();
+  renderNews('all');
+}
+
+document.getElementById('catFilters').addEventListener('click', e => {
   const btn = e.target.closest('.filter-btn');
-  if(!btn) return;
-  document.querySelectorAll('#catFilters .filter-btn').forEach(b=>b.classList.remove('active'));
+  if (!btn) return;
+  document.querySelectorAll('#catFilters .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderNews(btn.dataset.cat);
 });
+
+initNews();
 </script>
 </body>
 </html>

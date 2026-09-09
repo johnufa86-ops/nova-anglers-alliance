@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Редактор главной страницы — NOVA ANGLERS ALLIANCE</title>
+<title>Редактор контента сайта — NOVA ANGLERS ALLIANCE</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +15,37 @@
 <meta name="theme-color" content="#0a2346">
 <link rel="stylesheet" href="/style.css">
 <style>
+.tab-nav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn:hover {
+  color: var(--text);
+}
+.tab-btn.active {
+  color: var(--pulse-2);
+  border-bottom-color: var(--pulse-2);
+}
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -159,127 +190,222 @@
   <main class="admin-main">
     <div class="wrap" id="adminContent">
 
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:20px;">
         <div>
           <div class="eyebrow">Управление сайтом</div>
-          <h1 class="admin-title">Редактор главной страницы</h1>
+          <h1 class="admin-title">Редактор контента сайта</h1>
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
           <a href="/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Открыть главную ↗</a>
-          <button type="button" class="btn btn-primary btn-sm" id="saveBtnTop">Сохранить изменения</button>
+          <button type="button" class="btn btn-primary btn-sm" id="saveBtnTop">Сохранить всё</button>
         </div>
       </div>
-      <p class="admin-sub" style="margin-bottom:28px;">Тексты, заголовки и показатели сезона, которые видят все посетители сайта.</p>
+      <p class="admin-sub" style="margin-bottom:24px;">Настройка текстов, контактов, показателей сезона и соцсетей.</p>
 
-      <form id="contentForm">
-        
-        <!-- КАРТОЧКА 1: БАННЕР HERO -->
-        <div class="form-card">
-          <h2>1. Главный баннер (Hero-блок)</h2>
-          <p class="card-desc">Первый экран сайта. Формирует первое впечатление участников и зрителей.</p>
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="tab-home">Главная (Hero и цифры)</button>
+        <button class="tab-btn" data-tab="tab-contacts">Контакты и соцсети</button>
+        <button class="tab-btn" data-tab="tab-footer">Футер и бренд</button>
+      </div>
 
-          <div class="field-group">
-            <label for="f_eyebrow">Верхняя надпись (Eyebrow)</label>
-            <input type="text" id="f_eyebrow" placeholder="СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА">
+      <!-- TAB 1: ГЛАВНАЯ СТРАНИЦА -->
+      <div class="tab-panel active" id="tab-home">
+        <form id="homeContentForm">
+          
+          <div class="form-card">
+            <h2>1. Главный баннер (Hero-блок)</h2>
+            <p class="card-desc">Первый экран сайта. Формирует первое впечатление участников и зрителей.</p>
+
+            <div class="field-group">
+              <label for="f_eyebrow">Верхняя надпись (Eyebrow)</label>
+              <input type="text" id="f_eyebrow" placeholder="СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА">
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="f_title">Основной заголовок (Строка 1)</label>
+                <input type="text" id="f_title" placeholder="Рыболовный спорт.">
+              </div>
+              <div class="field-group">
+                <label for="f_titleAccent">Акцентный заголовок золотом (Строка 2)</label>
+                <input type="text" id="f_titleAccent" placeholder="Новый уровень.">
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="f_sub">Подзаголовок / Описание лиги</label>
+              <textarea id="f_sub" rows="3" placeholder="NOVA Anglers Alliance объединяет спортсменов..."></textarea>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="f_ctaPrimaryText">Кнопка 1: Текст</label>
+                <input type="text" id="f_ctaPrimaryText" placeholder="Ближайшие соревнования">
+              </div>
+              <div class="field-group">
+                <label for="f_ctaPrimaryUrl">Кнопка 1: Ссылка</label>
+                <input type="text" id="f_ctaPrimaryUrl" placeholder="/competitions">
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="f_ctaSecondaryText">Кнопка 2: Текст</label>
+                <input type="text" id="f_ctaSecondaryText" placeholder="Стать участником">
+              </div>
+              <div class="field-group">
+                <label for="f_ctaSecondaryUrl">Кнопка 2: Ссылка</label>
+                <input type="text" id="f_ctaSecondaryUrl" placeholder="/contacts">
+              </div>
+            </div>
           </div>
 
-          <div class="form-grid-2">
-            <div class="field-group">
-              <label for="f_title">Основной заголовок (Строка 1)</label>
-              <input type="text" id="f_title" placeholder="Рыболовный спорт.">
-            </div>
-            <div class="field-group">
-              <label for="f_titleAccent">Акцентный заголовок золотом (Строка 2)</label>
-              <input type="text" id="f_titleAccent" placeholder="Новый уровень.">
+          <div class="form-card">
+            <h2>2. Статистика лиги (Цифры на главной)</h2>
+            <p class="card-desc">Ключевые показатели на первом экране. При загрузке страницы анимируются счетчиками.</p>
+
+            <div class="form-grid-2" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+              <div class="field-group">
+                <label for="f_statAthletes">Спортсменов</label>
+                <input type="text" id="f_statAthletes" placeholder="482">
+              </div>
+              <div class="field-group">
+                <label for="f_statCrews">Экипажей</label>
+                <input type="text" id="f_statCrews" placeholder="37">
+              </div>
+              <div class="field-group">
+                <label for="f_statTournaments">Турниров в сезоне</label>
+                <input type="text" id="f_statTournaments" placeholder="19">
+              </div>
+              <div class="field-group">
+                <label for="f_statRegions">Регионов</label>
+                <input type="text" id="f_statRegions" placeholder="12">
+              </div>
             </div>
           </div>
 
-          <div class="field-group">
-            <label for="f_sub">Подзаголовок / Описание лиги</label>
-            <textarea id="f_sub" rows="3" placeholder="NOVA Anglers Alliance объединяет спортсменов..."></textarea>
+          <div class="form-card">
+            <h2>3. Интерактивный предпросмотр (Live Preview)</h2>
+            <p class="card-desc">Как баннер выглядит прямо сейчас при введённых данных.</p>
+
+            <div class="preview-box">
+              <div class="preview-eyebrow" id="prev_eyebrow">СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА</div>
+              <div class="preview-title">
+                <span id="prev_title">Рыболовный спорт.</span><br>
+                <span class="accent" id="prev_titleAccent">Новый уровень.</span>
+              </div>
+              <div class="preview-sub" id="prev_sub">NOVA Anglers Alliance объединяет спортсменов...</div>
+              <div style="display:flex;gap:12px;margin-bottom:12px;">
+                <span class="btn btn-primary btn-sm" id="prev_ctaPrimaryText">Ближайшие соревнования</span>
+                <span class="btn btn-ghost btn-sm" id="prev_ctaSecondaryText">Стать участником</span>
+              </div>
+              <div class="preview-stats">
+                <div class="preview-stat"><b id="prev_statAthletes">482</b><span>Спортсменов</span></div>
+                <div class="preview-stat"><b id="prev_statCrews">37</b><span>Экипажей</span></div>
+                <div class="preview-stat"><b id="prev_statTournaments">19</b><span>Турниров</span></div>
+                <div class="preview-stat"><b id="prev_statRegions">12</b><span>Регионов</span></div>
+              </div>
+            </div>
           </div>
 
-          <div class="form-grid-2">
-            <div class="field-group">
-              <label for="f_ctaPrimaryText">Кнопка 1: Текст</label>
-              <input type="text" id="f_ctaPrimaryText" placeholder="Ближайшие соревнования">
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button type="submit" class="btn btn-primary" id="saveHomeBtn">Сохранить главную</button>
+            <button type="button" class="btn btn-ghost" id="resetHomeBtn">Сбросить к умолчанию</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 2: КОНТАКТЫ И СОЦСЕТИ -->
+      <div class="tab-panel" id="tab-contacts">
+        <form id="contactsForm">
+          <div class="form-card">
+            <h2>Контакты Альянса</h2>
+            <p class="card-desc">Отображаются на странице контактов (/contacts) и в подвале сайта.</p>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="c_phone">Единый телефон для связи</label>
+                <input type="text" id="c_phone" placeholder="+7 (800) 555-01-01">
+              </div>
+              <div class="field-group">
+                <label for="c_emailGeneral">Email: Общие вопросы</label>
+                <input type="email" id="c_emailGeneral" placeholder="info@nova-anglers.ru">
+              </div>
             </div>
-            <div class="field-group">
-              <label for="f_ctaPrimaryUrl">Кнопка 1: Ссылка</label>
-              <input type="text" id="f_ctaPrimaryUrl" placeholder="/competitions">
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="c_emailPartners">Email: Партнёрство и спонсоры</label>
+                <input type="email" id="c_emailPartners" placeholder="partners@nova-anglers.ru">
+              </div>
+              <div class="field-group">
+                <label for="c_emailMedia">Email: Пресс-центр и СМИ</label>
+                <input type="email" id="c_emailMedia" placeholder="media@nova-anglers.ru">
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="c_address">Адрес штаб-квартиры / Локация</label>
+                <input type="text" id="c_address" placeholder="г. Москва · NOVA ANGLERS ALLIANCE HQ">
+              </div>
+              <div class="field-group">
+                <label for="c_workingHours">Часы приёма заявок и работы</label>
+                <input type="text" id="c_workingHours" placeholder="Пн–Пт: 09:00 — 19:00 (МСК)">
+              </div>
             </div>
           </div>
 
-          <div class="form-grid-2">
-            <div class="field-group">
-              <label for="f_ctaSecondaryText">Кнопка 2: Текст</label>
-              <input type="text" id="f_ctaSecondaryText" placeholder="Стать участником">
+          <div class="form-card">
+            <h2>Официальные сообщества и соцсети</h2>
+            <p class="card-desc">Ссылки на каналы и группы NOVA в футере сайта.</p>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label for="c_telegramUrl">Telegram (Канал или Бот)</label>
+                <input type="text" id="c_telegramUrl" placeholder="https://t.me/nova_anglers">
+              </div>
+              <div class="field-group">
+                <label for="c_vkUrl">Сообщество ВКонтакте (VK)</label>
+                <input type="text" id="c_vkUrl" placeholder="https://vk.com/nova_anglers">
+              </div>
             </div>
+
             <div class="field-group">
-              <label for="f_ctaSecondaryUrl">Кнопка 2: Ссылка</label>
-              <input type="text" id="f_ctaSecondaryUrl" placeholder="/contacts">
+              <label for="c_youtubeUrl">YouTube / Rutube / Видеоканал</label>
+              <input type="text" id="c_youtubeUrl" placeholder="https://youtube.com/@nova_anglers">
             </div>
           </div>
-        </div>
 
-        <!-- КАРТОЧКА 2: СТАТИСТИКА СЕЗОНА -->
-        <div class="form-card">
-          <h2>2. Статистика лиги (Цифры на главной)</h2>
-          <p class="card-desc">Ключевые показатели на первом экране. При загрузке страницы анимируются счетчиками.</p>
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button type="submit" class="btn btn-primary" id="saveContactsBtn">Сохранить контакты</button>
+          </div>
+        </form>
+      </div>
 
-          <div class="form-grid-2" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+      <!-- TAB 3: ФУТЕР И БРЕНД -->
+      <div class="tab-panel" id="tab-footer">
+        <form id="footerForm">
+          <div class="form-card">
+            <h2>Подвал сайта и информация о бренде</h2>
+            <p class="card-desc">Глобальная подпись и копирайт, выводимые на всех страницах ресурса.</p>
+
             <div class="field-group">
-              <label for="f_statAthletes">Спортсменов</label>
-              <input type="text" id="f_statAthletes" placeholder="482">
+              <label for="c_brandDesc">Краткое позиционирование лиги (Brand Tagline)</label>
+              <textarea id="c_brandDesc" rows="3" placeholder="Российская спортивная экосистема рыболовного спорта..."></textarea>
             </div>
+
             <div class="field-group">
-              <label for="f_statCrews">Экипажей</label>
-              <input type="text" id="f_statCrews" placeholder="37">
-            </div>
-            <div class="field-group">
-              <label for="f_statTournaments">Турниров в сезоне</label>
-              <input type="text" id="f_statTournaments" placeholder="19">
-            </div>
-            <div class="field-group">
-              <label for="f_statRegions">Регионов</label>
-              <input type="text" id="f_statRegions" placeholder="12">
+              <label for="c_copyright">Копирайт</label>
+              <input type="text" id="c_copyright" placeholder="© 2026 NOVA Anglers Alliance. Все права защищены.">
             </div>
           </div>
-        </div>
 
-        <!-- КАРТОЧКА 3: ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР -->
-        <div class="form-card">
-          <h2>Предварительный просмотр (Live Preview)</h2>
-          <p class="card-desc">Так баннер будет выглядеть на реальном сайте после сохранения.</p>
-
-          <div class="preview-box">
-            <div class="preview-eyebrow" id="prev_eyebrow">СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА</div>
-            <div class="preview-title">
-              <span id="prev_title">Рыболовный спорт.</span><br>
-              <span class="accent" id="prev_titleAccent">Новый уровень.</span>
-            </div>
-            <p class="preview-sub" id="prev_sub">NOVA Anglers Alliance объединяет спортсменов...</p>
-
-            <div style="display:flex;gap:12px;margin-bottom:20px;">
-              <span class="btn btn-primary btn-sm" id="prev_ctaPrimary">Ближайшие соревнования</span>
-              <span class="btn btn-ghost btn-sm" id="prev_ctaSecondary">Стать участником</span>
-            </div>
-
-            <div class="preview-stats">
-              <div class="preview-stat"><b id="prev_statAthletes">482</b><span>Спортсменов</span></div>
-              <div class="preview-stat"><b id="prev_statCrews">37</b><span>Экипажей</span></div>
-              <div class="preview-stat"><b id="prev_statTournaments">19</b><span>Турниров в сезоне</span></div>
-              <div class="preview-stat"><b id="prev_statRegions">12</b><span>Регионов</span></div>
-            </div>
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button type="submit" class="btn btn-primary" id="saveFooterBtn">Сохранить футер</button>
           </div>
-        </div>
-
-        <div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:50px;">
-          <button type="button" class="btn btn-ghost" id="resetBtn">Сбросить к значениям по умолчанию</button>
-          <button type="submit" class="btn btn-primary" id="saveBtn">Сохранить изменения</button>
-        </div>
-
-      </form>
+        </form>
+      </div>
 
     </div>
   </main>
@@ -288,17 +414,33 @@
 
 <script src="/common.js"></script>
 <script src="/js/api.js"></script>
-<script src="/js/admin.js"></script>
 <script src="/js/admin-ui.js"></script>
 <script>
-const fields = [
+// TAB SWITCHING
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const target = document.getElementById(btn.dataset.tab);
+    if (target) target.classList.add('active');
+  });
+});
+
+const homeFields = [
   'eyebrow', 'title', 'titleAccent', 'sub',
   'ctaPrimaryText', 'ctaPrimaryUrl', 'ctaSecondaryText', 'ctaSecondaryUrl',
   'statAthletes', 'statCrews', 'statTournaments', 'statRegions'
 ];
 
+const contactFields = [
+  'phone', 'emailGeneral', 'emailPartners', 'emailMedia',
+  'address', 'workingHours', 'telegramUrl', 'vkUrl', 'youtubeUrl',
+  'brandDesc', 'copyright'
+];
+
 function updatePreview() {
-  fields.forEach(f => {
+  homeFields.forEach(f => {
     const input = document.getElementById('f_' + f);
     const prev = document.getElementById('prev_' + f);
     if (input && prev) {
@@ -307,57 +449,90 @@ function updatePreview() {
   });
 }
 
-fields.forEach(f => {
+homeFields.forEach(f => {
   const el = document.getElementById('f_' + f);
-  if (el) {
-    el.addEventListener('input', updatePreview);
-  }
+  if (el) el.addEventListener('input', updatePreview);
 });
 
-async function loadContent() {
+async function loadAllContent() {
   try {
-    const res = await NOVA_API.get('/api/admin/content/home');
-    const s = res?.settings || {};
-    fields.forEach(f => {
+    const [homeRes, contactsRes] = await Promise.all([
+      NOVA_API.get('/api/admin/content/home').catch(() => ({})),
+      NOVA_API.get('/api/admin/content/contacts').catch(() => ({}))
+    ]);
+
+    const hs = homeRes?.settings || {};
+    homeFields.forEach(f => {
       const el = document.getElementById('f_' + f);
-      if (el && s[f] !== undefined) {
-        el.value = s[f];
-      }
+      if (el && hs[f] !== undefined) el.value = hs[f];
     });
     updatePreview();
+
+    const cs = contactsRes?.settings || {};
+    contactFields.forEach(f => {
+      const el = document.getElementById('c_' + f);
+      if (el && cs[f] !== undefined) el.value = cs[f];
+    });
   } catch (e) {
-    NOVAAdminUI.toast(e.message || 'Ошибка загрузки настроек', 'error');
+    NOVAAdminUI.toast(e.message || 'Ошибка загрузки контента', 'error');
   }
 }
 
-async function saveContent(e) {
-  if (e) e.preventDefault();
-  const btn1 = document.getElementById('saveBtn');
-  const btn2 = document.getElementById('saveBtnTop');
-  btn1.disabled = true; btn1.textContent = 'Сохранение…';
-  if (btn2) { btn2.disabled = true; btn2.textContent = 'Сохранение…'; }
-
+async function saveHome() {
+  const btn = document.getElementById('saveHomeBtn');
+  btn.disabled = true; btn.textContent = 'Сохранение…';
   const payload = {};
-  fields.forEach(f => {
+  homeFields.forEach(f => {
     const el = document.getElementById('f_' + f);
     if (el) payload[f] = el.value.trim();
   });
 
   try {
-    const res = await NOVA_API.request('PUT', '/api/admin/content/home', { settings: payload });
-    NOVAAdminUI.toast('Настройки главной страницы успешно сохранены!');
+    await NOVA_API.request('PUT', '/api/admin/content/home', { settings: payload });
+    NOVAAdminUI.toast('Настройки главной успешно сохранены!');
   } catch (err) {
-    NOVAAdminUI.toast(err.message || 'Не удалось сохранить настройки', 'error');
+    NOVAAdminUI.toast(err.message || 'Ошибка сохранения главной', 'error');
   } finally {
-    btn1.disabled = false; btn1.textContent = 'Сохранить изменения';
-    if (btn2) { btn2.disabled = false; btn2.textContent = 'Сохранить изменения'; }
+    btn.disabled = false; btn.textContent = 'Сохранить главную';
   }
 }
 
-document.getElementById('contentForm').addEventListener('submit', saveContent);
-document.getElementById('saveBtnTop').addEventListener('click', () => saveContent());
+async function saveContacts() {
+  const btn = document.getElementById('saveContactsBtn');
+  btn.disabled = true; btn.textContent = 'Сохранение…';
+  const payload = {};
+  contactFields.forEach(f => {
+    const el = document.getElementById('c_' + f);
+    if (el) payload[f] = el.value.trim();
+  });
 
-document.getElementById('resetBtn').addEventListener('click', () => {
+  try {
+    await NOVA_API.request('PUT', '/api/admin/content/contacts', { settings: payload });
+    NOVAAdminUI.toast('Контакты и реквизиты сохранены!');
+  } catch (err) {
+    NOVAAdminUI.toast(err.message || 'Ошибка сохранения контактов', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Сохранить контакты';
+  }
+}
+
+async function saveAll() {
+  const btnTop = document.getElementById('saveBtnTop');
+  btnTop.disabled = true; btnTop.textContent = 'Сохранение…';
+  try {
+    await Promise.all([saveHome(), saveContacts()]);
+  } finally {
+    btnTop.disabled = false; btnTop.textContent = 'Сохранить всё';
+  }
+}
+
+document.getElementById('homeContentForm').addEventListener('submit', (e) => { e.preventDefault(); saveHome(); });
+document.getElementById('contactsForm').addEventListener('submit', (e) => { e.preventDefault(); saveContacts(); });
+document.getElementById('footerForm').addEventListener('submit', (e) => { e.preventDefault(); saveContacts(); });
+document.getElementById('saveFooterBtn').addEventListener('click', (e) => { e.preventDefault(); saveContacts(); });
+document.getElementById('saveBtnTop').addEventListener('click', saveAll);
+
+document.getElementById('resetHomeBtn').addEventListener('click', () => {
   if (confirm('Сбросить поля к исходным текстам по умолчанию?')) {
     document.getElementById('f_eyebrow').value = 'СЕЗОН 2026 — РЕГИСТРАЦИЯ ОТКРЫТА';
     document.getElementById('f_title').value = 'Рыболовный спорт.';
@@ -381,7 +556,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     document.getElementById('loginView').style.display = 'none';
     document.getElementById('adminShell').style.display = 'flex';
     NOVAAdminUI.mountShell('content', user);
-    await loadContent();
+    await loadAllContent();
   } else {
     document.getElementById('loginView').style.display = 'block';
   }

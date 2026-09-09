@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Управление новостями — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+.news-table-wrap {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 20px;
+}
+.news-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.news-table th {
+  background: rgba(255,255,255,0.02);
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--line);
+}
+.news-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+}
+.news-table tr:hover td {
+  background: rgba(255,255,255,0.015);
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.status-pill.published {
+  background: rgba(87,230,161,0.12);
+  color: #57e6a1;
+  border: 1px solid rgba(87,230,161,0.25);
+}
+.status-pill.draft {
+  background: rgba(255,183,77,0.12);
+  color: #ffb74d;
+  border: 1px solid rgba(255,183,77,0.25);
+}
+.cat-badge {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--pulse-2);
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 10, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transform: translateY(15px);
+  transition: transform 0.2s ease;
+}
+.modal-backdrop.open .modal-card {
+  transform: translateY(0);
+}
+.modal-header {
+  padding: 20px 26px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+  color: var(--text);
+}
+.modal-body {
+  padding: 26px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-footer {
+  padding: 16px 26px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.01);
+}
+.field-group {
+  margin-bottom: 18px;
+}
+.field-group label {
+  display: block;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field-group input, .field-group select, .field-group textarea {
+  width: 100%;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  border-radius: var(--radius);
+  outline: none;
+  box-sizing: border-box;
+}
+.field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+  border-color: var(--pulse);
+}
+.field-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-wrap input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--pulse);
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <div class="eyebrow">Контент и медиа</div>
+          <h1 class="admin-title">Управление новостями</h1>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="/news" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Открыть раздел новостей ↗</a>
+          <button type="button" class="btn btn-primary btn-sm" id="btnCreateArticle">+ Добавить новость</button>
+        </div>
+      </div>
+      <p class="admin-sub" style="margin-bottom:28px;">Публикация турнирных анонсов, интервью, отчётов и пресс-релизов Альянса.</p>
+
+      <div id="articlesLoading" style="padding:40px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+        Загрузка публикаций...
+      </div>
+
+      <div id="articlesList" style="display:none;">
+        <div class="news-table-wrap">
+          <table class="news-table">
+            <thead>
+              <tr>
+                <th style="width:40%;">Заголовок</th>
+                <th>Категория</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th style="text-align:right;">Действия</th>
+              </tr>
+            </thead>
+            <tbody id="articlesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<!-- MODAL FOR CREATE / EDIT -->
+<div class="modal-backdrop" id="articleModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalTitle">Новая статья</h2>
+      <button type="button" class="btn btn-ghost btn-sm" id="btnModalClose" style="padding:4px 10px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="articleForm">
+        <input type="hidden" id="editArticleId">
+
+        <div class="field-group">
+          <label for="m_title">Заголовок новости *</label>
+          <input type="text" id="m_title" required placeholder="Например: Открыта регистрация на NOVA CUP — Волга">
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_category">Категория</label>
+            <select id="m_category">
+              <option value="Новости">Новости</option>
+              <option value="Анонс">Анонс</option>
+              <option value="Интервью">Интервью</option>
+              <option value="Результаты">Результаты</option>
+              <option value="Регламент">Регламент</option>
+              <option value="Медиа">Медиа</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="m_slug">URL-адрес (Slug)</label>
+            <input type="text" id="m_slug" placeholder="Оставьте пустым для автогенерации">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="m_cover">Изображение обложки (URL)</label>
+            <input type="text" id="m_cover" placeholder="https://... или /assets/news-cover.jpg">
+          </div>
+          <div class="field-group">
+            <label for="m_date">Дата публикации</label>
+            <input type="datetime-local" id="m_date">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="m_excerpt">Краткий анонс (отображается в карточке)</label>
+          <textarea id="m_excerpt" rows="2" placeholder="Краткое описание в 1-2 предложениях..."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="m_body">Полный текст новости *</label>
+          <textarea id="m_body" rows="8" placeholder="Текст статьи. Поддерживаются абзацы и ссылки..."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label class="toggle-wrap">
+            <input type="checkbox" id="m_isPublished" checked>
+            <span style="font-size:14px;color:var(--text);font-weight:600;">Опубликовать на сайте сразу</span>
+          </label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnDeleteArticle" style="display:none;color:#ff6b81;">Удалить</button>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnModalCancel">Отмена</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnSaveArticle">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script>
+let CURRENT_USER = null;
+let ARTICLES = [];
+
+async function init() {
+  CURRENT_USER = await NOVAAdminUI.guard('news', ['view']);
+  if (!CURRENT_USER) return;
+  loadArticles();
+}
+
+async function loadArticles() {
+  document.getElementById('articlesLoading').style.display = 'block';
+  document.getElementById('articlesList').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/admin/news', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('Не удалось загрузить статьи');
+    const data = await res.json();
+    ARTICLES = data.articles || [];
+    renderArticles();
+  } catch (err) {
+    NOVAAdminUI.toast('Ошибка загрузки: ' + err.message, 'error');
+  } finally {
+    document.getElementById('articlesLoading').style.display = 'none';
+    document.getElementById('articlesList').style.display = 'block';
+  }
+}
+
+function renderArticles() {
+  const tbody = document.getElementById('articlesTableBody');
+  if (!ARTICLES.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:40px;">Пока нет опубликованных статей</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = ARTICLES.map(a => {
+    const pubDate = a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('ru-RU') : '—';
+    const isPub = a.isPublished;
+    return `
+      <tr>
+        <td>
+          <div style="font-weight:600;color:var(--text);margin-bottom:4px;">${NOVAAdminUI.esc(a.title)}</div>
+          <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;">/${NOVAAdminUI.esc(a.slug)}</div>
+        </td>
+        <td><span class="cat-badge">${NOVAAdminUI.esc(a.category || 'Новости')}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);">${pubDate}</td>
+        <td>
+          <span class="status-pill ${isPub ? 'published' : 'draft'}">
+            ${isPub ? '● Опубликовано' : '○ Черновик'}
+          </span>
+        </td>
+        <td style="text-align:right;">
+          <button class="btn btn-ghost btn-sm" onclick="editArticle('${a.id}')" style="margin-right:6px;">Редактировать</button>
+          <a href="/article.html?id=${a.slug || a.id}" target="_blank" class="btn btn-ghost btn-sm">Просмотр ↗</a>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function openModal(article = null) {
+  const modal = document.getElementById('articleModal');
+  const title = document.getElementById('modalTitle');
+  const deleteBtn = document.getElementById('btnDeleteArticle');
+
+  if (article) {
+    title.textContent = 'Редактировать новость';
+    document.getElementById('editArticleId').value = article.id;
+    document.getElementById('m_title').value = article.title || '';
+    document.getElementById('m_slug').value = article.slug || '';
+    document.getElementById('m_category').value = article.category || 'Новости';
+    document.getElementById('m_cover').value = article.coverImage || '';
+    document.getElementById('m_excerpt').value = article.excerpt || '';
+    document.getElementById('m_body').value = article.body || '';
+    document.getElementById('m_isPublished').checked = Boolean(article.isPublished);
+
+    if (article.publishedAt) {
+      const d = new Date(article.publishedAt);
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      document.getElementById('m_date').value = d.toISOString().slice(0, 16);
+    } else {
+      document.getElementById('m_date').value = new Date().toISOString().slice(0, 16);
+    }
+
+    deleteBtn.style.display = 'block';
+  } else {
+    title.textContent = 'Новая статья';
+    document.getElementById('editArticleId').value = '';
+    document.getElementById('articleForm').reset();
+    document.getElementById('m_date').value = new Date().toISOString().slice(0, 16);
+    document.getElementById('m_isPublished').checked = true;
+    deleteBtn.style.display = 'none';
+  }
+
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('articleModal').classList.remove('open');
+}
+
+window.editArticle = function(id) {
+  const art = ARTICLES.find(a => a.id === id);
+  if (art) openModal(art);
+};
+
+document.getElementById('btnCreateArticle').addEventListener('click', () => openModal(null));
+document.getElementById('btnModalClose').addEventListener('click', closeModal);
+document.getElementById('btnModalCancel').addEventListener('click', closeModal);
+
+document.getElementById('btnSaveArticle').addEventListener('click', async () => {
+  const id = document.getElementById('editArticleId').value;
+  const title = document.getElementById('m_title').value.trim();
+  if (!title) {
+    NOVAAdminUI.toast('Укажите заголовок статьи', 'error');
+    return;
+  }
+
+  const payload = {
+    title,
+    slug: document.getElementById('m_slug').value.trim(),
+    category: document.getElementById('m_category').value,
+    coverImage: document.getElementById('m_cover').value.trim(),
+    excerpt: document.getElementById('m_excerpt').value.trim(),
+    body: document.getElementById('m_body').value.trim(),
+    isPublished: document.getElementById('m_isPublished').checked,
+    publishedAt: document.getElementById('m_date').value ? new Date(document.getElementById('m_date').value).toISOString() : new Date().toISOString(),
+  };
+
+  const saveBtn = document.getElementById('btnSaveArticle');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Сохранение...';
+
+  try {
+    const url = id ? `/api/admin/news/${id}` : '/api/admin/news';
+    const method = id ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || 'Ошибка сохранения');
+    }
+
+    NOVAAdminUI.toast(id ? 'Статья обновлена' : 'Статья успешно создана', 'ok');
+    closeModal();
+    await loadArticles();
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Сохранить';
+  }
+});
+
+document.getElementById('btnDeleteArticle').addEventListener('click', async () => {
+  const id = document.getElementById('editArticleId').value;
+  if (!id) return;
+
+  if (!confirm('Вы уверены, что хотите удалить эту статью? Действие необратимо.')) return;
+
+  try {
+    const res = await fetch(`/api/admin/news/${id}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+    if (!res.ok) throw new Error('Не удалось удалить статью');
+
+    NOVAAdminUI.toast('Статья удалена', 'ok');
+    closeModal();
+    await loadArticles();
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
