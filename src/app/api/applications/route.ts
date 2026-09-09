@@ -179,7 +179,7 @@ export async function POST(req: Request) {
             Prisma.sql`
               SELECT "id", "status", "entryType", "maxEntries",
                      "registrationOpenAt", "registrationCloseAt"
-              FROM "competitions"
+              FROM "Competition"
               WHERE "id" = ${competition.id}
               FOR UPDATE
             `
@@ -188,7 +188,8 @@ export async function POST(req: Request) {
           if (!comp) throw ERR.NOT_FOUND('Турнир не найден');
 
           // 2b. registration open RIGHT NOW — re-checked under the lock
-          if (comp.status !== 'registration_open') throw ERR.REGISTRATION_CLOSED();
+          const isOpenStatus = comp.status === 'registration_open' || comp.status === 'upcoming';
+          if (!isOpenStatus) throw ERR.REGISTRATION_CLOSED();
           if (comp.registrationOpenAt && now < comp.registrationOpenAt) {
             throw ERR.REGISTRATION_CLOSED();
           }

@@ -9,9 +9,12 @@
 
 const STAGE_BY_STATUS: Record<string, string> = {
   draft: 'upcoming',
+  upcoming: 'upcoming',
   registration_open: 'upcoming',
   registration_closed: 'upcoming',
+  live: 'live',
   in_progress: 'live',
+  finished: 'finished',
   completed: 'finished',
   archived: 'finished',
 };
@@ -23,7 +26,7 @@ export function registrationState(c: {
   registrationCloseAt: Date | null;
 }): 'open' | 'soon' | 'closed' {
   const now = Date.now();
-  if (c.status === 'registration_open') {
+  if (c.status === 'registration_open' || c.status === 'upcoming') {
     const openFrom = c.registrationOpenAt ? c.registrationOpenAt.getTime() : 0;
     const openTo = c.registrationCloseAt ? c.registrationCloseAt.getTime() : Infinity;
     if (now < openFrom) return 'soon';
