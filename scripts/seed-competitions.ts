@@ -139,16 +139,35 @@ const INITIAL_COMPETITIONS = [
 ];
 
 async function seed() {
-  console.log('Seeding initial competitions into DB...');
+  console.log('Cleaning up test competitions...');
+  const officialSlugs = INITIAL_COMPETITIONS.map((c) => c.slug);
+  const deleted = await db.competition.deleteMany({
+    where: {
+      slug: { notIn: officialSlugs },
+    },
+  });
+  console.log(`Removed ${deleted.count} obsolete/test competitions.`);
+
+  console.log('Seeding official 2026 competitions into DB...');
   for (const c of INITIAL_COMPETITIONS) {
     await db.competition.upsert({
       where: { slug: c.slug },
       update: c,
       create: c,
     });
+    console.log(`  ✓ ${c.slug} (${c.shortName})`);
   }
-  const count = await db.competition.count();
-  console.log(`Successfully seeded! Total competitions in DB: ${count}`);
+
+  const all = await db.competition.findMany({ select: { slug: true, title: true } });
+  console.log(`Successfully seeded! Total competitions in DB: ${all.length}`);
+  for (const c of all) {
+    console.log(`- ${c.slug}: ${c.title}`);
+  }
+
+  await db.$disconnect();
 }
 
-seed().catch(console.error).finally(() => process.exit(0));
+seed().catch((err) => {
+  console.error('Seed error:', err);
+  process.exit(1);
+});
