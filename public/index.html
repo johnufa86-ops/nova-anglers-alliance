@@ -56,7 +56,7 @@
     <div class="hero-stats">
       <div class="stat"><b class="mono" id="homeStatAthletes" data-count="0">0</b><span>Спортсменов</span></div>
       <div class="stat"><b class="mono" id="homeStatCrews" data-count="0">0</b><span>Экипажей</span></div>
-      <div class="stat"><b class="mono" id="homeStatTournaments" data-count="5">5</b><span>Турниров в сезоне</span></div>
+      <div class="stat"><b class="mono" id="homeStatTournaments" data-count="0">0</b><span>Турниров в сезоне</span></div>
       <div class="stat"><b class="mono" id="homeStatRegions" data-count="0">0</b><span>Регионов</span></div>
     </div>
   </div>
@@ -64,22 +64,22 @@
 </div>
 
 <!-- ============ NEXT COMPETITION ============ -->
-<section id="competition">
+<section id="competition" style="display:none;">
   <div class="wrap reveal">
     <div class="eyebrow">Ближайший старт</div>
     <div class="next-card">
       <div>
         <div class="next-status" id="nxStatus"><span class="dot"></span>Регистрация открыта</div>
-        <h3 class="next-title" id="nxTitle">NOVA CUP — Волга. Кубок открытия сезона</h3>
+        <h3 class="next-title" id="nxTitle">—</h3>
         <div class="next-meta">
-          <div><span>Дата</span><b id="nxDate">18–20 сентября 2026</b></div>
-          <div><span>Дисциплина</span><b id="nxDiscipline">Спиннинг, лодка</b></div>
-          <div><span>Место</span><b id="nxPlace">Астраханская область</b></div>
-          <div><span>Формат</span><b id="nxFormat">Экипажи, 2 спортсмена</b></div>
+          <div><span>Дата</span><b id="nxDate">—</b></div>
+          <div><span>Дисциплина</span><b id="nxDiscipline">—</b></div>
+          <div><span>Место</span><b id="nxPlace">—</b></div>
+          <div><span>Формат</span><b id="nxFormat">—</b></div>
         </div>
         <div class="next-actions">
-          <a href="competition.html?id=nova-cup-volga" class="btn btn-primary btn-sm" id="nxRegisterBtn">Регистрация</a>
-          <a href="competition.html?id=nova-cup-volga#reglament" class="btn btn-ghost btn-sm" id="nxReglamentBtn">Регламент</a>
+          <a href="#" class="btn btn-primary btn-sm" id="nxRegisterBtn">Регистрация</a>
+          <a href="#" class="btn btn-ghost btn-sm" id="nxReglamentBtn">Регламент</a>
         </div>
       </div>
       <div class="divider-v"></div>
@@ -93,7 +93,7 @@
         </div>
         <div class="entrants">
           <span class="avatars" id="nxAvatars" style="display:none;"></span>
-          <span id="nxEntrants">Открыт приём заявок · Свободно 80 мест</span>
+          <span id="nxEntrants">—</span>
         </div>
       </div>
     </div>
@@ -105,21 +105,21 @@
   <div class="wrap reveal">
     <div class="eyebrow">NOVA Live</div>
     <div class="section-head">
-      <h2>Открытие сезона 2026</h2>
-      <p class="sub">Сезон 2026 открывается кубком NOVA CUP — Волга в Астраханской области. Прямые включения с воды, протоколы взвешивания и оперативные результаты этапов будут публиковаться здесь.</p>
+      <h2>Сезон 2026</h2>
+      <p class="sub">Прямые включения с воды, протоколы взвешивания и оперативные результаты этапов будут публиковаться здесь по мере проведения соревнований.</p>
     </div>
     <div class="live-panel">
       <div class="live-top">
-        <div class="live-badge"><span class="dot"></span>СКОРО СТАРТ · 13–15 ИЮНЯ 2026</div>
-        <div class="live-meta mono">NOVA CUP — ВОЛГА · АСТРАХАНЬ</div>
+        <div class="live-badge"><span class="dot"></span>СКОРО · КАЛЕНДАРЬ ФОРМИРУЕТСЯ</div>
+        <div class="live-meta mono">NOVA ANGLERS ALLIANCE</div>
       </div>
       <div style="padding: 40px 24px; text-align: center;">
         <p style="color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto 20px; line-height: 1.6;">
           Турнирная таблица и начисление рейтинговых очков будут обновляться в режиме реального времени по ходу соревнований.
         </p>
         <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-          <a href="competition.html?id=nova-cup-volga" class="btn btn-primary btn-sm">Информация о кубке</a>
-          <a href="competitions.html" class="btn btn-ghost btn-sm">Календарь всех стартов</a>
+          <a href="competitions.html" class="btn btn-primary btn-sm">Календарь соревнований</a>
+          <a href="contacts.html" class="btn btn-ghost btn-sm">Стать участником</a>
         </div>
       </div>
     </div>
@@ -173,7 +173,7 @@
     <div class="eyebrow">Календарь NOVA</div>
     <div class="section-head">
       <h2>Сезон 2026</h2>
-      <p class="sub">19 турниров, 12 регионов — полный календарь дисциплин Альянса.</p>
+      <p class="sub">Календарь турниров формируется — следите за обновлениями.</p>
     </div>
     <div class="filters">
       <button class="filter-btn active" data-filter="all">Все</button>
@@ -326,8 +326,19 @@ tickCountdown(); setInterval(tickCountdown, 1000);
 /* ---------- next competition block — live data from the server ---------- */
 function updateNextCard(){
   const list = NOVA_DATA.competitions || [];
-  const next = list.find(c => c.registration === 'open') || list.find(c => c.stage !== 'finished');
-  if(!next) return;
+  const now = Date.now();
+  /* Find the nearest future competition with open registration, or any non-finished future competition */
+  const futureOpen = list.filter(c => c.registration === 'open' && new Date(c.dateStart).getTime() > now);
+  const futureAny = list.filter(c => c.stage !== 'finished' && new Date(c.dateStart).getTime() > now);
+  const next = (futureOpen.length ? futureOpen : futureAny).sort((a,b) => new Date(a.dateStart) - new Date(b.dateStart))[0];
+
+  const section = document.getElementById('competition');
+  if(!next){
+    if(section) section.style.display = 'none';
+    return;
+  }
+  if(section) section.style.display = '';
+
   const el = id => document.getElementById(id);
   if(el('nxTitle')) el('nxTitle').textContent = next.title;
   if(el('nxStatus')) el('nxStatus').innerHTML = `<span class="dot"></span>${NOVA.registrationLabel(next.registration)}`;
