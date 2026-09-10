@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Презентация для спонсоров — NOVA Street & River Уфа 2026</title>
+<meta name="description" content="Коммерческое предложение для партнеров и спонсоров рыболовного фестиваля NOVA Street & River Уфа 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+  body {
+    background-color: #06080c;
+    color: #e2e8f0;
+    font-family: 'Manrope', sans-serif;
+  }
+  .deck-container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .slide {
+    background: radial-gradient(circle at 50% 0%, #102644 0%, #080c14 75%);
+    border: 1px solid rgba(43,156,212,0.22);
+    border-radius: 16px;
+    padding: 56px 48px;
+    margin-bottom: 48px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  @media (max-width: 768px) {
+    .slide { padding: 32px 20px; }
+  }
+  .slide-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #2b9cd4;
+    background: rgba(43,156,212,0.1);
+    border: 1px solid rgba(43,156,212,0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .slide-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    color: #ffffff;
+  }
+  .slide-title .gold {
+    color: #e7cc9c;
+    background: linear-gradient(135deg, #fcedc7 0%, #ae8850 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .slide-lead {
+    font-size: 16.5px;
+    color: #94a3b8;
+    max-width: 760px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 860px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+  .card-benefit {
+    background: rgba(14, 22, 38, 0.7);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.25s ease;
+  }
+  .card-benefit:hover {
+    border-color: rgba(43,156,212,0.4);
+    transform: translateY(-2px);
+  }
+  .card-benefit .icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(43,156,212,0.12);
+    border: 1px solid rgba(43,156,212,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .card-benefit h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 10px;
+  }
+  .card-benefit p {
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .stat-tile {
+    background: rgba(8, 14, 24, 0.85);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .stat-tile b {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2b9cd4;
+    margin-bottom: 4px;
+  }
+  .stat-tile span {
+    font-size: 13px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .funnel-box {
+    background: rgba(8, 15, 26, 0.95);
+    border: 1px solid #ae8850;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .funnel-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .funnel-step:last-child { border-bottom: none; }
+  .funnel-step .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: #e7cc9c;
+    min-width: 32px;
+  }
+  .badge-nomination {
+    background: rgba(231, 204, 156, 0.1);
+    border: 1px solid rgba(231, 204, 156, 0.3);
+    color: #e7cc9c;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .pack-card {
+    background: rgba(14, 22, 38, 0.85);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .pack-card.featured {
+    border-color: #ae8850;
+    background: radial-gradient(circle at 50% 0%, rgba(174,136,80,0.12) 0%, rgba(14,22,38,0.95) 100%);
+  }
+  .pack-header h3 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #ffffff;
+  }
+  .pack-cost {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: #e7cc9c;
+    margin-bottom: 16px;
+  }
+  .pack-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+    font-size: 13.5px;
+    color: #94a3b8;
+  }
+  .pack-list li {
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pack-list li::before {
+    content: "✓";
+    color: #2b9cd4;
+    font-weight: bold;
+  }
+  .pack-card.featured .pack-list li::before {
+    color: #e7cc9c;
+  }
+  .cta-panel {
+    text-align: center;
+    padding: 48px 24px;
+    background: rgba(10, 20, 36, 0.8);
+    border: 1px solid rgba(43,156,212,0.3);
+    border-radius: 16px;
+  }
+  .print-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #2b9cd4;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(43,156,212,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    transition: transform 0.2s;
+  }
+  .print-btn:hover { transform: translateY(-2px); }
+  @media print {
+    .print-btn, header, footer { display: none !important; }
+    .slide { page-break-after: always; border: none; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="/index.html" class="logo"><img class="mark" src="/assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <div style="font-family:'JetBrains Mono', monospace;font-size:12px;color:var(--muted);">ПРЕЗЕНТАЦИЯ ДЛЯ ПАРТНЁРОВ · УФА 2026</div>
+  </div>
+</header>
+
+<div class="deck-container">
+
+  <!-- СЛАЙД 1: ТИТУЛЬНЫЙ -->
+  <section class="slide" style="text-align:center;padding:70px 32px;">
+    <div class="slide-badge">⚡ Официальное спонсорское предложение</div>
+    <h1 class="slide-title" style="font-size:clamp(32px,5.5vw,56px);margin:16px auto 20px;max-width:840px;">
+      NOVA Street & River <span class="gold">Уфа 2026</span>
+    </h1>
+    <p class="slide-lead" style="margin:0 auto 36px;font-size:18px;max-width:680px;">
+      Осенний фестиваль спортивного берегового спиннинга с уникальной системой плей-офф на выбывание и интерактивом для зрителей.
+    </p>
+    <div class="grid-3" style="max-width:760px;margin:0 auto 36px;">
+      <div class="stat-tile">
+        <b>24 ОКТ</b>
+        <span>Дата проведения (2026)</span>
+      </div>
+      <div class="stat-tile">
+        <b>г. Уфа</b>
+        <span>Акватория за 7 дней</span>
+      </div>
+      <div class="stat-tile">
+        <b>30–60</b>
+        <span>Спортсменов-участников</span>
+      </div>
+    </div>
+    <div style="font-size:14px;color:#94a3b8;font-family:'JetBrains Mono', monospace;">
+      Организатор: Общероссийская рыболовная спортивная лига NOVA Anglers Alliance
+    </div>
+  </section>
+
+  <!-- СЛАЙД 2: АУДИТОРИЯ ТУРНИРА -->
+  <section class="slide">
+    <div class="slide-badge">🎯 Целевая аудитория</div>
+    <h2 class="slide-title">Кто ваши будущие <span class="gold">покупатели</span>?</h2>
+    <p class="slide-lead">
+      Спортивный спиннинг объединяет одну из самых вовлечённых и платёжеспособных мужских аудиторий в спорте. Это активные потребители рыболовных снастей, экипировки, автоаксессуаров, туризма и качественной еды.
+    </p>
+
+    <div class="grid-4" style="margin-bottom:32px;">
+      <div class="stat-tile">
+        <b>88%</b>
+        <span>Мужчины 22–50 лет</span>
+      </div>
+      <div class="stat-tile">
+        <b>92%</b>
+        <span>Автовладельцы / 4x4</span>
+      </div>
+      <div class="stat-tile">
+        <b>60 000+ ₽</b>
+        <span>Средний бюджет на снасти в год</span>
+      </div>
+      <div class="stat-tile">
+        <b>2 500+</b>
+        <span>Охват в соцсетях турнира</span>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card-benefit">
+        <div class="icon-box">🎣</div>
+        <h3>Регулярные покупки</h3>
+        <p>Спиннингисты — постоянные клиенты магазинов: расходники (джиг, шнуры, резина, воблеры) покупаются перед каждой рыбалкой.</p>
+      </div>
+      <div class="card-benefit">
+        <div class="icon-box">🤝</div>
+        <h3>Лидеры мнений на воде</h3>
+        <p>Участники турнира — опытные рыболовы, к чьим рекомендациям прислушиваются тысячи любителей в Уфе и Башкортостане.</p>
+      </div>
+      <div class="card-benefit">
+        <div class="icon-box">☕</div>
+        <h3>Семьи и отдых</h3>
+        <p>После рыбалки участники заказывают еду, посещают кафе, покупают термосы, одежду и загородный отдых для всей семьи.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЛАЙД 3: УНИКАЛЬНЫЙ ФОРМАТ ТУРНИРА -->
+  <section class="slide">
+    <div class="slide-badge">🔥 Спортивный регламент</div>
+    <h2 class="slide-title">Формат шоу: <span class="gold">3 тура на выбывание</span></h2>
+    <p class="slide-lead">
+      Мы отказались от скучной монотонной рыбалки. Турнир проходит в формате плей-офф с постоянным накалом борьбы и прямым вовлечением зрителей.
+    </p>
+
+    <div class="grid-3" style="margin-bottom:32px;">
+      <div class="card-benefit" style="border-top:3px solid #2b9cd4;">
+        <span class="badge-nomination">1 ТУР · 60 участников</span>
+        <h3>Квалификационный тур</h3>
+        <p>Стартуют все спортсмены. Ограниченное время. Борьба за попадание в топ-40. Выбывает нижняя треть (20 чел).</p>
+      </div>
+      <div class="card-benefit" style="border-top:3px solid #e7cc9c;">
+        <span class="badge-nomination">2 ТУР · 40 участников</span>
+        <h3>Полуфинальный тур</h3>
+        <p>Нервы на пределе. Ловля в других секторах. Отсеивается ещё 20 человек. Формируется финальная двадцатка!</p>
+      </div>
+      <div class="card-benefit" style="border-top:3px solid #4ade80;">
+        <span class="badge-nomination">3 ТУР · ТОП-20 ФИНАЛ</span>
+        <h3>Золотой финал</h3>
+        <p>20 сильнейших спортсменов бьются за главный кубок и призы спонсоров под прицелом фото- и видеокамер!</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card-benefit">
+        <h3>🐟 Бережный принцип Catch & Release</h3>
+        <p>Рыба содержится в таре с водой, линейный судья моментально фиксирует длину на измерительной ленте и бережно отпускает её в воду. Полная прозрачность и экологичность.</p>
+      </div>
+      <div class="card-benefit">
+        <h3>🎯 Интерактивный конкурс прогнозов</h3>
+        <p>Зрители и болельщики на берегу и в соцсетях голосуют за победителя перед финальным туром. Угадавшие получают призы от спонсоров — максимальный виральный охват!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЛАЙД 4: ГЛАВНЫЙ СЛАЙД — ЧТО КОНКРЕТНО ПОЛУЧАЕТ СПОНСОР -->
+  <section class="slide" style="border-color:#ae8850;">
+    <div class="slide-badge" style="color:#e7cc9c;background:rgba(174,136,80,0.12);border-color:#ae8850;">💎 Главная ценность для бизнеса</div>
+    <h2 class="slide-title">Что конкретно получает <span class="gold">ваш бренд</span>?</h2>
+    <p class="slide-lead">
+      Мы создали условия, при которых каждый вложенный рубль возвращается спонсору новыми покупателями, повторными чеками и узнаваемостью.
+    </p>
+
+    <div class="grid-2" style="margin-bottom:28px;">
+      <div class="card-benefit">
+        <div class="icon-box">📦</div>
+        <h3>1. Прямой контакт прямо в руки (Welcome Pack)</h3>
+        <p>Ваш сертификат на 250–300 ₽, скидочная карта или приманки вкладываются в стартовый пакет <b>каждому из 60 участников</b> при регистрации. Ноль спама — 100% личное вручение целевому клиенту.</p>
+      </div>
+
+      <div class="card-benefit">
+        <div class="icon-box">💰</div>
+        <h3>2. Высокий ROI: приток клиентов в вашу кассу</h3>
+        <p>Рыболовы не выбрасывают сертификаты. Человек приходит в ваш магазин/кафе отоварить 250 ₽, а покупает снастей и расходников на <b>1 500 – 2 500 ₽</b>. Вы зарабатываете на повторном среднем чеке!</p>
+      </div>
+
+      <div class="card-benefit">
+        <div class="icon-box">🏆</div>
+        <h3>3. Личное вручение на сцене и свой кубок</h3>
+        <p>Ваш представитель лично объявляет победителя номинации (например, «Big Fish от магазина [Ваш бренд]») на церемонии награждения с микрофоном и фотоотчётом.</p>
+      </div>
+
+      <div class="card-benefit">
+        <div class="icon-box">🌐</div>
+        <h3>4. Цифровое присутствие на платформе NOVA</h3>
+        <p>Размещение логотипа и ссылки на сайте турнира, в официальных судейских протоколах, в Telegram-канале турнира и в итоговом профессиональном видеоотчёте.</p>
+      </div>
+    </div>
+
+    <!-- ВОРОНКА ОКУПАЕМОСТИ ДЛЯ МАГАЗИНА -->
+    <div class="funnel-box">
+      <div style="font-weight:700;color:#e7cc9c;margin-bottom:12px;font-size:16px;">
+        📊 Экономика сертификата для розничного магазина Уфы:
+      </div>
+      <div class="funnel-step">
+        <span class="num">01</span>
+        <div><b>60 сертификатов по 250 ₽ вручены спортсменам на старте</b><br><span style="color:#94a3b8;font-size:13px;">Для магазина себестоимость сертификата — это оптовая цена товара (~120–150 ₽), живые деньги из кассы не изымаются.</span></div>
+      </div>
+      <div class="funnel-step">
+        <span class="num">02</span>
+        <div><b>40–45 спиннингистов приходят в магазин отоварить сертификат</b><br><span style="color:#94a3b8;font-size:13px;">Рыболовы докупают приманки, плетёные шнуры, коробки, смазки. Средний чек в Уфе — от 1 800 ₽.</span></div>
+      </div>
+      <div class="funnel-step">
+        <span class="num">03</span>
+        <div><b>Результат: 60 000 – 80 000 ₽ выручки в кассе магазина</b><br><span style="color:#4ade80;font-size:13.5px;font-weight:600;">+ Магазин получает лояльных постоянных клиентов на весь зимний и весенний сезон!</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЛАЙД 5: МАКЕТ WELCOME PACK -->
+  <section class="slide">
+    <div class="slide-badge">🎒 Физическое брендирование</div>
+    <h2 class="slide-title">Как выглядит <span class="gold">Welcome Pack</span> участника</h2>
+    <p class="slide-lead">
+      Качественный стильный набор, который каждый спортсмен забирает домой и использует на последующих рыбалках.
+    </p>
+
+    <div class="grid-2" style="align-items:center;">
+      <div>
+        <img src="/assets/welcome-pack.jpg" alt="NOVA Welcome Pack Mockup" style="width:100%;border-radius:12px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 30px rgba(0,0,0,0.6);">
+      </div>
+      <div>
+        <div class="card-benefit" style="margin-bottom:16px;">
+          <h3 style="color:#e7cc9c;">В стартовом пакете:</h3>
+          <ul class="pack-list" style="margin-bottom:0;">
+            <li>Фирменная сумка-шоппер NOVA с золотым тиснением</li>
+            <li>Номерной бейдж участника на ланьярде (#01–#60)</li>
+            <li>Точная измерительная лента для бережного замера рыбы</li>
+            <li><b>Ваш подарочный сертификат на 250–300 ₽</b></li>
+            <li><b>Пачка силиконовых приманок от партнёра турнира</b></li>
+            <li>Скидочные купоны от заведений-партнёров по питанию</li>
+            <li>Памятный стикерпак NOVA Street & River</li>
+          </ul>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.5;">
+          * Количество партнёрских вложений в один пакет ограничено (не более 3–4 магазинов), чтобы ваше предложение не потерялось и гарантированно сработало.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЛАЙД 6: СПИСОК НОМИНАЦИЙ ДЛЯ БРЕНДИРОВАНИЯ -->
+  <section class="slide">
+    <div class="slide-badge">🏆 Брендинг наград</div>
+    <h2 class="slide-title">Номинации под <span class="gold">вашим именем</span></h2>
+    <p class="slide-lead">
+      Каждая номинация может носить имя вашего магазина или компании. Вы вручаете приз победителю со сцены.
+    </p>
+
+    <div class="grid-3">
+      <div class="card-benefit">
+        <span class="badge-nomination">ГЛАВНЫЙ ТРОФЕЙ</span>
+        <h3>Big Fish турнира</h3>
+        <p>За самую крупную щуку или судака. Самая престижная номинация фестиваля с максимальным вниманием зрителей.</p>
+      </div>
+
+      <div class="card-benefit">
+        <span class="badge-nomination">ХИТ ФЕСТИВАЛЯ</span>
+        <h3>Micro Fish (Ювелир)</h3>
+        <p>За самого крошечного зачётного окуня. Любимая народная номинация, вызывающая бурю позитива и аплодисментов!</p>
+      </div>
+
+      <div class="card-benefit">
+        <span class="badge-nomination">БУДУЩЕЕ СПОРТА</span>
+        <h3>Самый юный спиннингист</h3>
+        <p>Поддержка молодого участника фестиваля. Отличная возможность показать социальную ответственность бренда.</p>
+      </div>
+
+      <div class="card-benefit">
+        <span class="badge-nomination">КРАСОТА И АЗАРТ</span>
+        <h3>Lady Angler (Леди турнира)</h3>
+        <p>Специальный подарок для девушек-участниц. Приятный жест внимания и отличные фотокадры для соцсетей.</p>
+      </div>
+
+      <div class="card-benefit">
+        <span class="badge-nomination">ИНТЕРАКТИВ</span>
+        <h3>Приз от болельщиков</h3>
+        <p>Победителю конкурса прогнозов в Telegram/соцсетях. Вовлекает аудиторию, которая следит за трансляцией дома.</p>
+      </div>
+
+      <div class="card-benefit">
+        <span class="badge-nomination">ДЛЯ ВСЕХ</span>
+        <h3>Лотерея удачи по бейджам</h3>
+        <p>Розыгрыш призов среди участников, выбывших в 1 и 2 турах. Никто не уходит с турнира с плохим настроением!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЛАЙД 7: ПАКЕТЫ УЧАСТИЯ -->
+  <section class="slide">
+    <div class="slide-badge">📋 Доступные форматы</div>
+    <h2 class="slide-title">Пакеты участия для <span class="gold">партнёров</span></h2>
+    <p class="slide-lead">
+      Мы сделали порог входа максимально комфортным и доступным даже для небольших магазинов и локальных кафе:
+    </p>
+
+    <div class="grid-3">
+      <!-- Пакет 1 -->
+      <div class="pack-card">
+        <div class="pack-header">
+          <span class="badge-nomination">СТАРТОВЫЙ</span>
+          <h3>Партнёр Welcome Pack</h3>
+          <div class="pack-cost">60 сертификатов по 250 ₽</div>
+          <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">(или приманки/расходники)</p>
+        </div>
+        <ul class="pack-list">
+          <li>Вложение сертификата в пакет каждому спортсмену в руки</li>
+          <li>Логотип на официальном сайте турнира</li>
+          <li>Упоминание в сообществах турнира</li>
+          <li>Гарантированный приток покупателей в магазин</li>
+        </ul>
+        <a href="https://t.me/nova_anglers" target="_blank" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">Выбрать пакет</a>
+      </div>
+
+      <!-- Пакет 2 -->
+      <div class="pack-card featured">
+        <div class="pack-header">
+          <span class="badge-nomination" style="background:#ae8850;color:#080c14;font-weight:700;">ПОПУЛЯРНЫЙ</span>
+          <h3>Спонсор номинации</h3>
+          <div class="pack-cost">Приз на 3 000 – 5 000 ₽</div>
+          <p style="font-size:13px;color:#e7cc9c;margin-bottom:16px;">(снасть, сертификат или мерч)</p>
+        </div>
+        <ul class="pack-list">
+          <li>Всё, что входит в «Партнёр Welcome Pack»</li>
+          <li>Номинация носит имя вашего бренда</li>
+          <li>Личное вручение приза на сцене с микрофоном</li>
+          <li>Отдельное фото с победителем в соцсетях</li>
+          <li>Размещение баннера бренда в зоне награждения</li>
+        </ul>
+        <a href="https://t.me/nova_anglers" target="_blank" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;">Выбрать номинацию</a>
+      </div>
+
+      <!-- Пакет 3 -->
+      <div class="pack-card">
+        <div class="pack-header">
+          <span class="badge-nomination">ПИТАНИЕ / КЕЙТЕРИНГ</span>
+          <h3>Партнёр по питанию</h3>
+          <div class="pack-cost">Горячий перекус на финише</div>
+          <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">(чай, кофе, плов/пицца на 50 порций)</p>
+        </div>
+        <ul class="pack-list">
+          <li>Эксклюзивный статус партнёра по питанию</li>
+          <li>Шатёр / фудтрак / флаги заведения на берегу</li>
+          <li>Вложение купонов на доставку в пакеты участникам</li>
+          <li>Сертификат от заведения призёрам турнира</li>
+          <li>Благодарность ведущего на церемонии награждения</li>
+        </ul>
+        <a href="https://t.me/nova_anglers" target="_blank" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">Обсудить меню</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЛАЙД 8: КОНТАКТЫ ОРГКОМИТЕТА -->
+  <section class="slide" style="text-align:center;">
+    <div class="slide-badge">🤝 Давайте сотрудничать</div>
+    <h2 class="slide-title">Присоединяйтесь к первому осеннему кубку <span class="gold">в Уфе</span>!</h2>
+    <p class="slide-lead" style="margin:0 auto 36px;max-width:640px;">
+      Количество спонсорских номинаций и мест в Welcome Pack строго ограничено (не более 4 магазинов). Забронируйте участие вашего бренда уже сегодня.
+    </p>
+
+    <div class="cta-panel" style="max-width:640px;margin:0 auto 32px;">
+      <div style="font-size:18px;font-weight:700;color:#ffffff;margin-bottom:12px;">Оргкомитет NOVA Anglers Alliance:</div>
+      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:15px;color:#e7cc9c;margin-bottom:24px;">
+        <div>📞 +7 (800) 555-01-01</div>
+        <div>✉️ partners@nova-anglers.ru</div>
+        <div>💬 Telegram: @nova_anglers</div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="https://t.me/nova_anglers" target="_blank" class="btn btn-primary">Связаться в Telegram</a>
+        <a href="/competitions.html" target="_blank" class="btn btn-ghost">Сайт турнира ↗</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+  Скачать / Распечатать в PDF
+</button>
+
+</body>
+</html>
