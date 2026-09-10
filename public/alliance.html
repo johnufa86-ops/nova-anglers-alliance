@@ -95,7 +95,7 @@
   </div>
 </section>
 
-<section class="final-cta" style="padding:110px 0;">
+<section class="final-cta" id="allianceCtaSection" style="padding:110px 0;">
   <div class="burst" aria-hidden="true">
     <svg viewBox="0 0 900 900" width="100%" height="100%"><g fill="none" stroke="#ae8850">
       <circle cx="450" cy="450" r="180" opacity=".4" stroke-width="1"/>
@@ -104,10 +104,10 @@
     </g></svg>
   </div>
   <div class="wrap reveal">
-    <h2 style="font-size:clamp(28px,4.5vw,48px);">Твой след в рыболовном спорте начинается здесь.</h2>
-    <p class="sub">Стань частью NOVA Anglers Alliance.</p>
+    <h2 id="allianceCtaTitle" style="font-size:clamp(28px,4.5vw,48px);">Твой след в рыболовном спорте начинается здесь.</h2>
+    <p class="sub" id="allianceCtaSub">Стань частью NOVA Anglers Alliance.</p>
     <div class="hero-cta" style="justify-content:center;">
-      <a href="contacts.html" class="btn btn-primary">Стать участником NOVA</a>
+      <a href="contacts.html" class="btn btn-primary" id="allianceCtaBtn">Стать участником NOVA</a>
     </div>
   </div>
 </section>
@@ -148,6 +148,31 @@
 
 <script src="data/data.js"></script>
 <script src="common.js"></script>
+<script>
+/* ---------- dynamic CMS blocks sync ---------- */
+(async function syncAllianceBlocks(){
+  try {
+    const res = await fetch('/api/settings/blocks');
+    if(!res.ok) return;
+    const data = await res.json();
+    const b = data?.settings;
+    if(!b) return;
+
+    const ctaSec = document.getElementById('allianceCtaSection');
+    if(ctaSec){
+      if(b.allianceCtaVisible === false){
+        ctaSec.style.display = 'none';
+      } else {
+        ctaSec.style.display = '';
+        if(b.allianceCtaTitle) { const el = document.getElementById('allianceCtaTitle'); if(el) el.textContent = b.allianceCtaTitle; }
+        if(b.allianceCtaSub) { const el = document.getElementById('allianceCtaSub'); if(el) el.textContent = b.allianceCtaSub; }
+        if(b.allianceCtaBtnText) { const el = document.getElementById('allianceCtaBtn'); if(el) el.textContent = b.allianceCtaBtnText; }
+        if(b.allianceCtaBtnUrl) { const el = document.getElementById('allianceCtaBtn'); if(el) el.href = b.allianceCtaBtnUrl; }
+      }
+    }
+  } catch(e){}
+})();
+</script>
 
 </body>
 </html>

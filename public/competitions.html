@@ -49,7 +49,7 @@
         <h1>Соревнования</h1>
         <p class="sub">Полный календарь турниров сезона 2026 — от региональных этапов до финала. Каждый старт приносит очки в единый рейтинг NOVA.</p>
       </div>
-      <div class="page-hero-meta">
+      <div class="page-hero-meta" id="compHeroMeta">
         <div><span>Турниров в сезоне</span><b class="mono" id="statTotal">0</b></div>
         <div><span>Регионов</span><b class="mono" id="statRegions">0</b></div>
         <div><span>Открыта регистрация</span><b class="mono" id="statOpen">0</b></div>
@@ -86,6 +86,22 @@
   </div>
 </section>
 
+<section class="final-cta" id="compCtaSection" style="padding:100px 0;display:none;">
+  <div class="burst" aria-hidden="true">
+    <svg viewBox="0 0 900 900" width="100%" height="100%"><g fill="none" stroke="#ae8850">
+      <circle cx="450" cy="450" r="160" opacity=".4" stroke-width="1"/>
+      <circle cx="450" cy="450" r="260" opacity=".25" stroke-width="1"/>
+      <circle cx="450" cy="450" r="8" fill="#f2d5a1" stroke="none"/>
+    </g></svg>
+  </div>
+  <div class="wrap reveal">
+    <h2 id="compCtaTitle" style="font-size:clamp(26px,4vw,42px);">Хотите провести турнир NOVA в своём регионе?</h2>
+    <p class="sub" id="compCtaSub">Подайте заявку на организацию официального этапа Альянса.</p>
+    <div class="hero-cta" style="justify-content:center;">
+      <a href="contacts.html" class="btn btn-primary" id="compCtaBtn">Подать заявку</a>
+    </div>
+  </div>
+</section>
 
 </main>
 
@@ -177,6 +193,33 @@ document.querySelectorAll('.filter-btn[data-stage]').forEach(btn=>{
 document.getElementById('fDiscipline').addEventListener('change', e=>{ state.discipline = e.target.value; renderCal(); });
 document.getElementById('fRegion').addEventListener('change', e=>{ state.region = e.target.value; renderCal(); });
 document.getElementById('fSort').addEventListener('change', e=>{ state.sort = e.target.value; renderCal(); });
+
+/* ---------- dynamic CMS blocks sync ---------- */
+(async function syncCompBlocks(){
+  try {
+    const res = await fetch('/api/settings/blocks');
+    if(!res.ok) return;
+    const data = await res.json();
+    const b = data?.settings;
+    if(!b) return;
+
+    const statsEl = document.getElementById('compHeroMeta');
+    if(statsEl && b.compStatsVisible === false) statsEl.style.display = 'none';
+
+    const ctaSec = document.getElementById('compCtaSection');
+    if(ctaSec){
+      if(b.compCtaVisible === true){
+        ctaSec.style.display = '';
+        if(b.compCtaTitle) { const el = document.getElementById('compCtaTitle'); if(el) el.textContent = b.compCtaTitle; }
+        if(b.compCtaSub) { const el = document.getElementById('compCtaSub'); if(el) el.textContent = b.compCtaSub; }
+        if(b.compCtaBtnText) { const el = document.getElementById('compCtaBtn'); if(el) el.textContent = b.compCtaBtnText; }
+        if(b.compCtaBtnUrl) { const el = document.getElementById('compCtaBtn'); if(el) el.href = b.compCtaBtnUrl; }
+      } else {
+        ctaSec.style.display = 'none';
+      }
+    }
+  } catch(e){}
+})();
 </script>
 </body>
 </html>

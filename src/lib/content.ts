@@ -9,7 +9,7 @@ export const DEFAULT_HOME_SETTINGS = {
   ctaSecondaryUrl: '/contacts',
   statAthletes: '0',
   statCrews: '0',
-  statTournaments: '5',
+  statTournaments: '0',
   statRegions: '0',
 };
 
@@ -35,3 +35,42 @@ export const DEFAULT_FOOTER_SETTINGS = {
 };
 
 export type FooterSettings = typeof DEFAULT_FOOTER_SETTINGS;
+
+export const DEFAULT_BLOCKS_SETTINGS = {
+  // Главная страница: видимость блоков
+  homeHeroVisible: true,
+  homeStatsVisible: true,
+  homeNextCompVisible: true,
+  homeLiveVisible: true,
+  homeLiveTitle: 'Сезон 2026',
+  homeLiveSub: 'Прямые включения с воды, протоколы взвешивания и оперативные результаты этапов будут публиковаться здесь по мере проведения соревнований.',
+  homeLiveBadge: 'СКОРО · КАЛЕНДАРЬ ФОРМИРУЕТСЯ',
+  homeLiveMeta: 'NOVA ANGLERS ALLIANCE',
+  homeRatingVisible: true,
+  homeAboutVisible: true,
+  homeCalendarVisible: true,
+  homeCalendarSub: 'Календарь турниров формируется — следите за обновлениями.',
+  homeAthletesVisible: true,
+  homeFinalCtaVisible: true,
+  homeFinalCtaTitle: 'Готовы к новому сезону?',
+  homeFinalCtaSub: 'Регистрируйтесь на соревнования, следите за рейтингом и становитесь частью всероссийского рыболовного сообщества.',
+  homeFinalCtaBtnText: 'Участвовать в соревновании',
+  homeFinalCtaBtnUrl: 'competitions.html',
+
+  // Страница соревнований: видимость и тексты
+  compStatsVisible: true,
+  compCtaVisible: false,
+  compCtaTitle: 'Хотите провести турнир NOVA в своём регионе?',
+  compCtaSub: 'Подайте заявку на организацию официального этапа Альянса.',
+  compCtaBtnText: 'Подать заявку',
+  compCtaBtnUrl: 'contacts.html',
+
+  // Страница Альянса: видимость и тексты
+  allianceCtaVisible: true,
+  allianceCtaTitle: 'Твой след в рыболовном спорте начинается здесь.',
+  allianceCtaSub: 'Стань частью NOVA Anglers Alliance.',
+  allianceCtaBtnText: 'Стать участником NOVA',
+  allianceCtaBtnUrl: 'contacts.html',
+};
+
+export type BlocksSettings = typeof DEFAULT_BLOCKS_SETTINGS;

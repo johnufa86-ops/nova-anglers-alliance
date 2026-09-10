@@ -168,6 +168,88 @@
   font-size: 12px;
   color: var(--muted);
 }
+/* SWITCH & BLOCK CONSTRUCTOR STYLES */
+.block-switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.block-switch-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.block-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch-track {
+  width: 44px;
+  height: 24px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  position: relative;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: all 0.25s ease;
+}
+.switch-input:checked + .switch-track {
+  background: rgba(43,156,212,0.25);
+  border-color: var(--pulse);
+}
+.switch-input:checked + .switch-track .switch-thumb {
+  transform: translateX(20px);
+  background: var(--pulse);
+}
+.switch-status-text {
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  min-width: 60px;
+}
+.block-fields {
+  transition: opacity 0.2s;
+}
+.block-fields.is-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -207,6 +289,7 @@
 
       <div class="tab-nav">
         <button class="tab-btn active" data-tab="tab-home">Главная (Hero и цифры)</button>
+        <button class="tab-btn" data-tab="tab-blocks">Блоки страниц (Конструктор)</button>
         <button class="tab-btn" data-tab="tab-contacts">Контакты и соцсети</button>
         <button class="tab-btn" data-tab="tab-footer">Футер и бренд</button>
       </div>
@@ -410,6 +493,303 @@
         </form>
       </div>
 
+      <!-- TAB: УПРАВЛЕНИЕ БЛОКАМИ (КОНСТРУКТОР) -->
+      <div class="tab-panel" id="tab-blocks">
+        <form id="blocksForm">
+
+          <div style="background:rgba(43,156,212,0.08);border:1px solid rgba(43,156,212,0.25);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;">
+            <div style="font-weight:700;font-size:14.5px;color:var(--pulse-2);margin-bottom:4px;">Модульный конструктор блоков сайта</div>
+            <p style="font-size:13.5px;color:var(--muted);margin:0;line-height:1.5;">
+              Вы можете включать или выключать любые секции на страницах сайта тумблером. Если блок выключен, он полностью скрывается для посетителей. В активных блоках можно настраивать заголовки, описания и кнопки.
+            </p>
+          </div>
+
+          <h2 style="font-size:20px;margin-bottom:16px;color:var(--text);">Главная страница (index.html)</h2>
+
+          <!-- Блок Hero -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>1. Главный баннер (Hero)</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeHeroVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeHeroVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Первый экран сайта: заголовок лиги, слоган и основные кнопки перехода.</p>
+          </div>
+
+          <!-- Блок Статистика лиги -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>2. Счётчики статистики сезона</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeStatsVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeStatsVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Цифры на первом экране: «Спортсменов», «Экипажей», «Турниров в сезоне», «Регионов».</p>
+          </div>
+
+          <!-- Блок Ближайший старт -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>3. Карточка «Ближайший старт»</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeNextCompVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeNextCompVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Информационная карточка ближайшего турнира с таймером обратного отсчёта. При выключении скрывается даже при наличии запланированных турниров.</p>
+          </div>
+
+          <!-- Блок NOVA Live -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>4. Секция «NOVA Live»</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeLiveVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeLiveVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <div class="block-fields" id="fields_homeLive">
+              <div class="form-grid-2">
+                <div class="field-group">
+                  <label for="blk_homeLiveBadge">Плашка статуса (бейдж)</label>
+                  <input type="text" id="blk_homeLiveBadge" placeholder="СКОРО · КАЛЕНДАРЬ ФОРМИРУЕТСЯ">
+                </div>
+                <div class="field-group">
+                  <label for="blk_homeLiveMeta">Метка справа</label>
+                  <input type="text" id="blk_homeLiveMeta" placeholder="NOVA ANGLERS ALLIANCE">
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="blk_homeLiveTitle">Заголовок блока</label>
+                <input type="text" id="blk_homeLiveTitle" placeholder="Сезон 2026">
+              </div>
+              <div class="field-group">
+                <label for="blk_homeLiveSub">Описание блока</label>
+                <textarea id="blk_homeLiveSub" rows="2" placeholder="Прямые включения с воды, протоколы взвешивания..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Блок Рейтинг -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>5. Рейтинг NOVA (Топ-5 лидеров)</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeRatingVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeRatingVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Интерактивная таблица лидеров с переключением: Спортсмены, Экипажи, Клубы.</p>
+          </div>
+
+          <!-- Блок О лиге -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>6. Блок «О лиге NOVA» (Преимущества 01, 02, 03)</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeAboutVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeAboutVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Три карточки с описанием концепции Альянса: Соревнования, Спортсмены, Сообщество.</p>
+          </div>
+
+          <!-- Блок Календарь -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>7. Календарь соревнований</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeCalendarVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeCalendarVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <div class="block-fields" id="fields_homeCalendar">
+              <div class="field-group" style="margin-bottom:0;">
+                <label for="blk_homeCalendarSub">Подзаголовок календаря</label>
+                <input type="text" id="blk_homeCalendarSub" placeholder="Календарь турниров формируется — следите за обновлениями.">
+              </div>
+            </div>
+          </div>
+
+          <!-- Блок Участники -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>8. Сетка участников сезона</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeAthletesVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeAthletesVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Сетка с карточками спортсменов и экипажей на главной странице.</p>
+          </div>
+
+          <!-- Блок Финальный призыв на главной -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>9. Финальный призыв (Нижний CTA баннер)</span>
+                <span class="block-badge">Главная</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_homeFinalCtaVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_homeFinalCtaVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <div class="block-fields" id="fields_homeFinalCta">
+              <div class="field-group">
+                <label for="blk_homeFinalCtaTitle">Заголовок призыва</label>
+                <input type="text" id="blk_homeFinalCtaTitle" placeholder="Готовы к новому сезону?">
+              </div>
+              <div class="field-group">
+                <label for="blk_homeFinalCtaSub">Подзаголовок</label>
+                <textarea id="blk_homeFinalCtaSub" rows="2" placeholder="Регистрируйтесь на соревнования, следите за рейтингом..."></textarea>
+              </div>
+              <div class="form-grid-2">
+                <div class="field-group">
+                  <label for="blk_homeFinalCtaBtnText">Текст кнопки</label>
+                  <input type="text" id="blk_homeFinalCtaBtnText" placeholder="Участвовать в соревновании">
+                </div>
+                <div class="field-group">
+                  <label for="blk_homeFinalCtaBtnUrl">Ссылка кнопки</label>
+                  <input type="text" id="blk_homeFinalCtaBtnUrl" placeholder="competitions.html">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2 style="font-size:20px;margin:32px 0 16px;color:var(--text);">Страница «Соревнования» (competitions.html)</h2>
+
+          <!-- Блок Статистика соревнований -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>1. Статистика сезона в шапке</span>
+                <span class="block-badge">Соревнования</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_compStatsVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_compStatsVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc" style="margin-bottom:0;">Показатели «Турниров в сезоне», «Регионов», «Открыта регистрация» вверху каталога.</p>
+          </div>
+
+          <!-- Блок Провести турнир в регионе -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>2. Призыв «Хотите провести турнир в регионе?»</span>
+                <span class="block-badge">Соревнования</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_compCtaVisible">
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_compCtaVisible_status">ВЫКЛ</span>
+              </label>
+            </div>
+            <p class="card-desc">Блок внизу каталога с предложением подать заявку на проведение официального этапа Альянса в своём регионе.</p>
+            <div class="block-fields" id="fields_compCta">
+              <div class="field-group">
+                <label for="blk_compCtaTitle">Заголовок</label>
+                <input type="text" id="blk_compCtaTitle" placeholder="Хотите провести турнир NOVA в своём регионе?">
+              </div>
+              <div class="field-group">
+                <label for="blk_compCtaSub">Описание</label>
+                <input type="text" id="blk_compCtaSub" placeholder="Подайте заявку на организацию официального этапа Альянса.">
+              </div>
+              <div class="form-grid-2">
+                <div class="field-group">
+                  <label for="blk_compCtaBtnText">Текст кнопки</label>
+                  <input type="text" id="blk_compCtaBtnText" placeholder="Подать заявку">
+                </div>
+                <div class="field-group">
+                  <label for="blk_compCtaBtnUrl">Ссылка кнопки</label>
+                  <input type="text" id="blk_compCtaBtnUrl" placeholder="contacts.html">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2 style="font-size:20px;margin:32px 0 16px;color:var(--text);">Страница «Альянс» (alliance.html)</h2>
+
+          <!-- Блок Финальный призыв Альянс -->
+          <div class="form-card">
+            <div class="block-switch-row">
+              <div class="block-switch-title">
+                <span>1. Финальный призыв «Стань частью Альянса»</span>
+                <span class="block-badge">Альянс</span>
+              </div>
+              <label class="switch-label">
+                <input type="checkbox" class="switch-input" id="blk_allianceCtaVisible" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-status-text" id="blk_allianceCtaVisible_status">ВКЛ</span>
+              </label>
+            </div>
+            <div class="block-fields" id="fields_allianceCta">
+              <div class="field-group">
+                <label for="blk_allianceCtaTitle">Заголовок</label>
+                <input type="text" id="blk_allianceCtaTitle" placeholder="Твой след в рыболовном спорте начинается здесь.">
+              </div>
+              <div class="field-group">
+                <label for="blk_allianceCtaSub">Описание</label>
+                <input type="text" id="blk_allianceCtaSub" placeholder="Стань частью NOVA Anglers Alliance.">
+              </div>
+              <div class="form-grid-2">
+                <div class="field-group">
+                  <label for="blk_allianceCtaBtnText">Текст кнопки</label>
+                  <input type="text" id="blk_allianceCtaBtnText" placeholder="Стать участником NOVA">
+                </div>
+                <div class="field-group">
+                  <label for="blk_allianceCtaBtnUrl">Ссылка кнопки</label>
+                  <input type="text" id="blk_allianceCtaBtnUrl" placeholder="contacts.html">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:24px;">
+            <button type="submit" class="btn btn-primary" id="saveBlocksBtn">Сохранить настройки блоков</button>
+          </div>
+        </form>
+      </div>
+
     </div>
   </main>
   <footer class="admin-footer" id="adminFooter"></footer>
@@ -443,6 +823,30 @@ const contactFields = [
   'brandDesc', 'copyright'
 ];
 
+const blocksBooleanKeys = [
+  'homeHeroVisible', 'homeStatsVisible', 'homeNextCompVisible', 'homeLiveVisible',
+  'homeRatingVisible', 'homeAboutVisible', 'homeCalendarVisible', 'homeAthletesVisible',
+  'homeFinalCtaVisible', 'compStatsVisible', 'compCtaVisible', 'allianceCtaVisible'
+];
+
+const blocksTextKeys = [
+  'homeLiveBadge', 'homeLiveMeta', 'homeLiveTitle', 'homeLiveSub',
+  'homeCalendarSub',
+  'homeFinalCtaTitle', 'homeFinalCtaSub', 'homeFinalCtaBtnText', 'homeFinalCtaBtnUrl',
+  'compCtaTitle', 'compCtaSub', 'compCtaBtnText', 'compCtaBtnUrl',
+  'allianceCtaTitle', 'allianceCtaSub', 'allianceCtaBtnText', 'allianceCtaBtnUrl'
+];
+
+blocksBooleanKeys.forEach(k => {
+  const chk = document.getElementById('blk_' + k);
+  const status = document.getElementById('blk_' + k + '_status');
+  if (chk && status) {
+    chk.addEventListener('change', () => {
+      status.textContent = chk.checked ? 'ВКЛ' : 'ВЫКЛ';
+    });
+  }
+});
+
 function updatePreview() {
   homeFields.forEach(f => {
     const input = document.getElementById('f_' + f);
@@ -460,9 +864,10 @@ homeFields.forEach(f => {
 
 async function loadAllContent() {
   try {
-    const [homeRes, contactsRes] = await Promise.all([
+    const [homeRes, contactsRes, blocksRes] = await Promise.all([
       NOVA_API.get('/api/admin/content/home').catch(() => ({})),
-      NOVA_API.get('/api/admin/content/contacts').catch(() => ({}))
+      NOVA_API.get('/api/admin/content/contacts').catch(() => ({})),
+      NOVA_API.get('/api/admin/content/blocks').catch(() => ({}))
     ]);
 
     const hs = homeRes?.settings || {};
@@ -476,6 +881,22 @@ async function loadAllContent() {
     contactFields.forEach(f => {
       const el = document.getElementById('c_' + f);
       if (el && cs[f] !== undefined) el.value = cs[f];
+    });
+
+    const bs = blocksRes?.settings || {};
+    blocksBooleanKeys.forEach(k => {
+      const chk = document.getElementById('blk_' + k);
+      const status = document.getElementById('blk_' + k + '_status');
+      if (chk && bs[k] !== undefined) {
+        chk.checked = Boolean(bs[k]);
+        if (status) status.textContent = chk.checked ? 'ВКЛ' : 'ВЫКЛ';
+      }
+    });
+    blocksTextKeys.forEach(k => {
+      const el = document.getElementById('blk_' + k);
+      if (el && bs[k] !== undefined) {
+        el.value = bs[k];
+      }
     });
   } catch (e) {
     NOVAAdminUI.toast(e.message || 'Ошибка загрузки контента', 'error');
@@ -520,11 +941,34 @@ async function saveContacts() {
   }
 }
 
+async function saveBlocks() {
+  const btn = document.getElementById('saveBlocksBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Сохранение…'; }
+  const payload = {};
+  blocksBooleanKeys.forEach(k => {
+    const chk = document.getElementById('blk_' + k);
+    if (chk) payload[k] = chk.checked;
+  });
+  blocksTextKeys.forEach(k => {
+    const el = document.getElementById('blk_' + k);
+    if (el) payload[k] = el.value.trim();
+  });
+
+  try {
+    await NOVA_API.request('PUT', '/api/admin/content/blocks', { settings: payload });
+    NOVAAdminUI.toast('Настройки блоков успешно сохранены!');
+  } catch (err) {
+    NOVAAdminUI.toast(err.message || 'Ошибка сохранения блоков', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Сохранить настройки блоков'; }
+  }
+}
+
 async function saveAll() {
   const btnTop = document.getElementById('saveBtnTop');
   btnTop.disabled = true; btnTop.textContent = 'Сохранение…';
   try {
-    await Promise.all([saveHome(), saveContacts()]);
+    await Promise.all([saveHome(), saveContacts(), saveBlocks()]);
   } finally {
     btnTop.disabled = false; btnTop.textContent = 'Сохранить всё';
   }
@@ -533,6 +977,7 @@ async function saveAll() {
 document.getElementById('homeContentForm').addEventListener('submit', (e) => { e.preventDefault(); saveHome(); });
 document.getElementById('contactsForm').addEventListener('submit', (e) => { e.preventDefault(); saveContacts(); });
 document.getElementById('footerForm').addEventListener('submit', (e) => { e.preventDefault(); saveContacts(); });
+document.getElementById('blocksForm').addEventListener('submit', (e) => { e.preventDefault(); saveBlocks(); });
 document.getElementById('saveFooterBtn').addEventListener('click', (e) => { e.preventDefault(); saveContacts(); });
 document.getElementById('saveBtnTop').addEventListener('click', saveAll);
 
