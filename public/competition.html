@@ -93,8 +93,8 @@
       <div>
         <div class="map-block" id="oMap">КАРТА АКВАТОРИИ</div>
         <div class="entrants" style="margin-top:20px;">
-          <span class="avatars"><span>ЕК</span><span>МА</span><span>ДС</span></span>
-          <span id="oEntrants">— участников зарегистрировано</span>
+          <span class="avatars" id="oAvatars" style="display:none;"></span>
+          <span id="oEntrants">Открыт приём заявок</span>
         </div>
       </div>
     </div>
@@ -260,7 +260,18 @@ function render(c){
   document.getElementById('oOrganizer').textContent = c.organizer;
   document.getElementById('oContact').innerHTML = `<a href="mailto:${c.contact}" style="color:inherit;">${c.contact}</a>`;
   document.getElementById('oMap').textContent = (c.place || '').toUpperCase();
-  document.getElementById('oEntrants').textContent = `${c.participants} участников зарегистрировано`;
+
+  const count = c.participants || 0;
+  const limit = c.participantsLimit || 80;
+  const oAv = document.getElementById('oAvatars');
+  if(oAv) oAv.style.display = count > 0 ? 'flex' : 'none';
+  if(document.getElementById('oEntrants')) {
+    if(count > 0) {
+      document.getElementById('oEntrants').textContent = `${count} ${c.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано`;
+    } else {
+      document.getElementById('oEntrants').textContent = `Открыт приём заявок · Лимит ${limit} мест`;
+    }
+  }
 
   const entryTypeLabel = { individual:'Только спортсмены', team:'Только экипажи', both:'Спортсмены и экипажи' }[c.entryType] || '—';
   document.getElementById('regEntryType').textContent = entryTypeLabel;

@@ -92,8 +92,8 @@
           <div class="cd-unit"><b id="cd-s">00</b><span>сек</span></div>
         </div>
         <div class="entrants">
-          <span class="avatars"><span>ЕК</span><span>МА</span><span>ДС</span></span>
-          <span id="nxEntrants">Загружаем данные о регистрации…</span>
+          <span class="avatars" id="nxAvatars" style="display:none;"></span>
+          <span id="nxEntrants">Открыт приём заявок · Свободно 80 мест</span>
         </div>
       </div>
     </div>
@@ -304,8 +304,12 @@
 <script>
 
 /* ---------- countdown — цель: ближайший турнир с сервера ---------- */
-let target = new Date(); target.setDate(target.getDate()+14); target.setHours(target.getHours()+6);
+let target = null;
 function tickCountdown(){
+  if(!target){
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '00'; });
+    return;
+  }
   const now = new Date(); let diff = Math.max(0, target - now);
   const d = Math.floor(diff/86400000); diff -= d*86400000;
   const h = Math.floor(diff/3600000); diff -= h*3600000;
@@ -331,7 +335,19 @@ function updateNextCard(){
   if(el('nxDiscipline')) el('nxDiscipline').textContent = next.disciplineLabel;
   if(el('nxPlace')) el('nxPlace').textContent = next.place;
   if(el('nxFormat')) el('nxFormat').textContent = next.format;
-  if(el('nxEntrants')) el('nxEntrants').textContent = `${next.participants} ${next.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано`;
+
+  const count = next.participants || 0;
+  const limit = next.participantsLimit || 80;
+  const avEl = el('nxAvatars');
+  if(avEl) avEl.style.display = count > 0 ? 'flex' : 'none';
+  if(el('nxEntrants')) {
+    if(count > 0) {
+      el('nxEntrants').textContent = `${count} ${next.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано`;
+    } else {
+      el('nxEntrants').textContent = `Открыт приём заявок · Свободно ${limit} мест`;
+    }
+  }
+
   ['nxRegisterBtn','nxReglamentBtn'].forEach(id => {
     if(el(id)) el(id).href = `competition.html?id=${next.id}${id==='nxReglamentBtn'?'#reglament':''}`;
   });
@@ -341,9 +357,19 @@ function updateNextCard(){
     b.removeAttribute('href'); b.style.opacity = '.6'; b.style.pointerEvents = 'none';
   }
   const d = new Date(next.dateStart);
-  if(!isNaN(d)){ d.setHours(9,0,0,0); if(d.getTime() > Date.now()) target = d; }
+  if(!isNaN(d) && d.getTime() > Date.now()){
+    d.setHours(9,0,0,0);
+    target = d;
+  } else {
+    target = null;
+  }
+  tickCountdown();
 }
 updateNextCard();
+if(window.NOVACompetitions){
+  NOVACompetitions.onRefresh(updateNextCard);
+  NOVACompetitions.load();
+}
 
 /* ---------- rating preview (top 5 athletes) — from NOVA_DATA ---------- */
 /* ---------- rating preview (top 5 athletes / teams) ---------- */
