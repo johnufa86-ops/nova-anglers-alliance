@@ -17,7 +17,7 @@ export async function GET() {
     const [activeCompetitions, totalApplications, newApplications, approvedParticipants] =
       await Promise.all([
         db.competition.count({
-          where: { ...compFilter, status: { in: ['registration_open', 'in_progress'] } },
+          where: { ...compFilter, status: { in: ['registration_open', 'in_progress', 'upcoming', 'live'] } },
         }),
         db.application.count({ where: appFilter }),
         db.application.count({ where: { ...appFilter, status: 'submitted' } }),
@@ -48,7 +48,7 @@ export async function GET() {
     });
 
     const openRegistrations = await db.competition.findMany({
-      where: { ...compFilter, status: 'registration_open' },
+      where: { ...compFilter, status: { in: ['registration_open', 'upcoming', 'live'] } },
       include: { _count: { select: { applications: true } } },
       orderBy: { startDate: 'asc' },
       take: 8,
