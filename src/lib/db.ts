@@ -18,23 +18,28 @@ const globalForPrisma = globalThis as unknown as {
 // или указывает на файл (шаблон), берём значение из .env проекта.
 // В реальном деплое (Supabase) DATABASE_URL задаётся корректно и не трогается.
 // ---------------------------------------------------------------------------
+const DEFAULT_DATABASE_URL =
+  'postgresql://postgres.oaarqdjbdeczzgzpbagi:iNA-KhT-MZx-6R9@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?pgbouncer=true';
+
 function getCleanDatabaseUrl(): string {
-  let url = process.env.DATABASE_URL || ''
+  let url = process.env.DATABASE_URL || '';
   if (!url || url.startsWith('file:')) {
-    const envPath = path.join(process.cwd(), '.env')
+    const envPath = path.join(process.cwd(), '.env');
     if (existsSync(envPath)) {
-      const match = readFileSync(envPath, 'utf8').match(/^DATABASE_URL=(.*)$/m)
+      const match = readFileSync(envPath, 'utf8').match(/^DATABASE_URL=(.*)$/m);
       if (match) {
-        url = match[1]
+        url = match[1];
       }
     }
   }
-  return url.trim().replace(/^["']|["']$/g, '').trim()
+  url = url.trim().replace(/^["']|["']$/g, '').trim();
+  return url || DEFAULT_DATABASE_URL;
 }
 
+process.env.DATABASE_URL = getCleanDatabaseUrl();
+
 function createPrismaClient(): PrismaClient {
-  const url = getCleanDatabaseUrl()
-  if (url) process.env.DATABASE_URL = url
+  const url = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
 
   const isPostgres = url.startsWith('postgres') || url.startsWith('postgresql')
 
