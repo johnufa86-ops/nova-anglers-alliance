@@ -66,7 +66,8 @@ export async function POST(req: Request) {
     const disciplineLabel = String(body?.disciplineLabel || 'Спиннинг с лодок').trim();
     const status = String(body?.status || 'upcoming').trim();
     const prizeFund = String(body?.prizeFund || '').trim();
-    const maxEntries = parseInt(body?.maxEntries || body?.maxParticipants || '100', 10) || 100;
+    const noLimit = Boolean(body?.noLimit);
+    const maxEntries = noLimit ? 0 : (parseInt(body?.maxEntries || body?.maxParticipants || '100', 10) || 0);
     const fee = parseFloat(body?.fee || body?.entryFee || '0') || 0;
     const description = String(body?.description || '').trim();
     const dateLabel = String(body?.dateLabel || '').trim();
@@ -75,6 +76,12 @@ export async function POST(req: Request) {
     const endDate = body?.endDate ? new Date(body.endDate) : startDate;
     const registrationOpenAt = body?.registrationOpenAt ? new Date(body.registrationOpenAt) : null;
     const registrationCloseAt = body?.registrationCloseAt ? new Date(body.registrationCloseAt) : null;
+
+    let contentObj: any = {};
+    try {
+      contentObj = typeof body?.content === 'object' ? (body.content || {}) : JSON.parse(body?.content || '{}');
+    } catch {}
+    if (noLimit) contentObj.noLimit = true;
 
     const created = await db.competition.create({
       data: {
@@ -99,8 +106,13 @@ export async function POST(req: Request) {
         fee,
         entryFee: Math.round(fee),
         prizeFund,
+        format: String(body?.format || '').trim(),
+        entryType: String(body?.entryType || 'both').trim(),
+        days: parseInt(body?.days || '1', 10) || 1,
+        pointsMultiplier: String(body?.pointsMultiplier || '×1.0').trim(),
         organizer: String(body?.organizer || 'NOVA Anglers Alliance').trim(),
         contact: String(body?.contact || '').trim(),
+        content: JSON.stringify(contentObj),
       },
     });
 

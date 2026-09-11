@@ -348,14 +348,15 @@ function updateNextCard(){
   if(el('nxFormat')) el('nxFormat').textContent = next.format;
 
   const count = next.participants || 0;
-  const limit = next.participantsLimit || 80;
+  const hasLimit = Boolean(next.participantsLimit && next.participantsLimit > 0 && !next.noLimit);
+  const limit = next.participantsLimit;
   const avEl = el('nxAvatars');
   if(avEl) avEl.style.display = count > 0 ? 'flex' : 'none';
   if(el('nxEntrants')) {
     if(count > 0) {
-      el('nxEntrants').textContent = `${count} ${next.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано`;
+      el('nxEntrants').textContent = `${count} ${next.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано` + (hasLimit ? ` из ${limit}` : '');
     } else {
-      el('nxEntrants').textContent = `Открыт приём заявок · Свободно ${limit} мест`;
+      el('nxEntrants').textContent = hasLimit ? `Открыт приём заявок · Свободно ${limit} мест` : `Открыт приём заявок · Без ограничений мест`;
     }
   }
 

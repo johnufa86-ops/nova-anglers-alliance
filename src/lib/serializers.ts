@@ -90,8 +90,11 @@ export function serializePublicCompetition(
   const title = (c as any).title || (c as any).name || 'Соревнование NOVA';
   const shortTitle = (c as any).shortName || (c as any).title || (c as any).name || 'NOVA CUP';
 
+  const isNoLimit = Boolean(content.noLimit || c.maxEntries === 0 || c.maxEntries === null);
+
   return {
     id: c.slug,
+    slug: c.slug,
     title,
     shortTitle,
     stage: STAGE_BY_STATUS[c.status] || 'upcoming',
@@ -107,9 +110,13 @@ export function serializePublicCompetition(
     entryType: c.entryType || 'both',
     organizer: c.organizer || 'NOVA Anglers Alliance',
     contact: c.contact,
+    fee: (c as any).fee ?? (c as any).entryFee ?? 0,
     participants: counts.active,
     approvedCount: counts.approved,
-    participantsLimit: c.maxEntries,
+    participantsLimit: isNoLimit ? null : c.maxEntries,
+    noLimit: isNoLimit,
+    hasLimit: !isNoLimit,
+    customCharacteristics: content.customCharacteristics ?? [],
     prizeFund: c.prizeFund,
     days: c.days,
     pointsMultiplier: c.pointsMultiplier,

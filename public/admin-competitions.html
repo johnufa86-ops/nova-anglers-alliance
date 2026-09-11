@@ -175,6 +175,64 @@
 @media (max-width: 640px) {
   .form-grid-2 { grid-template-columns: 1fr; }
 }
+.chip-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.chip-btn:hover {
+  border-color: var(--pulse-2);
+  color: var(--text);
+  background: rgba(75,163,255,0.08);
+}
+.char-row {
+  display: grid;
+  grid-template-columns: 1.3fr 2fr 36px;
+  gap: 8px;
+  align-items: center;
+  background: rgba(255,255,255,0.02);
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+.char-row input {
+  padding: 8px 10px;
+  font-size: 13px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+.char-row input:focus {
+  border-color: var(--pulse);
+}
+.char-row .char-del-btn {
+  background: transparent;
+  border: none;
+  color: #ff6b81;
+  font-size: 16px;
+  cursor: pointer;
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.char-row .char-del-btn:hover {
+  background: rgba(255,107,129,0.15);
+}
 </style>
 </head>
 <body>
@@ -298,28 +356,61 @@
         <div class="form-grid-2">
           <div class="field-group">
             <label for="m_maxEntries">Лимит участников / экипажей</label>
-            <input type="number" id="m_maxEntries" placeholder="100" value="100">
+            <input type="number" id="m_maxEntries" placeholder="Например: 60" value="60">
+            <label style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12.5px;color:var(--text);cursor:pointer;">
+              <input type="checkbox" id="m_noLimit" style="width:auto;margin:0;"> Без ограничений (скрыть лимит мест на сайте)
+            </label>
           </div>
           <div class="field-group">
             <label for="m_fee">Взнос за участие (руб.)</label>
-            <input type="number" id="m_fee" placeholder="5000" value="0">
+            <input type="number" id="m_fee" placeholder="2000" value="0">
+            <span style="font-size:11.5px;color:var(--muted);display:block;margin-top:5px;">0 — бесплатное участие</span>
           </div>
         </div>
 
         <div class="form-grid-2">
           <div class="field-group">
             <label for="m_prizeFund">Призовой фонд</label>
-            <input type="text" id="m_prizeFund" placeholder="1 500 000 ₽">
+            <input type="text" id="m_prizeFund" placeholder="50% от взносов + кубки">
           </div>
           <div class="field-group">
             <label for="m_dateLabel">Текстовая подпись дат</label>
-            <input type="text" id="m_dateLabel" placeholder="13–15 июня 2026">
+            <input type="text" id="m_dateLabel" placeholder="10 октября 2026">
           </div>
         </div>
 
         <div class="field-group">
           <label for="m_description">Описание турнира и регламент (кратко)</label>
           <textarea id="m_description" rows="3" placeholder="Главный этап сезона..."></textarea>
+        </div>
+
+        <!-- ДИНАМИЧЕСКИЕ ХАРАКТЕРИСТИКИ ТУРНИРА -->
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+            <div>
+              <label style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text);display:block;margin:0;">
+                Характеристики турнира
+              </label>
+              <div style="font-size:12px;color:var(--muted);margin-top:3px;">
+                Добавляйте и удаляйте параметры (отображаются в карточках и на странице турнира).
+              </div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddChar" style="font-size:12px;padding:4px 10px;">+ Добавить строку</button>
+          </div>
+
+          <!-- Быстрые шаблоны -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="charQuickChips">
+            <span style="font-size:11.5px;color:var(--muted);align-self:center;">Быстрые:</span>
+            <button type="button" class="chip-btn" data-label="Формат туров" data-default="3 тура по 1 часу (плей-офф)">+ Формат туров</button>
+            <button type="button" class="chip-btn" data-label="Снасти и приманки" data-default="Спиннинг, искусственные приманки">+ Снасти</button>
+            <button type="button" class="chip-btn" data-label="Принцип ловли" data-default="Поймал — Отпусти">+ Принцип ловли</button>
+            <button type="button" class="chip-btn" data-label="Акватория" data-default="Береговая зона р. Белая">+ Акватория</button>
+            <button type="button" class="chip-btn" data-label="Зачёт" data-default="Личный по 5 самым крупным рыбам">+ Зачёт</button>
+            <button type="button" class="chip-btn" data-label="Питание" data-default="Полевая кухня и горячий чай">+ Питание</button>
+            <button type="button" class="chip-btn" data-label="Возраст" data-default="От 16 лет">+ Возраст</button>
+          </div>
+
+          <div id="charsContainer" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
       </form>
     </div>
@@ -379,7 +470,11 @@ function renderCompetitions() {
     const place = c.location || c.region || '—';
     const dates = c.dateLabel || (c.startDate ? new Date(c.startDate).toLocaleDateString('ru-RU') : '—');
     const appsCount = c._count?.applications || 0;
-    const maxEntries = c.maxEntries || c.maxParticipants || '—';
+    const maxEntries = c.maxEntries || c.maxParticipants || 0;
+    let content = {};
+    try { content = typeof c.content === 'object' ? (c.content || {}) : JSON.parse(c.content || '{}'); } catch {}
+    const isNoLimit = Boolean(content.noLimit || maxEntries === 0);
+    const entriesDisplay = isNoLimit ? `<b>${appsCount}</b> <span style="color:var(--muted);">(без лимита)</span>` : `<b>${appsCount}</b> / ${maxEntries}`;
     const stage = c.status || 'upcoming';
     const stageLabels = { upcoming: 'Предстоящий', live: '● Идёт сейчас', finished: 'Завершён' };
 
@@ -395,7 +490,7 @@ function renderCompetitions() {
           <div style="font-size:12px;color:var(--muted);">${NOVAAdminUI.esc(place)}</div>
         </td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:13px;">
-          <b>${appsCount}</b> / ${maxEntries}
+          ${entriesDisplay}
         </td>
         <td>
           <span class="stage-pill ${stage}">
@@ -413,6 +508,47 @@ function renderCompetitions() {
   }).join('');
 }
 
+function renderChars(chars = []) {
+  const container = document.getElementById('charsContainer');
+  container.innerHTML = '';
+  chars.forEach(ch => addCharRow(ch.label || ch.key || '', ch.value || ''));
+}
+
+function addCharRow(label = '', value = '') {
+  const container = document.getElementById('charsContainer');
+  const div = document.createElement('div');
+  div.className = 'char-row';
+  div.innerHTML = `
+    <input type="text" class="char-label" placeholder="Параметр (напр. Снасти)" value="${NOVAAdminUI.esc(label)}">
+    <input type="text" class="char-value" placeholder="Значение (напр. Спиннинг)" value="${NOVAAdminUI.esc(value)}">
+    <button type="button" class="char-del-btn" title="Удалить характеристику">✕</button>
+  `;
+  div.querySelector('.char-del-btn').addEventListener('click', () => div.remove());
+  container.appendChild(div);
+}
+
+document.getElementById('m_noLimit').addEventListener('change', (e) => {
+  const input = document.getElementById('m_maxEntries');
+  if (e.target.checked) {
+    input.disabled = true;
+    input.dataset.prev = input.value;
+    input.value = '';
+    input.placeholder = 'Без ограничений';
+  } else {
+    input.disabled = false;
+    input.value = input.dataset.prev || '60';
+    input.placeholder = 'Например: 60';
+  }
+});
+
+document.getElementById('btnAddChar').addEventListener('click', () => addCharRow('', ''));
+
+document.querySelectorAll('#charQuickChips .chip-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    addCharRow(btn.dataset.label, btn.dataset.default);
+  });
+});
+
 function openModal(comp = null) {
   const modal = document.getElementById('compModal');
   const title = document.getElementById('modalTitle');
@@ -429,11 +565,31 @@ function openModal(comp = null) {
     document.getElementById('m_status').value = comp.status || 'upcoming';
     document.getElementById('m_region').value = comp.region || '';
     document.getElementById('m_location').value = comp.location || '';
-    document.getElementById('m_maxEntries').value = comp.maxEntries || comp.maxParticipants || 100;
     document.getElementById('m_fee').value = comp.fee || comp.entryFee || 0;
     document.getElementById('m_prizeFund').value = comp.prizeFund || '';
     document.getElementById('m_dateLabel').value = comp.dateLabel || '';
     document.getElementById('m_description').value = comp.description || '';
+
+    let content = {};
+    try {
+      content = typeof comp.content === 'object' ? (comp.content || {}) : JSON.parse(comp.content || '{}');
+    } catch {}
+
+    const isNoLimit = Boolean(content.noLimit || comp.maxEntries === 0 || comp.maxParticipants === 0);
+    const noLimitBox = document.getElementById('m_noLimit');
+    const maxEntriesInput = document.getElementById('m_maxEntries');
+    noLimitBox.checked = isNoLimit;
+    if (isNoLimit) {
+      maxEntriesInput.disabled = true;
+      maxEntriesInput.value = '';
+      maxEntriesInput.placeholder = 'Без ограничений';
+    } else {
+      maxEntriesInput.disabled = false;
+      maxEntriesInput.value = comp.maxEntries || comp.maxParticipants || 60;
+      maxEntriesInput.placeholder = 'Например: 60';
+    }
+
+    renderChars(content.customCharacteristics || []);
 
     if (comp.startDate) {
       document.getElementById('m_startDate').value = new Date(comp.startDate).toISOString().slice(0, 10);
@@ -452,6 +608,10 @@ function openModal(comp = null) {
     document.getElementById('editCompSlug').value = '';
     document.getElementById('compForm').reset();
     document.getElementById('m_slug').disabled = false;
+    document.getElementById('m_noLimit').checked = false;
+    document.getElementById('m_maxEntries').disabled = false;
+    document.getElementById('m_maxEntries').value = '60';
+    renderChars([]);
     deleteBtn.style.display = 'none';
   }
 
@@ -479,6 +639,28 @@ document.getElementById('btnSaveComp').addEventListener('click', async () => {
     return;
   }
 
+  const noLimit = document.getElementById('m_noLimit').checked;
+  const maxEntries = noLimit ? 0 : (parseInt(document.getElementById('m_maxEntries').value, 10) || 0);
+
+  const customCharacteristics = [];
+  document.querySelectorAll('#charsContainer .char-row').forEach(row => {
+    const label = row.querySelector('.char-label')?.value.trim();
+    const value = row.querySelector('.char-value')?.value.trim();
+    if (label && value) {
+      customCharacteristics.push({ label, value });
+    }
+  });
+
+  let contentObj = {};
+  if (editSlug) {
+    const existingComp = COMPS.find(x => x.slug === editSlug);
+    try {
+      contentObj = typeof existingComp.content === 'object' ? (existingComp.content || {}) : JSON.parse(existingComp.content || '{}');
+    } catch {}
+  }
+  contentObj.noLimit = noLimit;
+  contentObj.customCharacteristics = customCharacteristics;
+
   const payload = {
     title,
     shortTitle: document.getElementById('m_shortTitle').value.trim(),
@@ -487,11 +669,13 @@ document.getElementById('btnSaveComp').addEventListener('click', async () => {
     status: document.getElementById('m_status').value,
     region: document.getElementById('m_region').value.trim(),
     location: document.getElementById('m_location').value.trim(),
-    maxEntries: parseInt(document.getElementById('m_maxEntries').value, 10) || 100,
+    noLimit,
+    maxEntries,
     fee: parseFloat(document.getElementById('m_fee').value) || 0,
     prizeFund: document.getElementById('m_prizeFund').value.trim(),
     dateLabel: document.getElementById('m_dateLabel').value.trim(),
     description: document.getElementById('m_description').value.trim(),
+    content: contentObj,
   };
 
   const startVal = document.getElementById('m_startDate').value;

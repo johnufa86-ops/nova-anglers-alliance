@@ -77,7 +77,7 @@
       <div>
         <h3 class="next-title" style="font-size:22px;">О турнире</h3>
         <p class="prose" style="margin-bottom:28px;" id="oDescription"></p>
-        <div class="next-meta">
+        <div class="next-meta" id="oMeta">
           <div><span>Дисциплина</span><b id="oDiscipline">—</b></div>
           <div><span>Формат</span><b id="oFormat">—</b></div>
           <div><span>Дней соревнований</span><b id="oDays">—</b></div>
@@ -239,6 +239,8 @@ function renderNotFound(){
 function render(c){
   if(!c){ renderNotFound(); return; }
 
+  const hasLimit = Boolean(c.participantsLimit && c.participantsLimit > 0 && !c.noLimit);
+
   document.getElementById('pageTitle').textContent = c.title + ' — NOVA ANGLERS ALLIANCE';
   document.getElementById('pageDescription').setAttribute('content', c.description.slice(0,160));
   document.getElementById('bcTitle').textContent = c.shortTitle;
@@ -246,36 +248,63 @@ function render(c){
   document.getElementById('hSub').textContent = c.description;
   document.getElementById('mDate').textContent = c.dateLabel;
   document.getElementById('mPlace').textContent = c.place;
-  document.getElementById('mParticipants').textContent = `${c.participants} / ${c.participantsLimit}`;
+  document.getElementById('mParticipants').textContent = hasLimit
+    ? `${c.participants} / ${c.participantsLimit}`
+    : (c.participants > 0 ? `${c.participants} уч. (без лимита)` : 'Без ограничений');
 
   document.getElementById('stageRow').innerHTML = `
     <span class="stage-badge ${c.stage}">${c.stage==='live'?'<span class="dot"></span>':''}${NOVA.stageLabel(c.stage)}</span>
     <span class="next-status" style="margin:0;"><span class="dot"></span>${NOVA.registrationLabel(c.registration)}</span>`;
 
   document.getElementById('oDescription').textContent = c.description;
-  document.getElementById('oDiscipline').textContent = c.disciplineLabel;
-  document.getElementById('oFormat').textContent = c.format;
-  document.getElementById('oDays').textContent = c.days;
-  document.getElementById('oPrize').textContent = c.prizeFund;
-  document.getElementById('oOrganizer').textContent = c.organizer;
-  document.getElementById('oContact').innerHTML = `<a href="mailto:${c.contact}" style="color:inherit;">${c.contact}</a>`;
+
+  // Render characteristics dynamically
+  const metaItems = [];
+  if (c.disciplineLabel) metaItems.push({ label: 'Дисциплина', value: c.disciplineLabel });
+  if (c.format) metaItems.push({ label: 'Формат', value: c.format });
+  if (c.fee !== undefined && c.fee !== null) {
+    metaItems.push({ label: 'Взнос', value: c.fee > 0 ? `${c.fee} ₽` : 'Бесплатно' });
+  }
+  metaItems.push({ label: 'Лимит мест', value: hasLimit ? `${c.participantsLimit} мест` : 'Без ограничений' });
+  if (c.prizeFund) metaItems.push({ label: 'Призовой фонд', value: c.prizeFund });
+  if (c.days) metaItems.push({ label: 'Дней соревнований', value: c.days });
+
+  const customChars = c.customCharacteristics || [];
+  customChars.forEach(ch => {
+    if (ch.label && ch.value) {
+      metaItems.push({ label: ch.label, value: ch.value });
+    }
+  });
+
+  if (c.organizer) metaItems.push({ label: 'Организатор', value: c.organizer });
+  if (c.contact) metaItems.push({ label: 'Контакт', value: c.contact, isMail: true });
+
+  const oMetaEl = document.getElementById('oMeta');
+  if (oMetaEl) {
+    oMetaEl.innerHTML = metaItems.map(m => `
+      <div>
+        <span>${NOVA.esc ? NOVA.esc(m.label) : m.label}</span>
+        <b>${m.isMail ? `<a href="mailto:${m.value}" style="color:inherit;">${m.value}</a>` : (NOVA.esc ? NOVA.esc(m.value) : m.value)}</b>
+      </div>
+    `).join('');
+  }
+
   document.getElementById('oMap').textContent = (c.place || '').toUpperCase();
 
   const count = c.participants || 0;
-  const limit = c.participantsLimit || 80;
   const oAv = document.getElementById('oAvatars');
   if(oAv) oAv.style.display = count > 0 ? 'flex' : 'none';
   if(document.getElementById('oEntrants')) {
     if(count > 0) {
-      document.getElementById('oEntrants').textContent = `${count} ${c.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано`;
+      document.getElementById('oEntrants').textContent = `${count} ${c.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано` + (hasLimit ? ` из ${c.participantsLimit}` : '');
     } else {
-      document.getElementById('oEntrants').textContent = `Открыт приём заявок · Лимит ${limit} мест`;
+      document.getElementById('oEntrants').textContent = hasLimit ? `Открыт приём заявок · Лимит ${c.participantsLimit} мест` : `Открыт приём заявок · Без ограничений мест`;
     }
   }
 
   const entryTypeLabel = { individual:'Только спортсмены', team:'Только экипажи', both:'Спортсмены и экипажи' }[c.entryType] || '—';
   document.getElementById('regEntryType').textContent = entryTypeLabel;
-  document.getElementById('regSlotsLeft').textContent = Math.max(0, c.participantsLimit - c.participants);
+  document.getElementById('regSlotsLeft').textContent = hasLimit ? Math.max(0, c.participantsLimit - c.participants) : 'Без ограничений';
 
   const registerHref = `register.html?id=${c.id}`;
   const regButtons = [document.getElementById('oRegisterBtn'), document.getElementById('oRegisterBtnMain')];

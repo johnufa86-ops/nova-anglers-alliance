@@ -45,11 +45,17 @@ window.NOVA_DATA = {
       dateEnd: '2026-10-10',
       dateLabel: '10 октября 2026',
       participants: 0,
-      participantsLimit: 60,
+      participantsLimit: 0,
+      noLimit: true,
       entryType: 'individual',
       fee: 2000,
       prizeFund: '50% от взносов + кубки и подарки спонсоров',
       format: 'Личный зачёт, 3 тура по 1 часу (плей-офф)',
+      customCharacteristics: [
+        { label: 'Формат туров', value: '3 тура по 1 часу (плей-офф)' },
+        { label: 'Снасти и приманки', value: 'Спиннинг, искусственные приманки' },
+        { label: 'Принцип ловли', value: 'Поймал — Отпусти' }
+      ],
       days: 1,
       organizer: 'NOVA Anglers Alliance',
       contact: 'info@nova-anglers.ru',
@@ -171,5 +177,9 @@ window.NOVA = {
 
   qs(name){
     return new URLSearchParams(window.location.search).get(name);
+  },
+
+  esc(s){
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   },
 };

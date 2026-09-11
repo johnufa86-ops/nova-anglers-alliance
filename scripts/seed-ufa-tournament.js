@@ -33,7 +33,14 @@ async function main() {
     contact: 'info@nova-anglers.ru',
     days: 1,
     pointsMultiplier: '×1.0',
-    content: '{}'
+    content: JSON.stringify({
+      noLimit: true,
+      customCharacteristics: [
+        { label: 'Формат туров', value: '3 тура по 1 часу (плей-офф)' },
+        { label: 'Снасти и приманки', value: 'Спиннинг, искусственные приманки' },
+        { label: 'Принцип ловли', value: 'Поймал — Отпусти' }
+      ]
+    })
   };
 
   try {
@@ -52,8 +59,9 @@ async function main() {
           "maxEntries" = $14, "maxParticipants" = $15, fee = $16, "entryFee" = $17,
           "prizeFund" = $18, status = $19, format = $20, "entryType" = $21,
           organizer = $22, contact = $23, days = $24, "pointsMultiplier" = $25,
+          content = $26,
           "updatedAt" = NOW()
-        WHERE id = $26
+        WHERE id = $27
       `, [
         comp.title, comp.shortName, comp.name, comp.description,
         comp.discipline, comp.disciplineLabel, comp.category,
@@ -62,6 +70,7 @@ async function main() {
         comp.maxEntries, comp.maxParticipants, comp.fee, comp.entryFee,
         comp.prizeFund, comp.status, comp.format, comp.entryType,
         comp.organizer, comp.contact, comp.days, comp.pointsMultiplier,
+        comp.content,
         id
       ]);
       console.log('Updated tournament successfully!');

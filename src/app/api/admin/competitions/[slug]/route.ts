@@ -142,11 +142,40 @@ export async function PUT(
     if (body.registrationCloseAt !== undefined) {
       data.registrationCloseAt = body.registrationCloseAt ? new Date(body.registrationCloseAt) : null;
     }
-    if (body.maxEntries !== undefined || body.maxParticipants !== undefined) {
+    if (body.format !== undefined) data.format = String(body.format).trim();
+    if (body.category !== undefined) data.category = String(body.category).trim();
+    if (body.entryType !== undefined) data.entryType = String(body.entryType).trim();
+    if (body.days !== undefined) data.days = parseInt(body.days, 10) || 1;
+    if (body.pointsMultiplier !== undefined) data.pointsMultiplier = String(body.pointsMultiplier).trim();
+
+    if (body.noLimit) {
+      data.maxEntries = 0;
+      data.maxParticipants = 0;
+    } else if (body.maxEntries !== undefined || body.maxParticipants !== undefined) {
       const m = parseInt(body.maxEntries ?? body.maxParticipants, 10);
-      data.maxEntries = m;
-      data.maxParticipants = m;
+      data.maxEntries = isNaN(m) ? 0 : m;
+      data.maxParticipants = isNaN(m) ? 0 : m;
     }
+
+    if (body.content !== undefined) {
+      let currentContent: any = {};
+      try {
+        currentContent = JSON.parse(c.content || '{}');
+      } catch {}
+      const newContent = typeof body.content === 'object' ? { ...currentContent, ...body.content } : JSON.parse(body.content || '{}');
+      if (body.noLimit !== undefined) {
+        newContent.noLimit = Boolean(body.noLimit);
+      }
+      data.content = JSON.stringify(newContent);
+    } else if (body.noLimit !== undefined) {
+      let currentContent: any = {};
+      try {
+        currentContent = JSON.parse(c.content || '{}');
+      } catch {}
+      currentContent.noLimit = Boolean(body.noLimit);
+      data.content = JSON.stringify(currentContent);
+    }
+
     if (body.fee !== undefined || body.entryFee !== undefined) {
       const f = parseFloat(body.fee ?? body.entryFee);
       data.fee = f;

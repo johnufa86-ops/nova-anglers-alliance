@@ -61,6 +61,10 @@ function competitionCardHTML(c){
   const d = new Date(c.dateStart);
   const day = isNaN(d) ? '' : String(d.getDate()).padStart(2,'0');
   const monShort = isNaN(d) ? '' : d.toLocaleDateString('ru-RU',{month:'short'}).toUpperCase().replace('.','');
+  const hasLimit = Boolean(c.participantsLimit && c.participantsLimit > 0 && !c.noLimit);
+  const partTag = hasLimit
+    ? `${c.participants}/${c.participantsLimit} уч.`
+    : (c.participants > 0 ? `${c.participants} уч.` : 'Свободный приём');
   return `
     <a href="competition.html?id=${c.id}" class="cal-card" style="text-decoration:none;color:inherit;">
       <div class="cal-image">
@@ -69,7 +73,7 @@ function competitionCardHTML(c){
       </div>
       <div class="cal-date"><b>${day}</b><span>${monShort}</span></div>
       <h4>${c.shortTitle}</h4>
-      <div class="cal-tags"><span class="cal-tag">${c.disciplineLabel}</span><span class="cal-tag">${c.participants}/${c.participantsLimit} уч.</span></div>
+      <div class="cal-tags"><span class="cal-tag">${c.disciplineLabel}</span><span class="cal-tag">${partTag}</span></div>
       <div class="cal-place">${c.place}</div>
       <div class="cal-status ${regClass}">${reg}</div>
     </a>`;
