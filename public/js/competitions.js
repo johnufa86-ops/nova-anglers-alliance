@@ -21,7 +21,9 @@ window.NOVACompetitions = (function () {
 
   function mergeIntoDemo(list) {
     if (!Array.isArray(list) || !window.NOVA_DATA) return;
-    NOVA_DATA.competitions = list;
+    if (list.length > 0) {
+      NOVA_DATA.competitions = list;
+    }
     loaded = true;
   }
 
