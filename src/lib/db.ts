@@ -18,27 +18,35 @@ const globalForPrisma = globalThis as unknown as {
 // или указывает на файл (шаблон), берём значение из .env проекта.
 // В реальном деплое (Supabase) DATABASE_URL задаётся корректно и не трогается.
 // ---------------------------------------------------------------------------
-if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith('file:')) {
-  const envPath = path.join(process.cwd(), '.env')
-  if (existsSync(envPath)) {
-    const match = readFileSync(envPath, 'utf8').match(/^DATABASE_URL=(.*)$/m)
-    if (match) {
-      const url = match[1].trim().replace(/^["']|["']$/g, '')
-      if (url) process.env.DATABASE_URL = url
+function getCleanDatabaseUrl(): string {
+  let url = process.env.DATABASE_URL || ''
+  if (!url || url.startsWith('file:')) {
+    const envPath = path.join(process.cwd(), '.env')
+    if (existsSync(envPath)) {
+      const match = readFileSync(envPath, 'utf8').match(/^DATABASE_URL=(.*)$/m)
+      if (match) {
+        url = match[1]
+      }
     }
   }
+  return url.trim().replace(/^["']|["']$/g, '').trim()
 }
 
 function createPrismaClient(): PrismaClient {
-  const url = process.env.DATABASE_URL || ''
+  const url = getCleanDatabaseUrl()
+  if (url) process.env.DATABASE_URL = url
+
   const isPostgres = url.startsWith('postgres') || url.startsWith('postgresql')
 
   if (isPostgres) {
     try {
-      // Try Pool first (adapter-pg v5), fallback to connectionString (v7)
       let adapter: any
       try {
-        const pool = globalForPrisma.pgPool ?? new Pool({ connectionString: url })
+        const poolConfig: any = { connectionString: url }
+        if (url.includes('supabase.com') || url.includes('pooler')) {
+          poolConfig.ssl = { rejectUnauthorized: false }
+        }
+        const pool = globalForPrisma.pgPool ?? new Pool(poolConfig)
         if (!globalForPrisma.pgPool) globalForPrisma.pgPool = pool
         adapter = new PrismaPg(pool)
       } catch {

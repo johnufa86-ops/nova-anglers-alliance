@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { handle, ERR, rateLimit } from '@/lib/api';
+import { handle, ERR, rateLimit, ApiError } from '@/lib/api';
 import {
   createSession,
   destroySession,
@@ -26,18 +26,23 @@ export async function POST(req: Request) {
       throw ERR.VALIDATION({ email: !email, password: !password }, 'Укажите e-mail и пароль');
     }
 
-    const user = await db.user.findUnique({ where: { email } });
-    // generic message — never reveal which part was wrong
-    if (!user || !verifyPassword(password, user.passwordHash)) {
-      throw ERR.FORBIDDEN('Неверный e-mail или пароль');
-    }
+    try {
+      const user = await db.user.findUnique({ where: { email } });
+      if (!user || !verifyPassword(password, user.passwordHash)) {
+        throw ERR.FORBIDDEN('Неверный e-mail или пароль');
+      }
 
-    const token = await createSession(user.id, req.headers.get('user-agent'));
-    const res = NextResponse.json({
-      user: { email: user.email, name: user.name, role: user.role },
-    });
-    res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions(7 * 24 * 3600));
-    return res;
+      const token = await createSession(user.id, req.headers.get('user-agent'));
+      const res = NextResponse.json({
+        user: { email: user.email, name: user.name, role: user.role },
+      });
+      res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions(7 * 24 * 3600));
+      return res;
+    } catch (err: any) {
+      if (err instanceof ApiError) throw err;
+      console.error('[api/auth/login error]:', err);
+      throw ERR.INTERNAL(err?.message || 'Временная ошибка сервера. Попробуйте позже');
+    }
   });
 }
 
