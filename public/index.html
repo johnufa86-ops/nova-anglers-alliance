@@ -33,7 +33,7 @@
     </nav>
     <div class="header-actions">
       <a href="login.html" class="login-link">Войти</a>
-      <a href="contacts.html" class="btn btn-primary btn-sm">Участвовать</a>
+      <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-primary btn-sm">Участвовать</a>
       <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -51,7 +51,7 @@
     <p class="hero-sub" id="homeHeroSub">NOVA Anglers Alliance объединяет спортсменов, команды и соревнования в единую рыболовную спортивную систему.</p>
     <div class="hero-cta">
       <a href="competitions.html" class="btn btn-primary" id="homeCtaPrimary">Ближайшие соревнования</a>
-      <a href="contacts.html" class="btn btn-ghost" id="homeCtaSecondary">Стать участником</a>
+      <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-ghost" id="homeCtaSecondary">Подать заявку</a>
     </div>
     <div class="hero-stats" id="heroStats">
       <div class="stat"><b class="mono" id="homeStatAthletes" data-count="0">0</b><span>Спортсменов</span></div>
@@ -119,7 +119,7 @@
         </p>
         <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
           <a href="competitions.html" class="btn btn-primary btn-sm">Календарь соревнований</a>
-          <a href="contacts.html" class="btn btn-ghost btn-sm">Стать участником</a>
+          <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-ghost btn-sm">Подать заявку</a>
         </div>
       </div>
     </div>
@@ -259,7 +259,7 @@
     <p class="sub" id="finalCtaSub">Стань частью NOVA Anglers Alliance.</p>
     <div class="hero-cta">
       <a href="competitions.html" class="btn btn-primary" id="finalCtaBtnPrimary">Участвовать в соревновании</a>
-      <a href="contacts.html" class="btn btn-ghost" id="finalCtaBtnSecondary">Стать участником NOVA</a>
+      <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-ghost" id="finalCtaBtnSecondary">Подать заявку на участие</a>
     </div>
   </div>
 </section>
@@ -360,9 +360,8 @@ function updateNextCard(){
     }
   }
 
-  ['nxRegisterBtn','nxReglamentBtn'].forEach(id => {
-    if(el(id)) el(id).href = `competition.html?id=${next.id}${id==='nxReglamentBtn'?'#reglament':''}`;
-  });
+  if(el('nxRegisterBtn')) el('nxRegisterBtn').href = `register.html?id=${next.id}`;
+  if(el('nxReglamentBtn')) el('nxReglamentBtn').href = `competition.html?id=${next.id}#reglament`;
   if(el('nxRegisterBtn') && next.registration === 'closed'){
     const b = el('nxRegisterBtn');
     b.textContent = 'Регистрация закрыта';

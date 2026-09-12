@@ -19,7 +19,7 @@
 
 (function(){
 
-  const compId = NOVA.qs('id') || 'nova-cup-volga';
+  let compId = NOVA.qs('id') || 'nova-street-river-ufa-2026';
   const appId  = NOVA.qs('app');
   const appTok = NOVA.qs('t');
 
@@ -76,14 +76,31 @@
   }
 
   async function loadCompetition(){
+    if(!compId || compId === 'nova-cup-volga'){
+      compId = 'nova-street-river-ufa-2026';
+    }
     try {
       const data = await NOVA_API.get(`/api/competitions/${encodeURIComponent(compId)}`);
       competition = data.competition;
       serverOnline = true;
     } catch(e){
-      // сервер недоступен — показываем форму по демо-данным,
-      // но подача всё равно упрётся в сервер: предупреждаем заранее
-      competition = NOVA.competition(compId);
+      // Try to discover active competition from catalog API
+      try {
+        const cat = await NOVA_API.get('/api/competitions');
+        if (cat && Array.isArray(cat.competitions) && cat.competitions.length > 0) {
+          const active = cat.competitions.find(x => x.registration === 'open' || x.stage === 'upcoming') || cat.competitions[0];
+          if (active) {
+            compId = active.slug || active.id;
+            const single = await NOVA_API.get(`/api/competitions/${encodeURIComponent(compId)}`);
+            competition = single.competition;
+            serverOnline = true;
+            return true;
+          }
+        }
+      } catch(catErr) {}
+
+      // сервер недоступен — показываем форму по демо-данным
+      competition = NOVA.competition(compId) || (window.NOVA_DATA && NOVA_DATA.competitions && NOVA_DATA.competitions[0]);
       serverOnline = false;
       if(!competition) { paintNotFound(); return false; }
     }

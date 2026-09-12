@@ -119,3 +119,20 @@ function emptyState(text){
     // Non-blocking fallback
   }
 })();
+
+/* ---------- sync header 'Участвовать' action to registration form ---------- */
+(function syncHeaderJoinBtn() {
+  function fixJoinBtns() {
+    document.querySelectorAll('a.btn').forEach(btn => {
+      if (btn.textContent.trim() === 'Участвовать') {
+        btn.href = 'register.html?id=nova-street-river-ufa-2026';
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixJoinBtns);
+  } else {
+    fixJoinBtns();
+  }
+})();
+
