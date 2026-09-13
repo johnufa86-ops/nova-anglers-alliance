@@ -117,6 +117,8 @@
      REVISIT MODE — прямая/сохранённая ссылка ?app=NOVA-…&t=…
      ============================================================ */
   if(appId){
+    const yCard = $('#yandexFormCard'); if(yCard) yCard.style.display = 'none';
+    const vkCard = $('.vk-hybrid-card'); if(vkCard) vkCard.style.display = 'none';
     (async () => {
       try {
         const app = await NOVAApplications.getById(appId, appTok || undefined);
