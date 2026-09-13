@@ -1270,15 +1270,16 @@ a.row-link{color:inherit;display:table-row;}
   .hero-cta{flex-direction:column;gap:10px;margin-top:28px;}
   .hero-cta .btn{width:100%;justify-content:center;}
   .hero-stats{
-    gap:14px 16px;
+    gap:10px 12px;
     margin-top:32px;
     padding-top:20px;
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(3, 1fr);
     max-width:100%;
+    text-align:center;
   }
-  .hero-stats .stat b{font-size:22px;}
-  .hero-stats .stat span{font-size:10.5px;}
+  .hero-stats .stat b{font-size:24px;}
+  .hero-stats .stat span{font-size:10px;}
   .scroll-cue{display:none;}
 
   /* Page hero (interior pages) */
