@@ -140,10 +140,10 @@
 <section id="participants">
   <div class="wrap reveal">
     <div class="eyebrow">Участники</div>
-    <div class="section-head"><h2>Зарегистрированные спортсмены и экипажи</h2></div>
+    <div class="section-head"><h2>Зарегистрированные спортсмены</h2></div>
     <div class="table-wrap">
       <table class="live-table">
-        <thead><tr><th>#</th><th>Спортсмен / экипаж</th><th>Команда</th><th style="text-align:right">Статус</th></tr></thead>
+        <thead><tr><th>#</th><th>Спортсмен</th><th>Регион</th><th style="text-align:right">Статус</th></tr></thead>
         <tbody id="participantsBody"></tbody>
       </table>
     </div>
@@ -157,7 +157,7 @@
     <div class="section-head"><h2>Итоговый протокол</h2></div>
     <div class="table-wrap" id="resultsWrap">
       <table class="live-table">
-        <thead><tr><th>Место</th><th>Спортсмен / экипаж</th><th>Вес / баллы</th><th style="text-align:right">Очки NOVA</th></tr></thead>
+        <thead><tr><th>Место</th><th>Спортсмен</th><th>Вес / баллы</th><th style="text-align:right">Очки NOVA</th></tr></thead>
         <tbody id="resultsBody"></tbody>
       </table>
     </div>
@@ -301,13 +301,13 @@ function render(c){
   if(oAv) oAv.style.display = count > 0 ? 'flex' : 'none';
   if(document.getElementById('oEntrants')) {
     if(count > 0) {
-      document.getElementById('oEntrants').textContent = `${count} ${c.entryType==='team' ? 'экипажей' : 'участников'} зарегистрировано` + (hasLimit ? ` из ${c.participantsLimit}` : '');
+      document.getElementById('oEntrants').textContent = `${count} спортсменов зарегистрировано` + (hasLimit ? ` из ${c.participantsLimit}` : '');
     } else {
       document.getElementById('oEntrants').textContent = hasLimit ? `Открыт приём заявок · Лимит ${c.participantsLimit} мест` : `Открыт приём заявок · Без ограничений мест`;
     }
   }
 
-  const entryTypeLabel = { individual:'Только спортсмены', team:'Только экипажи', both:'Спортсмены и экипажи' }[c.entryType] || '—';
+  const entryTypeLabel = { individual:'Личный зачёт', team:'Командный зачёт', both:'Лично-командный зачёт' }[c.entryType] || 'Личный зачёт';
   document.getElementById('regEntryType').textContent = entryTypeLabel;
   document.getElementById('regSlotsLeft').textContent = hasLimit ? Math.max(0, c.participantsLimit - c.participants) : 'Без ограничений';
 
