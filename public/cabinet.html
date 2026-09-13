@@ -23,55 +23,15 @@
     <div style="text-align:center;margin-bottom:30px;">
       <img src="/assets/logo-full.png" alt="NOVA Anglers Alliance" style="height:64px;margin:0 auto;">
     </div>
-    <div class="login-card">
-      <h1>Кабинет спортсмена</h1>
-      <p class="sub">Ваша цифровая спортивная книжка: заявки, документы, результаты и рейтинг.</p>
-
-      <div class="cab-tabs" role="tablist">
-        <button type="button" class="cab-tab active" id="tabLogin" role="tab">Вход</button>
-        <button type="button" class="cab-tab" id="tabRegister" role="tab">Регистрация</button>
-      </div>
-
-      <div id="authError" style="display:none;margin-bottom:16px;"></div>
-
-      <!-- ВХОД -->
-      <form id="loginForm" novalidate>
-        <div class="field">
-          <label for="loginEmail">E-mail</label>
-          <input type="email" id="loginEmail" autocomplete="username" placeholder="you@mail.ru" required>
-        </div>
-        <div class="field">
-          <label for="loginPassword">Пароль</label>
-          <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;margin-top:8px;">Войти</button>
-      </form>
-
-      <!-- РЕГИСТРАЦИЯ -->
-      <form id="registerForm" novalidate style="display:none;">
-        <div class="field">
-          <label for="regName">ФИО</label>
-          <input type="text" id="regName" autocomplete="name" placeholder="Волков Артём Сергеевич" required>
-          <span class="field-error" id="err-regName" style="display:none;"></span>
-        </div>
-        <div class="field">
-          <label for="regEmail">E-mail</label>
-          <input type="email" id="regEmail" autocomplete="email" placeholder="you@mail.ru" required>
-          <span class="field-hint">Если вы подавали заявку на турнир с этого e-mail — история заявок привяжется автоматически.</span>
-          <span class="field-error" id="err-regEmail" style="display:none;"></span>
-        </div>
-        <div class="field">
-          <label for="regPassword">Пароль</label>
-          <input type="password" id="regPassword" autocomplete="new-password" placeholder="Минимум 8 символов" required>
-          <span class="field-error" id="err-regPassword" style="display:none;"></span>
-        </div>
-        <button type="submit" class="btn btn-primary" id="registerBtn" style="width:100%;justify-content:center;margin-top:8px;">Создать кабинет</button>
-      </form>
-
-      <div class="login-hint">
-        Кабинет организатора — <a href="/admin" style="color:var(--pulse-2);">/admin</a>.
-        Доступы к нему выдаёт администратор Альянса.
-      </div>
+    <div class="login-card" style="text-align:center;">
+      <div class="eyebrow" style="margin-bottom:8px;">Сезон 2026</div>
+      <h1 style="font-size:24px;margin-bottom:12px;">Личный кабинет спортсмена</h1>
+      <p class="sub" style="margin-bottom:28px;line-height:1.6;font-size:14.5px;">
+        Сервис цифрового кабинета спортсмена находится на стадии подготовки к открытию сезона.<br><br>
+        Регистрация на турниры открыта и проходит через официальную форму на странице соревнований.
+      </p>
+      <a href="/competitions.html" class="btn btn-primary" style="justify-content:center;width:100%;margin-bottom:12px;">Ближайшие соревнования →</a>
+      <a href="/" class="btn btn-ghost" style="justify-content:center;width:100%;">На главную страницу</a>
     </div>
     <p style="text-align:center;margin-top:22px;font-size:13px;"><a href="/" style="color:var(--muted);">← Вернуться на сайт</a></p>
   </div>
@@ -152,77 +112,77 @@ function fieldError(field, message) {
   if (el) { el.textContent = message; el.style.display = message ? 'block' : 'none'; }
 }
 
-/* ---------- табы ---------- */
-function selectTab(tab) {
-  const login = tab === 'login';
-  $('tabLogin').classList.toggle('active', login);
-  $('tabRegister').classList.toggle('active', !login);
-  $('loginForm').style.display = login ? 'block' : 'none';
-  $('registerForm').style.display = login ? 'none' : 'block';
-  $('authError').style.display = 'none';
-}
-$('tabLogin').addEventListener('click', () => selectTab('login'));
-$('tabRegister').addEventListener('click', () => selectTab('register'));
-if (new URLSearchParams(location.search).get('mode') === 'register') selectTab('register');
-
-/* ---------- вход ---------- */
-$('loginForm').addEventListener('submit', async (ev) => {
-  ev.preventDefault();
-  const btn = $('loginBtn');
-  btn.disabled = true; btn.textContent = 'Вход…';
-  $('authError').style.display = 'none';
-  try {
-    const user = await NOVACabinet.login(
-      $('loginEmail').value.trim(),
-      $('loginPassword').value
-    );
-    window.location.href = user && user.role !== 'athlete' ? '/admin' : '/cabinet';
-  } catch (e) {
-    btn.disabled = false; btn.textContent = 'Войти';
-    showAuthError(`<b>${NOVACabinetUI.esc(e.message || 'Не удалось войти')}</b>`);
+/* ---------- табы и формы (если активны) ---------- */
+if ($('tabLogin')) {
+  function selectTab(tab) {
+    const login = tab === 'login';
+    $('tabLogin').classList.toggle('active', login);
+    $('tabRegister').classList.toggle('active', !login);
+    $('loginForm').style.display = login ? 'block' : 'none';
+    $('registerForm').style.display = login ? 'none' : 'block';
+    $('authError').style.display = 'none';
   }
-});
+  $('tabLogin').addEventListener('click', () => selectTab('login'));
+  $('tabRegister').addEventListener('click', () => selectTab('register'));
+  if (new URLSearchParams(location.search).get('mode') === 'register') selectTab('register');
 
-/* ---------- регистрация (e-mail верификация → затем клейм) ---------- */
-$('registerForm').addEventListener('submit', async (ev) => {
-  ev.preventDefault();
-  const btn = $('registerBtn');
-  ['regName', 'regEmail', 'regPassword'].forEach((f) => fieldError(f.replace('reg', '').toLowerCase(), ''));
-  $('authError').style.display = 'none';
-
-  const name = $('regName').value.trim();
-  const email = $('regEmail').value.trim();
-  const password = $('regPassword').value;
-
-  let bad = false;
-  if (name.length < 2) { fieldError('regname', 'Укажите ФИО'); bad = true; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fieldError('regemail', 'Укажите корректный e-mail'); bad = true; }
-  if (password.length < 8) { fieldError('regpassword', 'Пароль — минимум 8 символов'); bad = true; }
-  if (bad) return;
-
-  btn.disabled = true; btn.textContent = 'Создаём кабинет…';
-  try {
-    // STAGE 6: аккаунт создаётся сразу, но история заявок/документы
-    // активируются ТОЛЬКО после подтверждения e-mail по ссылке из письма
-    const res = await NOVACabinet.register(name, email, password);
-    if (res && res.needsVerification) {
-      sessionStorage.setItem('nova_needs_verification', '1');
+  /* ---------- вход ---------- */
+  $('loginForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const btn = $('loginBtn');
+    btn.disabled = true; btn.textContent = 'Вход…';
+    $('authError').style.display = 'none';
+    try {
+      const user = await NOVACabinet.login(
+        $('loginEmail').value.trim(),
+        $('loginPassword').value
+      );
+      window.location.href = user && user.role !== 'athlete' ? '/admin' : '/cabinet';
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Войти';
+      showAuthError(`<b>${NOVACabinetUI.esc(e.message || 'Не удалось войти')}</b>`);
     }
-    window.location.href = '/cabinet';
-  } catch (e) {
-    btn.disabled = false; btn.textContent = 'Создать кабинет';
-    if (e.code === 'VALIDATION_ERROR' && e.details) {
-      const map = { name: 'regname', email: 'regemail', password: 'regpassword' };
-      let shown = false;
-      for (const [k, msg] of Object.entries(e.details)) {
-        if (map[k]) { fieldError(map[k], msg); shown = true; }
+  });
+
+  /* ---------- регистрация (e-mail верификация → затем клейм) ---------- */
+  $('registerForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const btn = $('registerBtn');
+    ['regName', 'regEmail', 'regPassword'].forEach((f) => fieldError(f.replace('reg', '').toLowerCase(), ''));
+    $('authError').style.display = 'none';
+
+    const name = $('regName').value.trim();
+    const email = $('regEmail').value.trim();
+    const password = $('regPassword').value;
+
+    let bad = false;
+    if (name.length < 2) { fieldError('regname', 'Укажите ФИО'); bad = true; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fieldError('regemail', 'Укажите корректный e-mail'); bad = true; }
+    if (password.length < 8) { fieldError('regpassword', 'Пароль — минимум 8 символов'); bad = true; }
+    if (bad) return;
+
+    btn.disabled = true; btn.textContent = 'Создаём кабинет…';
+    try {
+      const res = await NOVACabinet.register(name, email, password);
+      if (res && res.needsVerification) {
+        sessionStorage.setItem('nova_needs_verification', '1');
       }
-      if (!shown) showAuthError(`<b>${NOVACabinetUI.esc(e.message)}</b>`);
-    } else {
-      showAuthError(`<b>${NOVACabinetUI.esc(e.message || 'Не удалось зарегистрироваться')}</b>`);
+      window.location.href = '/cabinet';
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Создать кабинет';
+      if (e.code === 'VALIDATION_ERROR' && e.details) {
+        const map = { name: 'regname', email: 'regemail', password: 'regpassword' };
+        let shown = false;
+        for (const [k, msg] of Object.entries(e.details)) {
+          if (map[k]) { fieldError(map[k], msg); shown = true; }
+        }
+        if (!shown) showAuthError(`<b>${NOVACabinetUI.esc(e.message)}</b>`);
+      } else {
+        showAuthError(`<b>${NOVACabinetUI.esc(e.message || 'Не удалось зарегистрироваться')}</b>`);
+      }
     }
-  }
-});
+  });
+}
 
 /* ---------- дашборд ---------- */
 function renderDashboard(data, user) {

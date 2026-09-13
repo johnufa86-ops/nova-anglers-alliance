@@ -177,8 +177,7 @@ nav.primary-nav a::after{
 nav.primary-nav a:hover::after{width:100%;}
 
 .header-actions{display:flex;align-items:center;gap:22px;}
-.login-link{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
-.login-link:hover{color:var(--text);}
+.login-link{display:none !important;}
 
 .burger{display:none;width:26px;height:18px;position:relative;background:none;border:0;}
 .burger span{position:absolute;left:0;right:0;height:1px;background:var(--text);transition:all .3s var(--ease);}
