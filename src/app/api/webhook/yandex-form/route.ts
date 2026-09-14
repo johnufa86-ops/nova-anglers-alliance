@@ -156,19 +156,6 @@ export async function POST(req: NextRequest) {
             },
           });
 
-          // Обновляем счётчик участников в карточке турнира
-          const count = await (db as any).applicationParticipant.count({
-            where: {
-              application: {
-                competitionId: comp.id,
-                status: 'approved',
-              },
-            },
-          });
-          await (db as any).competition.update({
-            where: { id: comp.id },
-            data: { participants: count },
-          });
         }
       }
 
