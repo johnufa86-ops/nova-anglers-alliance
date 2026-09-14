@@ -104,10 +104,10 @@ export async function POST(req: NextRequest) {
           data: {
             firstName,
             lastName,
+            middleName: patronymic || null,
             displayName: fullName,
             city: city || 'Уфа',
             region: region || 'Республика Башкортостан',
-            country: 'Россия',
             phone: phone || null,
             email: email || null,
             status: 'active',
