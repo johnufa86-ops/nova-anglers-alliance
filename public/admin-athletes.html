@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Спортсмены — NOVA ANGLERS ALLIANCE</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="/style.css">
+<style>
+.stat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 4px;
+}
+.stat-lbl {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.search-input {
+  flex: 1;
+  min-width: 240px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  border-radius: var(--radius);
+  outline: none;
+}
+.search-input:focus {
+  border-color: var(--pulse);
+}
+
+.table-wrap {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 10px;
+}
+.athlete-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.athlete-table th {
+  background: rgba(255,255,255,0.02);
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--line);
+}
+.athlete-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+}
+.athlete-table tr:hover td {
+  background: rgba(255,255,255,0.015);
+}
+
+.avatar-cell {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  color: var(--pulse-2);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-tag {
+  display: inline-block;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.badge-tag.accent {
+  color: var(--pulse-2);
+  border-color: rgba(75,163,255,0.3);
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 10, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 680px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transform: translateY(15px);
+  transition: transform 0.2s ease;
+}
+.modal-backdrop.open .modal-card {
+  transform: translateY(0);
+}
+.modal-header {
+  padding: 20px 26px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+  color: var(--text);
+}
+.modal-body {
+  padding: 24px 26px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-footer {
+  padding: 16px 26px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  background: rgba(255,255,255,0.01);
+}
+
+.photo-uploader-box {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  background: var(--void);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 22px;
+  transition: border-color 0.2s ease;
+}
+.photo-uploader-box.dragover {
+  border-color: var(--pulse);
+  background: rgba(75,163,255,0.04);
+}
+.photo-preview-wrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid var(--pulse-2);
+  background: var(--panel-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.photo-preview-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-preview-wrap .initials {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--pulse-2);
+}
+
+.field-group {
+  margin-bottom: 16px;
+}
+.field-group label {
+  display: block;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field-group input, .field-group select, .field-group textarea {
+  width: 100%;
+  background: var(--void);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  border-radius: var(--radius);
+  outline: none;
+  box-sizing: border-box;
+}
+.field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+  border-color: var(--pulse);
+}
+.field-group textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .photo-uploader-box { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell">
+  <header class="admin-header" id="adminHeader"></header>
+  <main class="admin-main">
+    <div class="wrap" id="adminContent">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <div style="margin-bottom:8px;">
+            <a href="/admin" class="btn btn-ghost btn-sm">← В дашборд</a>
+          </div>
+          <div class="eyebrow">База участников</div>
+          <h1 class="admin-title">Спортсмены</h1>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="/athletes" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Все спортсмены на сайте ↗</a>
+        </div>
+      </div>
+      <p class="admin-sub" style="margin-bottom:24px;">Управление профилями, загрузка фотографий участников, редактирование клубов и спортивных разрядов.</p>
+
+      <!-- Stats Cards -->
+      <div class="stat-cards-grid">
+        <div class="stat-card">
+          <div class="stat-lbl">Всего спортсменов</div>
+          <div class="stat-val" id="statTotal">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">С фотографией</div>
+          <div class="stat-val" id="statWithPhoto" style="color:#57e6a1;">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Без фотографии</div>
+          <div class="stat-val" id="statWithoutPhoto" style="color:var(--muted);">—</div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <input type="text" id="athleteSearchInput" class="search-input" placeholder="Поиск по имени, городу, клубу...">
+        <select id="filterPhoto" class="search-input" style="flex:0 0 200px;">
+          <option value="all">Все фото: любые</option>
+          <option value="with">Только с фото</option>
+          <option value="without">Без фото</option>
+        </select>
+      </div>
+
+      <!-- Loading / List -->
+      <div id="athletesLoading" style="padding:40px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;">
+        Загрузка базы спортсменов...
+      </div>
+
+      <div id="athletesList" style="display:none;">
+        <div class="table-wrap">
+          <table class="athlete-table">
+            <thead>
+              <tr>
+                <th style="width:54px;">Фото</th>
+                <th>Спортсмен</th>
+                <th>Город / Регион</th>
+                <th>Клуб / Разряд</th>
+                <th>Рейтинг</th>
+                <th style="text-align:right;">Действия</th>
+              </tr>
+            </thead>
+            <tbody id="athletesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  <footer class="admin-footer" id="adminFooter"></footer>
+</div>
+
+<!-- MODAL: EDIT ATHLETE & PHOTO -->
+<div class="modal-backdrop" id="athleteModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalAthleteTitle">Редактирование профиля</h2>
+      <button type="button" class="btn btn-ghost btn-sm" id="btnModalClose" style="padding:4px 10px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="athleteForm">
+        <input type="hidden" id="editAthleteId">
+        <input type="hidden" id="editPhotoUrl">
+
+        <!-- Photo upload section -->
+        <label style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">
+          Фотография спортсмена
+        </label>
+        <div class="photo-uploader-box" id="dropZone">
+          <div class="photo-preview-wrap" id="modalPhotoPreview">
+            <span class="initials" id="modalInitials">NA</span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:600;color:var(--text);font-size:14px;margin-bottom:4px;">
+              Загрузить фото с компьютера
+            </div>
+            <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.4;">
+              Выберите файл (JPG, PNG) или перетащите его сюда. Фото будет автоматически оптимизировано для карточки спортсмена.
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <label class="btn btn-secondary btn-sm" style="cursor:pointer;margin:0;">
+                📁 Выбрать фото...
+                <input type="file" id="filePhotoInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
+              </label>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnClearPhoto" style="display:none;color:#ff6b81;">
+                ✕ Удалить фото
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional URL input -->
+        <div class="field-group" style="margin-top:-10px;margin-bottom:20px;">
+          <details style="font-size:12.5px;color:var(--muted);">
+            <summary style="cursor:pointer;user-select:none;">Или указать прямую ссылку на фото (URL)</summary>
+            <div style="margin-top:8px;">
+              <input type="url" id="inputPhotoUrlDirect" placeholder="https://example.com/photo.jpg">
+            </div>
+          </details>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="editFirstName">Имя *</label>
+            <input type="text" id="editFirstName" required>
+          </div>
+          <div class="field-group">
+            <label for="editLastName">Фамилия *</label>
+            <input type="text" id="editLastName" required>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="editMiddleName">Отчество</label>
+            <input type="text" id="editMiddleName" placeholder="Если есть">
+          </div>
+          <div class="field-group">
+            <label for="editDisplayName">Отображаемое имя на сайте</label>
+            <input type="text" id="editDisplayName" placeholder="Оставьте пустым для Фамилия Имя">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="editCity">Город</label>
+            <input type="text" id="editCity" placeholder="Например, Уфа">
+          </div>
+          <div class="field-group">
+            <label for="editRegion">Регион</label>
+            <input type="text" id="editRegion" placeholder="Республика Башкортостан">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field-group">
+            <label for="editClub">Рыболовный клуб / Команда</label>
+            <input type="text" id="editClub" placeholder="Например, Рыболовный клуб Уфа">
+          </div>
+          <div class="field-group">
+            <label for="editSportsCategory">Спортивный разряд / звание</label>
+            <select id="editSportsCategory">
+              <option value="">Без разряда</option>
+              <option value="3 юношеский">3 юношеский разряд</option>
+              <option value="2 юношеский">2 юношеский разряд</option>
+              <option value="1 юношеский">1 юношеский разряд</option>
+              <option value="3 разряд">3 спортивный разряд</option>
+              <option value="2 разряд">2 спортивный разряд</option>
+              <option value="1 разряд">1 спортивный разряд</option>
+              <option value="КМС">КМС (Кандидат в мастера спорта)</option>
+              <option value="МС">МС (Мастер спорта России)</option>
+              <option value="МСМК">МСМК (Мастер спорта международного класса)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="editBio">О спортсмене (краткая биография / достижения)</label>
+          <textarea id="editBio" placeholder="Информация о спортсмене, опыте, трофеях и специализации..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost btn-sm" id="btnModalCancel">Отмена</button>
+      <button type="button" class="btn btn-primary btn-sm" id="btnSaveAthlete">Сохранить изменения</button>
+    </div>
+  </div>
+</div>
+
+<script src="/common.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/admin-ui.js"></script>
+<script>
+let CURRENT_USER = null;
+let ATHLETES = [];
+let FILTERED = [];
+
+async function init() {
+  CURRENT_USER = await NOVAAdminUI.guard('athletes', ['view']);
+  if (!CURRENT_USER) return;
+  loadAthletes();
+}
+
+async function loadAthletes() {
+  document.getElementById('athletesLoading').style.display = 'block';
+  document.getElementById('athletesList').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/athletes', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('Не удалось загрузить спортсменов');
+    const data = await res.json();
+    ATHLETES = data.athletes || [];
+    updateStats();
+    applyFilter();
+  } catch (err) {
+    NOVAAdminUI.toast('Ошибка загрузки: ' + err.message, 'error');
+  } finally {
+    document.getElementById('athletesLoading').style.display = 'none';
+    document.getElementById('athletesList').style.display = 'block';
+  }
+}
+
+function updateStats() {
+  const total = ATHLETES.length;
+  const withPhoto = ATHLETES.filter(a => a.photoUrl && a.photoUrl.trim()).length;
+  const withoutPhoto = total - withPhoto;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statWithPhoto').textContent = withPhoto;
+  document.getElementById('statWithoutPhoto').textContent = withoutPhoto;
+}
+
+function applyFilter() {
+  const q = (document.getElementById('athleteSearchInput').value || '').toLowerCase().trim();
+  const photoFilter = document.getElementById('filterPhoto').value;
+
+  FILTERED = ATHLETES.filter(a => {
+    if (photoFilter === 'with' && (!a.photoUrl || !a.photoUrl.trim())) return false;
+    if (photoFilter === 'without' && a.photoUrl && a.photoUrl.trim()) return false;
+
+    if (!q) return true;
+    const hay = [a.name, a.firstName, a.lastName, a.city, a.region, a.club, a.sportsCategory].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('athletesTableBody');
+  if (!FILTERED.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">Спортсмены не найдены</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = FILTERED.map(a => {
+    const photo = a.photoUrl ? '<img src="' + NOVAAdminUI.esc(a.photoUrl) + '" alt="' + NOVAAdminUI.esc(a.name) + '">' : '<span>' + NOVAAdminUI.esc(a.initials || 'NA') + '</span>';
+    const loc = [a.city, a.region].filter(Boolean).join(', ') || '—';
+    const club = a.club || '—';
+    const cat = a.sportsCategory ? '<span class="badge-tag accent" style="margin-left:6px;">' + NOVAAdminUI.esc(a.sportsCategory) + '</span>' : '';
+
+    return '<tr>' +
+      '<td><div class="avatar-cell">' + photo + '</div></td>' +
+      '<td>' +
+        '<div style="font-weight:600;color:var(--text);">' + NOVAAdminUI.esc(a.name) + '</div>' +
+        '<div style="font-size:12px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;">ID: ' + NOVAAdminUI.esc(a.id.slice(0, 8)) + '...</div>' +
+      '</td>' +
+      '<td style="color:var(--muted);font-size:13px;">' + NOVAAdminUI.esc(loc) + '</td>' +
+      '<td><span style="color:var(--text);">' + NOVAAdminUI.esc(club) + '</span>' + cat + '</td>' +
+      '<td style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:var(--pulse-2);font-weight:600;">' + (a.rating || 0) + ' pts</td>' +
+      '<td style="text-align:right;">' +
+        '<button type="button" class="btn btn-secondary btn-sm" onclick="openAthleteModal(\'' + a.id + '\')" style="margin-right:6px;">📷 Фото и профиль</button>' +
+        '<a href="/athlete.html?id=' + a.id + '" target="_blank" class="btn btn-ghost btn-sm">Профиль ↗</a>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// Search and filter listeners
+document.getElementById('athleteSearchInput').addEventListener('input', applyFilter);
+document.getElementById('filterPhoto').addEventListener('change', applyFilter);
+
+// Modal functions
+const modal = document.getElementById('athleteModal');
+const fileInput = document.getElementById('filePhotoInput');
+const dropZone = document.getElementById('dropZone');
+const photoUrlInput = document.getElementById('editPhotoUrl');
+const directUrlInput = document.getElementById('inputPhotoUrlDirect');
+const previewWrap = document.getElementById('modalPhotoPreview');
+const btnClearPhoto = document.getElementById('btnClearPhoto');
+
+function updatePhotoPreview(url, initials = 'NA') {
+  photoUrlInput.value = url || '';
+  directUrlInput.value = url && !url.startsWith('data:') ? url : '';
+
+  if (url) {
+    previewWrap.innerHTML = '<img src="' + NOVAAdminUI.esc(url) + '" alt="Preview">';
+    btnClearPhoto.style.display = 'inline-flex';
+  } else {
+    previewWrap.innerHTML = '<span class="initials">' + NOVAAdminUI.esc(initials) + '</span>';
+    btnClearPhoto.style.display = 'none';
+  }
+}
+
+btnClearPhoto.addEventListener('click', () => {
+  const athleteId = document.getElementById('editAthleteId').value;
+  const a = ATHLETES.find(item => item.id === athleteId);
+  updatePhotoPreview('', a ? a.initials : 'NA');
+  fileInput.value = '';
+});
+
+directUrlInput.addEventListener('input', (e) => {
+  const url = e.target.value.trim();
+  const athleteId = document.getElementById('editAthleteId').value;
+  const a = ATHLETES.find(item => item.id === athleteId);
+  updatePhotoPreview(url, a ? a.initials : 'NA');
+});
+
+// Image file resizing helper (converts to base64 JPEG max 500x500)
+function handleImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) {
+    NOVAAdminUI.toast('Пожалуйста, выберите файл изображения (JPG, PNG)', 'error');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const maxDim = 500;
+      let width = img.width;
+      let height = img.height;
+
+      // Crop to square from center
+      const minSide = Math.min(width, height);
+      const sx = (width - minSide) / 2;
+      const sy = (height - minSide) / 2;
+
+      const canvas = document.createElement('canvas');
+      const targetSize = Math.min(minSide, maxDim);
+      canvas.width = targetSize;
+      canvas.height = targetSize;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, targetSize, targetSize);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.86);
+      updatePhotoPreview(dataUrl);
+      NOVAAdminUI.toast('Фото подготовлено к сохранению', 'ok');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files && e.target.files[0]) {
+    handleImageFile(e.target.files[0]);
+  }
+});
+
+// Drag & drop
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('dragover');
+});
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    handleImageFile(e.dataTransfer.files[0]);
+  }
+});
+
+window.openAthleteModal = async function(id) {
+  let athlete = ATHLETES.find(a => a.id === id);
+  if (!athlete) return;
+
+  // Fetch fresh full data from GET /api/athletes/:id
+  try {
+    const res = await fetch('/api/athletes/' + id);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.athlete) athlete = { ...athlete, ...data.athlete };
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  document.getElementById('editAthleteId').value = athlete.id;
+  document.getElementById('modalAthleteTitle').textContent = 'Редактирование: ' + athlete.name;
+  document.getElementById('editFirstName').value = athlete.firstName || '';
+  document.getElementById('editLastName').value = athlete.lastName || '';
+  document.getElementById('editMiddleName').value = athlete.middleName || '';
+  document.getElementById('editDisplayName').value = athlete.name !== (athlete.firstName + ' ' + athlete.lastName).trim() ? (athlete.name || '') : '';
+  document.getElementById('editCity').value = athlete.city || '';
+  document.getElementById('editRegion').value = athlete.region || '';
+  document.getElementById('editClub').value = athlete.club || '';
+  document.getElementById('editSportsCategory').value = athlete.sportsCategory || '';
+  document.getElementById('editBio').value = athlete.bio || '';
+
+  updatePhotoPreview(athlete.photoUrl || '', athlete.initials || 'NA');
+
+  modal.classList.add('open');
+};
+
+function closeModal() {
+  modal.classList.remove('open');
+  fileInput.value = '';
+}
+
+document.getElementById('btnModalClose').addEventListener('click', closeModal);
+document.getElementById('btnModalCancel').addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) closeModal();
+});
+
+// Save athlete
+document.getElementById('btnSaveAthlete').addEventListener('click', async () => {
+  const id = document.getElementById('editAthleteId').value;
+  if (!id) return;
+
+  const firstName = document.getElementById('editFirstName').value.trim();
+  const lastName = document.getElementById('editLastName').value.trim();
+  if (!firstName || !lastName) {
+    NOVAAdminUI.toast('Имя и фамилия обязательны для заполнения', 'error');
+    return;
+  }
+
+  const payload = {
+    firstName,
+    lastName,
+    middleName: document.getElementById('editMiddleName').value.trim() || null,
+    displayName: document.getElementById('editDisplayName').value.trim() || null,
+    city: document.getElementById('editCity').value.trim() || null,
+    region: document.getElementById('editRegion').value.trim() || null,
+    club: document.getElementById('editClub').value.trim() || null,
+    sportsCategory: document.getElementById('editSportsCategory').value || null,
+    bio: document.getElementById('editBio').value.trim() || null,
+    photoUrl: document.getElementById('editPhotoUrl').value.trim() || null,
+  };
+
+  const btn = document.getElementById('btnSaveAthlete');
+  btn.disabled = true;
+  btn.textContent = 'Сохранение...';
+
+  try {
+    const res = await fetch('/api/athletes/' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Ошибка при сохранении');
+    }
+
+    NOVAAdminUI.toast('Профиль и фото спортсмена успешно сохранены!', 'ok');
+    closeModal();
+    await loadAthletes();
+  } catch (err) {
+    NOVAAdminUI.toast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Сохранить изменения';
+  }
+});
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

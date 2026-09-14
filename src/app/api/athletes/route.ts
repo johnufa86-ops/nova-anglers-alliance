@@ -30,6 +30,8 @@ export async function GET(req: NextRequest) {
         club: true,
         region: true,
         photoUrl: true,
+        sportsCategory: true,
+        bio: true,
         ratingEntries: {
           select: { points: true },
         },
@@ -59,8 +61,14 @@ export async function GET(req: NextRequest) {
       return {
         id: a.id,
         name,
+        firstName: a.firstName || '',
+        lastName: a.lastName || '',
         initials,
         region: a.region || a.city || 'Регион уточняется',
+        city: a.city || '',
+        club: a.club || '',
+        sportsCategory: a.sportsCategory || '',
+        bio: a.bio || '',
         teamId: team ? team.id : null,
         teamName: team ? team.name : null,
         rating,

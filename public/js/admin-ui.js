@@ -31,6 +31,7 @@ window.NOVAAdminUI = (function () {
       ['/admin', 'Дашборд', 'dashboard'],
       ['/admin/applications', 'Заявки', 'applications'],
       ['/admin/competitions', 'Соревнования', 'competitions'],
+      ['/admin/athletes', 'Спортсмены', 'athletes'],
       ['/admin/news', 'Новости', 'news'],
       ['/admin/content', 'Контент сайта', 'content'],
       ['/admin/payment-details', 'Реквизиты', 'payment-details'],
