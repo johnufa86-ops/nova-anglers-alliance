@@ -21,23 +21,27 @@ export async function POST(req: NextRequest) {
     let city = '';
     let region = '';
 
-    const answers = body.answers || body;
-    if (typeof answers === 'object' && answers !== null) {
-      for (const key of Object.keys(answers)) {
-        const item = answers[key];
-        const qText = (typeof item === 'object' && item?.question ? String(item.question) : key).toLowerCase();
-        const val = typeof item === 'object' && item?.value !== undefined ? String(item.value) : String(item);
+    // Поддерживаем как обычный webhook, так и JSON-RPC 2.0 (body.params)
+    const targetContainers = [body.params?.answers, body.params, body.answers, body].filter(Boolean);
 
-        if (qText.includes('фио') || qText.includes('имя') || qText.includes('фамилия')) {
-          if (!fullName && val.trim()) fullName = val.trim();
-        } else if (qText.includes('телефон') || qText.includes('связ') || qText.includes('номер')) {
-          if (!phone && val.trim()) phone = val.trim();
-        } else if (qText.includes('email') || qText.includes('почт') || qText.includes('e-mail')) {
-          if (!email && val.trim()) email = val.trim();
-        } else if (qText.includes('город') || qText.includes('регион') || qText.includes('откуда') || qText.includes('проживан')) {
-          if (!region && val.trim()) {
-            city = val.trim();
-            region = val.trim();
+    for (const container of targetContainers) {
+      if (typeof container === 'object' && container !== null) {
+        for (const key of Object.keys(container)) {
+          const item = container[key];
+          const qText = (typeof item === 'object' && item?.question ? String(item.question) : key).toLowerCase();
+          const val = typeof item === 'object' && item?.value !== undefined ? String(item.value) : String(item);
+
+          if (qText.includes('фио') || qText.includes('имя') || qText.includes('фамилия') || qText === 'fullname' || qText === 'name') {
+            if (!fullName && val.trim()) fullName = val.trim();
+          } else if (qText.includes('телефон') || qText.includes('связ') || qText.includes('номер') || qText === 'phone') {
+            if (!phone && val.trim()) phone = val.trim();
+          } else if (qText.includes('email') || qText.includes('почт') || qText.includes('e-mail')) {
+            if (!email && val.trim()) email = val.trim();
+          } else if (qText.includes('город') || qText.includes('регион') || qText.includes('откуда') || qText.includes('проживан') || qText === 'city') {
+            if (!region && val.trim()) {
+              city = val.trim();
+              region = val.trim();
+            }
           }
         }
       }
@@ -152,15 +156,32 @@ export async function POST(req: NextRequest) {
       }
 
       return NextResponse.json({
+        jsonrpc: '2.0',
+        id: body?.id ?? 1,
+        result: {
+          ok: true,
+          athleteId: athlete.id,
+        },
         ok: true,
         message: 'Athlete and tournament application recorded from Yandex Form webhook',
         athleteId: athlete.id,
       });
     }
 
-    return NextResponse.json({ ok: true, received: true });
+    return NextResponse.json({
+      jsonrpc: '2.0',
+      id: body?.id ?? 1,
+      result: { ok: true, received: true },
+      ok: true,
+      received: true,
+    });
   } catch (error: any) {
     console.error('[Yandex Form Webhook Error]:', error);
-    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+    return NextResponse.json({
+      jsonrpc: '2.0',
+      id: 1,
+      error: { code: -32000, message: error.message },
+      ok: false,
+    }, { status: 200 });
   }
 }
