@@ -99,6 +99,7 @@
           <a href="#" class="btn btn-primary btn-sm" id="oRegisterBtn">Зарегистрироваться</a>
           <a href="https://vk.me/nova_anglers" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="background:rgba(0,119,255,0.12);border-color:rgba(0,119,255,0.35);color:#60a5fa;" title="Подать заявку через ВКонтакте">Заявка через VK ↗</a>
           <a href="#reglament" class="btn btn-ghost btn-sm">Регламент</a>
+          <a href="rules.html" class="btn btn-ghost btn-sm" title="Полное положение соревнований">Полные правила ↗</a>
         </div>
       </div>
       <div>
@@ -115,8 +116,15 @@
 <!-- РЕГЛАМЕНТ -->
 <section id="reglament">
   <div class="wrap reveal">
-    <div class="eyebrow">Регламент</div>
-    <div class="section-head"><h2>Правила турнира</h2></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+      <div>
+        <div class="eyebrow">Регламент</div>
+        <div class="section-head" style="margin-bottom:0;"><h2>Правила турнира</h2></div>
+      </div>
+      <a href="rules.html" class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px;">
+        <span>📄 Полный официальный регламент (Web / PDF)</span> ↗
+      </a>
+    </div>
     <div class="prose" id="regBody"></div>
   </div>
 </section>
@@ -215,6 +223,7 @@
       </div>
       <div class="foot-col"><h5>Спорт</h5><ul>
         <li><a href="competitions.html">Соревнования</a></li><li><a href="competitions.html">Календарь</a></li>
+        <li><a href="rules.html">Регламент и правила</a></li>
         <li><a href="rating.html">Рейтинг</a></li><li><a href="athletes.html">Участники</a></li>
         <li><a href="teams.html">Команды</a></li>
       </ul></div>
@@ -365,9 +374,14 @@ function render(c){
     : `<div style="grid-column:1/-1;">${emptyState('Медиаматериалы появятся после турнира')}</div>`;
 
   /* документы */
-  document.getElementById('docList').innerHTML = (c.documents||[]).length
-    ? c.documents.map(d => `<div class="doc-row"><span class="doc-name">📄 ${d.name}</span><span class="doc-type">${d.type}</span></div>`).join('')
-    : `<div class="doc-row"><span class="doc-name" style="color:var(--muted-2);">Документы пока не опубликованы</span></div>`;
+  const defaultDocs = [
+    { name: 'Официальное положение и регламент турнира (NOVA Street & River Уфа 2026)', type: 'Регламент (Web / PDF)', url: 'rules.html' }
+  ];
+  const allDocs = (c.documents && c.documents.length) ? c.documents : defaultDocs;
+  document.getElementById('docList').innerHTML = allDocs.map(d => d.url 
+    ? `<a href="${d.url}" class="doc-row" style="text-decoration:none;color:inherit;" target="${d.url.startsWith('http') ? '_blank' : '_self'}"><span class="doc-name">📄 ${d.name}</span><span class="doc-type">${d.type}</span></a>`
+    : `<div class="doc-row"><span class="doc-name">📄 ${d.name}</span><span class="doc-type">${d.type}</span></div>`
+  ).join('');
 
   /* участники — реальный список из базы (только подтверждённые,
      только публичные поля: имя / команда / регион) */

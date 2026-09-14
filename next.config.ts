@@ -41,6 +41,8 @@ const nextConfig: NextConfig = {
       { source: '/media', destination: '/media.html' },
       { source: '/alliance', destination: '/alliance.html' },
       { source: '/partners', destination: '/partners.html' },
+      { source: '/rules', destination: '/rules.html' },
+      { source: '/regulations', destination: '/rules.html' },
       { source: '/contacts', destination: '/contacts.html' },
     ];
   },

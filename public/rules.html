@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Регламент и правила турнира — NOVA Street & River Уфа 2026 — NOVA Anglers Alliance</title>
+<meta name="description" content="Официальный регламент, правила проведения, условия участия и судейство турнира NOVA Street & River — Уфа 2026. Береговой спиннинг, принцип «Поймал — Отпусти».">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0a2346">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Стили для страницы регламента */
+.rules-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  align-items: start;
+  margin-top: 32px;
+}
+@media (max-width: 960px) {
+  .rules-container {
+    grid-template-columns: 1fr;
+  }
+  .rules-toc {
+    display: none;
+  }
+}
+.rules-toc {
+  position: sticky;
+  top: 96px;
+  background: var(--card, #0f172a);
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  padding: 20px;
+}
+.rules-toc h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted, #94a3b8);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rules-toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rules-toc li a {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text, #e2e8f0);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  line-height: 1.35;
+}
+.rules-toc li a:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  transform: translateX(4px);
+}
+.rules-content {
+  background: var(--card, #0f172a);
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  padding: 36px 44px;
+}
+@media (max-width: 640px) {
+  .rules-content {
+    padding: 24px 18px;
+  }
+}
+.rules-section {
+  margin-bottom: 44px;
+  scroll-margin-top: 100px;
+}
+.rules-section:last-child {
+  margin-bottom: 0;
+}
+.rules-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line, rgba(255,255,255,0.08));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rules-section h3 {
+  font-size: 1.15rem;
+  color: #38bdf8;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.rules-section p {
+  color: var(--muted, #cbd5e1);
+  line-height: 1.7;
+  font-size: 0.98rem;
+  margin-bottom: 16px;
+}
+.rules-section ul, .rules-section ol {
+  color: var(--muted, #cbd5e1);
+  line-height: 1.7;
+  font-size: 0.98rem;
+  padding-left: 24px;
+  margin-bottom: 20px;
+}
+.rules-section li {
+  margin-bottom: 8px;
+}
+.badge-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+.rules-stamp-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed var(--line, rgba(255,255,255,0.18));
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.9rem;
+}
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.95rem;
+}
+.rules-table th {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  text-align: left;
+  padding: 12px 16px;
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  font-weight: 600;
+}
+.rules-table td {
+  padding: 12px 16px;
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  color: var(--muted, #cbd5e1);
+}
+.rules-table tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+.highlight-box {
+  background: rgba(56, 189, 248, 0.05);
+  border-left: 4px solid #38bdf8;
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 20px 0;
+}
+.highlight-box.warning {
+  background: rgba(239, 68, 68, 0.05);
+  border-left-color: #ef4444;
+}
+.highlight-box p {
+  margin: 0;
+  color: #f1f5f9;
+}
+.action-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+/* Печатная версия */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  header, footer, .rules-toc, .action-bar, .breadcrumb, .badge-stamp {
+    display: none !important;
+  }
+  .rules-container {
+    grid-template-columns: 1fr !important;
+    margin: 0 !important;
+  }
+  .rules-content {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  .rules-section h2, .rules-section h3 {
+    color: #000 !important;
+    border-bottom-color: #ccc !important;
+  }
+  .rules-section p, .rules-section li, .rules-table td {
+    color: #222 !important;
+  }
+  .rules-table th {
+    background: #eee !important;
+    color: #000 !important;
+    border-color: #ccc !important;
+  }
+  .rules-table td {
+    border-color: #ccc !important;
+  }
+  .highlight-box {
+    background: #f8f9fa !important;
+    border-left-color: #333 !important;
+    color: #000 !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="stars" style="display:none"></canvas>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="competitions.html">Соревнования</a>
+      <a href="rating.html">Рейтинг</a>
+      <a href="athletes.html">Участники</a>
+      <a href="news.html">Новости</a>
+      <a href="media.html">Медиа</a>
+      <a href="alliance.html">Альянс</a>
+    </nav>
+    <div class="header-actions">
+      <a href="login.html" class="login-link">Войти</a>
+      <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-primary btn-sm">Участвовать</a>
+      <button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="index.html">Главная</a>
+      <span>/</span>
+      <a href="competitions.html">Соревнования</a>
+      <span>/</span>
+      <a href="competition.html?id=nova-street-river-ufa-2026">NOVA Street & River</a>
+      <span>/</span>
+      <span>Регламент и правила</span>
+    </div>
+    <div class="badge-stamp">Официальный нормативный документ</div>
+    <h1>Положение и регламент соревнований</h1>
+    <p class="sub">Открытый рейтинговый турнир по спортивной ловле хищной рыбы спиннингом с берега «NOVA Street & River — Уфа 2026». Личный зачёт, строгий принцип «Поймал — Отпусти» (Catch & Release).</p>
+
+    <div class="action-bar">
+      <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-primary">Подать заявку на турнир</a>
+      <a href="https://vk.me/nova_anglers" target="_blank" rel="noopener" class="btn btn-secondary" style="background:#0077ff;border-color:#0077ff;color:#fff;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="margin-right:6px;"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm3.38 13.91h-1.63c-.6 0-.78-.48-1.85-1.55-.93-.9-1.35-1.02-1.58-1.02-.33 0-.42.09-.42.54v1.44c0 .39-.12.62-1.17.62-1.74 0-3.66-1.05-5.02-3.02-2.04-2.9-2.58-5.1-2.58-5.54 0-.24.09-.45.54-.45h1.62c.42 0 .57.18.72.63.81 2.37 2.19 4.44 2.76 4.44.21 0 .3-.09.3-.6V9.45c-.06-1.11-.66-1.2-.66-1.6 0-.18.15-.36.39-.36h2.55c.36 0 .48.18.48.6v3.24c0 .36.15.48.27.48.21 0 .39-.12.78-.51 1.23-1.38 2.1-3.51 2.1-3.51.12-.24.3-.45.72-.45h1.62c.48 0 .6.24.48.6-.21.99-2.28 3.84-2.37 3.99-.18.3-.24.42 0 .75.18.24.78.75 1.17 1.23 1.05 1.23 1.86 2.25 2.07 2.97.21.36-.06.57-.48.57z"/></svg>
+        Заявка через VK ↗
+      </a>
+      <button onclick="window.print()" class="btn btn-ghost">🖨️ Распечатать / В PDF</button>
+      <a href="competition.html?id=nova-street-river-ufa-2026" class="btn btn-ghost">← Карточка турнира</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="rules-container">
+
+      <!-- Оглавление (боковая колонка) -->
+      <aside class="rules-toc">
+        <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg> Оглавление</h4>
+        <ul>
+          <li><a href="#sec-1">1. Общие положения и цели</a></li>
+          <li><a href="#sec-2">2. Дата, тайминг и формат</a></li>
+          <li><a href="#sec-3">3. Требования к участникам</a></li>
+          <li><a href="#sec-4">4. Снасти, приманки и монтажи</a></li>
+          <li><a href="#sec-5">5. Зачёт рыбы и Catch & Release</a></li>
+          <li><a href="#sec-6">6. Плей-офф и призовой фонд</a></li>
+          <li><a href="#sec-7">7. Взносы и регистрация</a></li>
+          <li><a href="#sec-8">8. Безопасность и этика</a></li>
+          <li><a href="#sec-9">9. Контакты и судейство</a></li>
+        </ul>
+      </aside>
+
+      <!-- Основное содержание положения -->
+      <article class="rules-content">
+
+        <div class="rules-stamp-box">
+          <div>
+            <div style="font-weight:700;color:#fff;">УТВЕРЖДЕНО</div>
+            <div style="color:var(--muted);font-size:0.85rem;">Организационным комитетом NOVA Anglers Alliance</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:#38bdf8;font-weight:600;">Сезон 2026 · Редакция 1.2</div>
+            <div style="color:var(--muted);font-size:0.85rem;">Дисциплина: береговой спиннинг (личный зачёт)</div>
+          </div>
+        </div>
+
+        <!-- Раздел 1 -->
+        <section class="rules-section" id="sec-1">
+          <h2>1. Общие положения и цели турнира</h2>
+          <p>
+            Настоящее Положение определяет порядок организации, судейства и проведения открытого рейтингового соревнования по спортивной ловле хищной рыбы спиннингом с берега <strong>«NOVA Street & River — Уфа 2026»</strong>.
+          </p>
+          <p><strong>Основные цели турнира:</strong></p>
+          <ul>
+            <li>Популяризация спортивного спиннинга и береговой спортивной рыбалки в городской черте (Street Fishing) и на естественных реках.</li>
+            <li>Продвижение цивилизованного, бережного отношения к водным биоресурсам и повсеместное внедрение принципа <strong>«Поймал — Отпусти» (Catch & Release)</strong>.</li>
+            <li>Повышение спортивного мастерства рыболовов, обмен опытом между ведущими спортсменами регионов России.</li>
+            <li>Формирование открытого спортивного рейтинга NOVA Anglers Alliance и выявление сильнейших спиннингистов сезона 2026 года.</li>
+          </ul>
+        </section>
+
+        <!-- Раздел 2 -->
+        <section class="rules-section" id="sec-2">
+          <h2>2. Дата, место проведения и регламент туров</h2>
+          <p>
+            <strong>Место проведения:</strong> Республика Башкортостан, город Уфа, согласованный участок набережной реки Белая / реки Уфа. Точные границы секторов ловли и стартовой поляны публикуются оргкомитетом за 14 дней до старта соревнований.
+          </p>
+          <p>
+            Турнир проводится в <strong>один соревновательный день</strong> в динамичном формате плей-офф (3 тура по 1 часу).
+          </p>
+
+          <h3>Почасовой регламент (Тайминг):</h3>
+          <table class="rules-table">
+            <thead>
+              <tr>
+                <th style="width:130px;">Время</th>
+                <th>Этап программы</th>
+                <th>Описание</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>07:00 — 08:00</strong></td>
+                <td>Регистрация и жеребьёвка</td>
+                <td>Прибытие участников, сверка заявок, выдача бейджей, стартовых номеров и измерительных лент.</td>
+              </tr>
+              <tr>
+                <td><strong>08:00 — 08:30</strong></td>
+                <td>Торжественное открытие</td>
+                <td>Построение спортсменов, приветственное слово организаторов, инструктаж главного судьи.</td>
+              </tr>
+              <tr>
+                <td><strong>08:30 — 09:30</strong></td>
+                <td>1 ТУР: Квалификация (1 час)</td>
+                <td>Старт всех зарегистрированных спортсменов (до 60 участников) на общей акватории.</td>
+              </tr>
+              <tr>
+                <td><strong>09:30 — 10:15</strong></td>
+                <td>Перерыв и подсчёт баллов</td>
+                <td>Сдача промежуточных протоколов судьям, публикация списка участников 2 тура.</td>
+              </tr>
+              <tr>
+                <td><strong>10:15 — 11:15</strong></td>
+                <td>2 ТУР: Полуфинал (1 час)</td>
+                <td>Борьба в запрессованной спортивной зоне среди топ-спиннингистов, прошедших отбор.</td>
+              </tr>
+              <tr>
+                <td><strong>11:15 — 12:00</strong></td>
+                <td>Перерыв и подготовка финала</td>
+                <td>Определение сильнейших финалистов для «Золотого финала».</td>
+              </tr>
+              <tr>
+                <td><strong>12:00 — 13:00</strong></td>
+                <td>3 ТУР: Золотой финал (1 час)</td>
+                <td>Решающая дуэль сильнейших спортсменов за кубок победителя и призовой подиум.</td>
+              </tr>
+              <tr>
+                <td><strong>13:00 — 14:00</strong></td>
+                <td>Обед, уха и лотерея</td>
+                <td>Дружеский обед (горячая уха от партнёров), розыгрыш призов среди выбывших участников.</td>
+              </tr>
+              <tr>
+                <td><strong>14:00 — 15:00</strong></td>
+                <td>Награждение и закрытие</td>
+                <td>Вручение кубков, медалей, денежных чеков победителям и официальное закрытие этапа.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Раздел 3 -->
+        <section class="rules-section" id="sec-3">
+          <h2>3. Требования к участникам и условия допуска</h2>
+          <ul>
+            <li>К участию допускаются рыболовы любого пола и возраста. Участники моложе 18 лет допускаются в присутствии родителей или совершеннолетних представителей с письменным согласием.</li>
+            <li>Лимит участников строго ограничен регламентом акватории: <strong>не более 60 спортсменов</strong>.</li>
+            <li>Формат соревнований: <strong>личный зачёт</strong>.</li>
+            <li>Каждый спортсмен обязан иметь при себе:
+              <ul>
+                <li>Индивидуальный документ, удостоверяющий личность (паспорт или водительское удостоверение);</li>
+                <li>Мягкий садок, кан или ведро с водой для временного сохранения рыбы живой до подхода судьи;</li>
+                <li>Инструмент для безопасного и быстрого извлечения крючка (корнцанг, хирургический зажим, зевник).</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Раздел 4 -->
+        <section class="rules-section" id="sec-4">
+          <h2>4. Снасти, приманки, монтажи и ограничения</h2>
+          <p>
+            Ловля осуществляется исключительно спиннинговым удилищем любого строя и теста с берега.
+          </p>
+          <ul>
+            <li><strong>Количество удилищ:</strong> Спортсмен может иметь при себе неограниченное количество запасных удилищ и катушек в зоне соревнований, однако ловля ведётся строго <em>одной снастью одновременно</em>.</li>
+            <li><strong>Разрешённые приманки:</strong> Исключительно искусственные приманки (мягкие силиконовые приманки, воблеры всех типов, колеблющиеся и вращающиеся блёсны, тейл-спиннеры, цикады, пилькеры).</li>
+            <li><strong>Разрешённые монтажи:</strong> Джиг-головка, шарнирный монтаж с разборной чебурашкой, джиг-риг, токио-риг, дроп-шот, отводной поводок, каролинская и техасская оснастки.</li>
+            <li><strong>Дистанция между спортсменами:</strong> Во время тура минимальное расстояние между соревнующимися рыболовами должно составлять <strong>не менее 5 метров</strong>. Сокращение дистанции допускается исключительно с обоюдного согласия обоих спортсменов.</li>
+          </ul>
+
+          <div class="highlight-box warning">
+            <p><strong>СТРОГО ЗАПРЕЩЕНО:</strong></p>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              <li>Применение любых естественных насадок (живец, червь, мотыль, рыбная нарезка и т.д.);</li>
+              <li>Использование искусственных аттрактантов, изготовленных из измельчённых натуральных биоресурсов (рыбный фарш, паста из ракообразных);</li>
+              <li>Намеренное багрение рыбы («драч», «кошение» тройниками);</li>
+              <li>Одновременное использование более одной приманки на оснастке («гирлянды», дополнительные крючки выше приманки);</li>
+              <li>Заход в воду глубже, чем по щиколотку (забродная ловля запрещена в целях безопасности и равных условий).</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Раздел 5 -->
+        <section class="rules-section" id="sec-5">
+          <h2>5. Зачёт рыбы и принцип Catch & Release</h2>
+          <p>
+            NOVA Anglers Alliance исповедует бережное отношение к ихтиофауне: <strong>вся пойманная рыба после фиксации судьёй отпускается обратно в водоём живой и неповреждённой</strong>.
+          </p>
+
+          <h3>Зачётные виды рыб и минимальные размеры:</h3>
+          <table class="rules-table">
+            <thead>
+              <tr>
+                <th>Вид рыбы</th>
+                <th>Минимальный зачётный размер</th>
+                <th>Правило замера</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Окунь</strong> (Perca fluviatilis)</td>
+                <td><span style="color:#38bdf8;font-weight:700;">от 12 см</span></td>
+                <td>От кончика рыла до конца лучей хвостового плавника</td>
+              </tr>
+              <tr>
+                <td><strong>Щука</strong> (Esox lucius)</td>
+                <td><span style="color:#38bdf8;font-weight:700;">от 32 см</span></td>
+                <td>От кончика рыла до конца лучей хвостового плавника</td>
+              </tr>
+              <tr>
+                <td><strong>Судак</strong> (Sander lucioperca)</td>
+                <td><span style="color:#38bdf8;font-weight:700;">от 40 см</span></td>
+                <td>От кончика рыла до конца лучей хвостового плавника</td>
+              </tr>
+              <tr>
+                <td><strong>Жерех</strong> (Aspius aspius)</td>
+                <td><span style="color:#38bdf8;font-weight:700;">от 40 см</span></td>
+                <td>От кончика рыла до конца лучей хвостового плавника</td>
+              </tr>
+              <tr>
+                <td><strong>Голавль</strong> (Squalius cephalus)</td>
+                <td><span style="color:#38bdf8;font-weight:700;">от 20 см</span></td>
+                <td>От кончика рыла до конца лучей хвостового плавника</td>
+              </tr>
+              <tr>
+                <td><strong>Язь</strong> (Leuciscus idus)</td>
+                <td><span style="color:#38bdf8;font-weight:700;">от 25 см</span></td>
+                <td>От кончика рыла до конца лучей хвостового плавника</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="highlight-box">
+            <p>
+              <strong>Краснокнижные и охраняемые виды:</strong> Таймень, европейский хариус, стерлядь, осетровые и подкаменщик при случайной поимке подлежат <em>немедленному и бережному выпуску</em> в родную стихию без помещения в садок и без замера судьёй.
+            </p>
+          </div>
+
+          <h3>Порядок фиксации улова:</h3>
+          <ol>
+            <li>После успешного вываживания спортсмен аккуратно помещает рыбу в ёмкость с водой (кан/ведро/садок) и подаёт сигнал линейному судье: «Судья, замер!».</li>
+            <li>Линейный судья оперативно подходит к спортсмену, смачивает официальную измерительную линейку и укладывает рыбу на бок. Замер производится в миллиметрах.</li>
+            <li>Размер фиксируется в протоколе, спортсмен и судья заверяют запись подписями, после чего судья незамедлительно выпускает рыбу в реку.</li>
+            <li><strong>Снулая рыба, рыба с критическими повреждениями жабр или брошенная на сухой песок/камни к зачёту не принимается!</strong></li>
+            <li>В зачёт каждого тура принимается <strong>не более 5 самых крупных рыб</strong> спортсмена. Результатом тура является сумма длин зачётных рыб.</li>
+          </ol>
+        </section>
+
+        <!-- Раздел 6 -->
+        <section class="rules-section" id="sec-6">
+          <h2>6. Определение победителей и призовой фонд</h2>
+          <p>
+            Победитель определяется по итогам решающего 3-го тура («Золотой финал»). В случае равенства суммы баллов/длин преимущество получает участник, поймавший наиболее крупную единичную рыбу (Big Fish).
+          </p>
+          <p>
+            <strong>Формирование призового фонда:</strong> ровно <strong>50% суммы всех фактически собранных стартовых взносов</strong> направляются в денежный призовой фонд за призовые места.
+          </p>
+
+          <h3>Награждение победителей и номинации:</h3>
+          <ul>
+            <li>🥇 <strong>1 МЕСТО:</strong> Большой переходящий кубок NOVA + Золотая медаль + Денежный приз (50% от призового фонда) + Ценные призы и подарки от генеральных спонсоров турнира.</li>
+            <li>🥈 <strong>2 МЕСТО:</strong> Серебряный кубок + Серебряная медаль + Денежный приз (30% от призового фонда) + Подарки от партнёров.</li>
+            <li>🥉 <strong>3 МЕСТО:</strong> Бронзовый кубок + Бронзовая медаль + Денежный приз (20% от призового фонда) + Подарки от партнёров.</li>
+            <li>🦈 <strong>Специальная номинация «Big Fish»:</strong> Наградной кубок и специальный приз за самую длинную рыбу турнира.</li>
+            <li>🔍 <strong>Специальная номинация «Micro Fish»:</strong> Памятный кубок и приз за самого маленького зачётного окуня (от 12 см).</li>
+            <li>👦 <strong>Номинация «Юный спиннингист»:</strong> Специальный приз и диплом поддержки молодого поколения спортсменов.</li>
+            <li>👩 <strong>Номинация «Lady Angler»:</strong> Специальный кубок и подарок для лучшей женщины-рыболова.</li>
+            <li>🎟️ <strong>Утешительная лотерея:</strong> Розыгрыш фирменного рыболовного снаряжения и сертификатов среди всех участников, выбывших по итогам 1 и 2 туров. Без подарка не останется никто!</li>
+          </ul>
+        </section>
+
+        <!-- Раздел 7 -->
+        <section class="rules-section" id="sec-7">
+          <h2>7. Финансовые условия и подача заявок</h2>
+          <p>
+            Стартовый взнос за участие составляет <strong>2 000 рублей</strong> с одного участника.
+          </p>
+          <p>
+            Средства от взносов направляются на:
+          </p>
+          <ul>
+            <li>Формирование денежного призового фонда (50% от суммы сборов);</li>
+            <li>Оплату работы судейской коллегии и комендантской службы;</li>
+            <li>Изготовление эксклюзивных наградных кубков, медалей и фирменной символики;</li>
+            <li>Организацию горячего питания (уха на костре, чай, выпечка);</li>
+            <li>Медицинское сопровождение соревнований и подготовку секторов.</li>
+          </ul>
+          <p>
+            <strong>Порядок подачи заявки:</strong> подача заявки осуществляется через защищённую электронную форму на сайте (<a href="register.html?id=nova-street-river-ufa-2026" style="color:#38bdf8;">подать заявку на сайте</a>) либо через личные сообщения официального сообщества ВКонтакте <a href="https://vk.me/nova_anglers" target="_blank" rel="noopener" style="color:#38bdf8;">vk.me/nova_anglers</a>.
+          </p>
+        </section>
+
+        <!-- Раздел 8 -->
+        <section class="rules-section" id="sec-8">
+          <h2>8. Безопасность, дисциплина и форс-мажор</h2>
+          <ul>
+            <li>Каждый спортсмен несёт персональную ответственность за свою жизнь, здоровье и сохранность личного имущества во время турнира.</li>
+            <li>Употребление алкогольных напитков, наркотических средств, а также нахождение в зоне соревнований в состоянии опьянения <strong>категорически запрещено</strong> и влечёт немедленную дисквалификацию без возврата стартового взноса.</li>
+            <li>Участники обязаны соблюдать нормы экологической этики: категорически запрещено оставлять мусор, обрывки лески, пластиковую тару на берегу. Весь мусор утилизируется в контейнеры на стартовой поляне.</li>
+            <li>В случае неблагоприятных погодных условий (гроза со шквалистым ветром) главный судья имеет право временно приостановить или досрочно завершить тур в целях безопасности спортсменов.</li>
+          </ul>
+        </section>
+
+        <!-- Раздел 9 -->
+        <section class="rules-section" id="sec-9">
+          <h2>9. Контакты оргкомитета и судейской коллегии</h2>
+          <p>По всем вопросам регламента, партнёрства и аккредитации прессы:</p>
+          <ul>
+            <li>Электронная почта оргкомитета: <a href="mailto:info@nova-anglers.ru" style="color:#38bdf8;">info@nova-anglers.ru</a></li>
+            <li>Официальное сообщество ВКонтакте: <a href="https://vk.com/nova_anglers" target="_blank" rel="noopener" style="color:#38bdf8;">vk.com/nova_anglers</a></li>
+            <li>Вопросы партнёрства и спонсорства: <a href="mailto:partners@nova-anglers.ru" style="color:#38bdf8;">partners@nova-anglers.ru</a></li>
+          </ul>
+
+          <div style="margin-top:36px;text-align:center;padding-top:24px;border-top:1px solid var(--line, rgba(255,255,255,0.08));">
+            <a href="register.html?id=nova-street-river-ufa-2026" class="btn btn-primary" style="padding:14px 32px;font-size:1.05rem;">Подать заявку на участие в турнире</a>
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="assets/logo-full.png" alt="NOVA Anglers Alliance — Альянс рыболовов">
+        <p>Российская спортивная экосистема рыболовного спорта: соревнования, рейтинг, спортсмены и медиа.</p>
+      </div>
+      <div class="foot-col"><h5>Спорт</h5><ul>
+        <li><a href="competitions.html">Соревнования</a></li>
+        <li><a href="rules.html">Регламент и правила</a></li>
+        <li><a href="rating.html">Рейтинг</a></li>
+        <li><a href="athletes.html">Участники</a></li>
+        <li><a href="teams.html">Команды</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Альянс</h5><ul>
+        <li><a href="news.html">Новости</a></li><li><a href="media.html">Медиа</a></li>
+        <li><a href="partners.html">Партнёры</a></li><li><a href="alliance.html">Об Альянсе</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Контакты</h5><ul>
+        <li><a href="mailto:info@nova-anglers.ru">info@nova-anglers.ru</a></li><li><a href="contacts.html">Контакты</a></li>
+        <li><a href="contacts.html">Пресс-центр</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 NOVA Anglers Alliance. Все права защищены.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3L2 11l6 2 2 6 3-4 5 4z"/></svg></a>
+        <a href="https://vk.com/nova_anglers" target="_blank" rel="noopener" aria-label="VK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12A10 10 0 1 0 5 19.5L3 22l3-1a10 10 0 0 0 16-9z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="common.js"></script>
+
+</body>
+</html>
