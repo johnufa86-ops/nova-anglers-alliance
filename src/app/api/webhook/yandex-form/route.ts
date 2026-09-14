@@ -149,8 +149,8 @@ export async function POST(req: NextRequest) {
               },
               statusHistory: {
                 create: {
-                  status: 'approved',
-                  note: 'Заявка получена автоматически через Яндекс.Форму',
+                  newStatus: 'approved',
+                  comment: 'Заявка получена автоматически через Яндекс.Форму',
                 },
               },
             },
