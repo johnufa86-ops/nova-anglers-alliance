@@ -15,6 +15,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    let firstName = '';
+    let lastName = '';
+    let patronymic = '';
     let fullName = '';
     let phone = '';
     let email = '';
@@ -31,20 +34,35 @@ export async function POST(req: NextRequest) {
           const qText = (typeof item === 'object' && item?.question ? String(item.question) : key).toLowerCase();
           const val = typeof item === 'object' && item?.value !== undefined ? String(item.value) : String(item);
 
-          if (qText.includes('фио') || qText.includes('имя') || qText.includes('фамилия') || qText === 'fullname' || qText === 'name') {
+          if (qText === 'фамилия' || qText.includes('фамили') || qText === 'lastname') {
+            if (!lastName && val.trim()) lastName = val.trim();
+          } else if (qText === 'имя' || qText.includes('имя') || qText === 'firstname') {
+            if (!firstName && val.trim()) firstName = val.trim();
+          } else if (qText === 'отчество' || qText.includes('отчеств') || qText === 'patronymic') {
+            if (!patronymic && val.trim()) patronymic = val.trim();
+          } else if (qText.includes('фио') || qText === 'fullname') {
             if (!fullName && val.trim()) fullName = val.trim();
           } else if (qText.includes('телефон') || qText.includes('связ') || qText.includes('номер') || qText === 'phone') {
             if (!phone && val.trim()) phone = val.trim();
           } else if (qText.includes('email') || qText.includes('почт') || qText.includes('e-mail')) {
             if (!email && val.trim()) email = val.trim();
           } else if (qText.includes('город') || qText.includes('регион') || qText.includes('откуда') || qText.includes('проживан') || qText === 'city') {
-            if (!region && val.trim()) {
+            if (!city && val.trim()) {
               city = val.trim();
               region = val.trim();
             }
           }
         }
       }
+    }
+
+    if (!fullName && (lastName || firstName)) {
+      fullName = `${lastName} ${firstName}`.trim();
+    }
+    if (!firstName && fullName) {
+      const parts = fullName.split(/\s+/);
+      lastName = parts[0] || 'Спортсмен';
+      firstName = parts[1] || '';
     }
 
     const regionLower = (region || '').toLowerCase();
