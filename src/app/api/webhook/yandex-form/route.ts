@@ -110,7 +110,6 @@ export async function POST(req: NextRequest) {
             region: region || 'Республика Башкортостан',
             phone: phone || null,
             email: email || null,
-            status: 'active',
           },
         });
       }
