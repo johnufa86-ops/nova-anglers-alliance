@@ -37,6 +37,7 @@
     <a href="index.html" class="logo"><img class="mark" src="assets/icon-star.png" alt="NOVA">NOVA <span class="sub">ANGLERS&nbsp;ALLIANCE</span></a>
     <nav class="primary-nav" id="primaryNav">
       <a href="competitions.html">Соревнования</a>
+      <a href="rules.html">Регламент</a>
       <a href="rating.html">Рейтинг</a>
       <a href="athletes.html">Участники</a>
       <a href="news.html">Новости</a>
@@ -417,7 +418,7 @@ function updateNextCard(){
   }
 
   if(el('nxRegisterBtn')) el('nxRegisterBtn').href = `register.html?id=${next.id}`;
-  if(el('nxReglamentBtn')) el('nxReglamentBtn').href = `competition.html?id=${next.id}#reglament`;
+  if(el('nxReglamentBtn')) el('nxReglamentBtn').href = 'rules.html';
   if(el('nxRegisterBtn') && next.registration === 'closed'){
     const b = el('nxRegisterBtn');
     b.textContent = 'Регистрация закрыта';
