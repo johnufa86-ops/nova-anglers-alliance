@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
 
     let fullName = '';
     let phone = '';
+    let email = '';
     let city = '';
     let region = '';
 
@@ -31,6 +32,8 @@ export async function POST(req: NextRequest) {
           if (!fullName && val.trim()) fullName = val.trim();
         } else if (qText.includes('телефон') || qText.includes('связ') || qText.includes('номер')) {
           if (!phone && val.trim()) phone = val.trim();
+        } else if (qText.includes('email') || qText.includes('почт') || qText.includes('e-mail')) {
+          if (!email && val.trim()) email = val.trim();
         } else if (qText.includes('город') || qText.includes('регион') || qText.includes('откуда') || qText.includes('проживан')) {
           if (!region && val.trim()) {
             city = val.trim();
@@ -69,21 +72,88 @@ export async function POST(req: NextRequest) {
       const lastName = parts[0] || 'Спортсмен';
       const firstName = parts[1] || '';
 
-      const athlete = await (db as any).athlete.create({
-        data: {
-          firstName,
-          lastName,
-          displayName: fullName,
-          city: city || 'Уфа',
-          region: region || 'Республика Башкортостан',
-          country: 'Россия',
-          status: 'active',
-        },
+      // 1. Создаём или обновляем запись спортсмена
+      let athlete = await (db as any).athlete.findFirst({
+        where: { displayName: fullName },
       });
+
+      if (!athlete) {
+        athlete = await (db as any).athlete.create({
+          data: {
+            firstName,
+            lastName,
+            displayName: fullName,
+            city: city || 'Уфа',
+            region: region || 'Республика Башкортостан',
+            country: 'Россия',
+            phone: phone || null,
+            email: email || null,
+            status: 'active',
+          },
+        });
+      }
+
+      // 2. Находим турнир «NOVA Street & River — Уфа 2026»
+      const comp = await (db as any).competition.findFirst({
+        where: { slug: 'nova-street-river-ufa-2026' },
+      });
+
+      if (comp) {
+        // Проверяем, нет ли уже заявки от этого спортсмена на этот турнир
+        const existingApp = await (db as any).application.findFirst({
+          where: {
+            competitionId: comp.id,
+            athleteId: athlete.id,
+          },
+        });
+
+        if (!existingApp) {
+          const appNumber = `APP-YA-${Date.now().toString(36).toUpperCase()}`;
+          await (db as any).application.create({
+            data: {
+              competitionId: comp.id,
+              athleteId: athlete.id,
+              entryType: 'athlete',
+              status: 'approved', // сразу в подтверждённые участники
+              applicationNumber: appNumber,
+              contactEmail: email || `ya_${Date.now()}@nova-anglers.ru`,
+              contactPhone: phone || '',
+              rawPayload: JSON.stringify(body),
+              source: 'yandex_forms',
+              participants: {
+                create: {
+                  athleteId: athlete.id,
+                  role: 'athlete',
+                },
+              },
+              statusHistory: {
+                create: {
+                  status: 'approved',
+                  note: 'Заявка получена автоматически через Яндекс.Форму',
+                },
+              },
+            },
+          });
+
+          // Обновляем счётчик участников в карточке турнира
+          const count = await (db as any).applicationParticipant.count({
+            where: {
+              application: {
+                competitionId: comp.id,
+                status: 'approved',
+              },
+            },
+          });
+          await (db as any).competition.update({
+            where: { id: comp.id },
+            data: { participants: count },
+          });
+        }
+      }
 
       return NextResponse.json({
         ok: true,
-        message: 'Athlete recorded from Yandex Form webhook',
+        message: 'Athlete and tournament application recorded from Yandex Form webhook',
         athleteId: athlete.id,
       });
     }
