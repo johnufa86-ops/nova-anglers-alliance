@@ -44,9 +44,9 @@
 <section class="page-hero">
   <div class="wrap">
     <div class="breadcrumb"><a href="index.html">Главная</a><span>/</span><span>Медиа</span></div>
-    <div class="eyebrow">NOVA Media</div>
-    <h1>Соревнования. Люди. Эмоции.</h1>
-    <p class="sub">Фото и видео со стартов NOVA со всей страны.</p>
+    <div class="eyebrow" id="m_eyebrow">NOVA Media</div>
+    <h1 id="m_title">Соревнования. Люди. Эмоции.</h1>
+    <p class="sub" id="m_sub">Фото и видео со стартов NOVA со всей страны.</p>
   </div>
 </section>
 
@@ -171,6 +171,21 @@ NOVACompetitions.onRefresh(() => {
   renderMedia();
 });
 NOVACompetitions.load();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/api/settings/media');
+    if (!res.ok) return;
+    const { settings: s } = await res.json();
+    if (!s) return;
+    const setT = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+    setT('m_eyebrow', s.eyebrow);
+    setT('m_title', s.title);
+    setT('m_sub', s.sub);
+  } catch(e) {}
+});
 </script>
 </body>
 </html>

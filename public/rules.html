@@ -600,5 +600,25 @@
 <script src="data/data.js"></script>
 <script src="common.js"></script>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/api/settings/rules');
+    if (!res.ok) return;
+    const { settings: s } = await res.json();
+    if (!s) return;
+    const setT = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+    setT('r_eyebrow', s.eyebrow);
+    setT('r_title', s.title);
+    setT('r_sub', s.sub);
+    setT('r_versionDate', s.versionDate);
+    if (s.introText) {
+      const introEl = document.querySelector('.rules-content p');
+      if (introEl) introEl.textContent = s.introText;
+    }
+  } catch(e) {}
+});
+</script>
 </body>
 </html>
