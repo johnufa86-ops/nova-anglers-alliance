@@ -139,17 +139,21 @@ export function serializePublicParticipant(p: {
     team?: { name: string; region: string } | null;
   };
   athlete: {
+    id?: string;
     displayName: string;
     region: string;
     club?: string | null;
+    photoUrl?: string | null;
   };
 }) {
   const isTeam = p.application.entryType === 'team';
   return {
+    athleteId: p.athlete.id || p.id,
     applicationNumber: p.application.applicationNumber,
     name: p.athlete.displayName,
     teamName: isTeam ? p.application.team?.name ?? null : p.athlete.club || null,
     region: p.athlete.region,
+    photoUrl: p.athlete.photoUrl || '',
     role: p.role,
     status: p.application.status,
     // NOTE: no phone / email / birthdate here — organizer-only data

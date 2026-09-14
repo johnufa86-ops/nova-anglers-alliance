@@ -395,6 +395,7 @@ async function renderParticipants(c){
   try {
     const list = await NOVACompetitions.participants(c.id);
     rows = list.map(p => ({
+      id: p.athleteId || p.id,
       name: p.name,
       team: p.teamName || p.region,
       region: p.region,
@@ -403,12 +404,12 @@ async function renderParticipants(c){
   } catch(e) {
     /* сервер недоступен — демо-фолбэк */
     rows = (c.participantsList||[]).map(NOVA.participant.bind(NOVA)).filter(Boolean)
-      .map(p => ({ name: p.name, team: p.sub, region: p.sub, status: 'confirmed' }));
+      .map(p => ({ id: p.id, name: p.name, team: p.sub, region: p.sub, status: 'confirmed' }));
   }
   pBody.innerHTML = rows.length ? rows.map((p,i)=>`
-    <tr>
+    <tr class="${p.id ? 'is-link' : ''}" ${p.id ? `onclick="location.href='athlete.html?id=${encodeURIComponent(p.id)}'"` : ''}>
       <td class="pos-cell">${String(i+1).padStart(2,'0')}</td>
-      <td><span class="entity-link">${p.name}</span></td>
+      <td>${p.id ? `<a href="athlete.html?id=${encodeURIComponent(p.id)}" class="entity-link">${p.name}</a>` : `<span class="entity-link">${p.name}</span>`}</td>
       <td>${p.team}</td>
       <td style="text-align:right;"><span class="status-pill confirmed">Подтверждён</span></td>
     </tr>`).join('') : `<tr><td colspan="4"><div class="empty-state">Подтверждённых участников пока нет — подайте первую заявку</div></td></tr>`;

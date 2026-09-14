@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
         city: true,
         club: true,
         region: true,
+        photoUrl: true,
         ratingEntries: {
           select: { points: true },
         },
@@ -66,6 +67,7 @@ export async function GET(req: NextRequest) {
         competitions,
         wins,
         podiums,
+        photoUrl: a.photoUrl || '',
       };
     });
 

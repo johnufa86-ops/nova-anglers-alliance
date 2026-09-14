@@ -28,7 +28,7 @@ export async function GET(
         },
       },
       include: {
-        athlete: { select: { displayName: true, region: true, club: true } },
+        athlete: { select: { id: true, displayName: true, region: true, club: true, photoUrl: true } },
         application: {
           select: {
             applicationNumber: true,
