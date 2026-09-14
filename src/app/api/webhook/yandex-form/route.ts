@@ -1,18 +1,97 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+function extractText(val: any): string {
+  if (val === null || val === undefined) return '';
+  if (typeof val === 'string') return val.trim();
+  if (typeof val === 'number') return String(val);
+  if (Array.isArray(val)) {
+    return val.map(extractText).filter(Boolean).join(', ');
+  }
+  if (typeof val === 'object') {
+    return val.value || val.text || val.name || val.label || val.title || val.slug || '';
+  }
+  return String(val).trim();
+}
+
+function extractQuestionLabel(item: any, fallbackKey: string): string {
+  if (typeof item === 'object' && item !== null) {
+    if (item.question) {
+      if (typeof item.question === 'object') {
+        return (item.question.label || item.question.name || item.question.text || item.question.title || fallbackKey).toLowerCase();
+      }
+      return String(item.question).toLowerCase();
+    }
+    if (item.label) return String(item.label).toLowerCase();
+    if (item.name) return String(item.name).toLowerCase();
+    if (item.title) return String(item.title).toLowerCase();
+  }
+  return fallbackKey.toLowerCase();
+}
+
+export async function GET() {
+  try {
+    const lastLog = await (db as any).siteSetting.findUnique({
+      where: { key: 'last_yandex_webhook' },
+    }).catch(() => null);
+
+    return NextResponse.json({
+      status: 'active',
+      endpoint: 'https://www.nova-anglers.ru/api/webhook/yandex-form',
+      lastWebhook: lastLog ? JSON.parse(lastLog.value) : null,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ status: 'error', error: err.message });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     let body: any = {};
     const contentType = req.headers.get('content-type') || '';
 
-    if (contentType.includes('application/json')) {
-      body = await req.json();
-    } else if (contentType.includes('application/x-www-form-urlencoded')) {
-      const formData = await req.formData();
-      formData.forEach((val, key) => {
-        body[key] = val;
+    try {
+      if (contentType.includes('application/json')) {
+        body = await req.json();
+      } else if (contentType.includes('form')) {
+        const formData = await req.formData();
+        formData.forEach((val, key) => {
+          body[key] = val;
+        });
+      } else {
+        const text = await req.text();
+        try {
+          body = JSON.parse(text);
+        } catch {
+          body = { rawText: text };
+        }
+      }
+    } catch (e: any) {
+      console.warn('[Yandex Webhook Body Parse Warn]:', e);
+    }
+
+    // Сохраняем последний полученный вебхук для отладки
+    try {
+      await (db as any).siteSetting.upsert({
+        where: { key: 'last_yandex_webhook' },
+        update: {
+          value: JSON.stringify({
+            receivedAt: new Date().toISOString(),
+            contentType,
+            body,
+          }),
+        },
+        create: {
+          key: 'last_yandex_webhook',
+          value: JSON.stringify({
+            receivedAt: new Date().toISOString(),
+            contentType,
+            body,
+          }),
+        },
       });
+    } catch (e) {
+      console.error('[Yandex Webhook Log to DB Error]:', e);
     }
 
     let firstName = '';
@@ -24,37 +103,45 @@ export async function POST(req: NextRequest) {
     let city = '';
     let region = '';
 
-    // Поддерживаем как обычный webhook, так и JSON-RPC 2.0 (body.params)
-    const targetContainers = [body.params?.answers, body.params, body.answers, body].filter(Boolean);
+    // Рекурсивный поиск по всем возможным контейнерам данных
+    const searchInObject = (obj: any) => {
+      if (!obj || typeof obj !== 'object') return;
+      if (Array.isArray(obj)) {
+        for (const el of obj) searchInObject(el);
+        return;
+      }
+      for (const [k, v] of Object.entries(obj)) {
+        const label = extractQuestionLabel(v, k);
+        const val = extractText(typeof v === 'object' && v !== null && (v as any).value !== undefined ? (v as any).value : v);
 
-    for (const container of targetContainers) {
-      if (typeof container === 'object' && container !== null) {
-        for (const key of Object.keys(container)) {
-          const item = container[key];
-          const qText = (typeof item === 'object' && item?.question ? String(item.question) : key).toLowerCase();
-          const val = typeof item === 'object' && item?.value !== undefined ? String(item.value) : String(item);
-
-          if (qText === 'фамилия' || qText.includes('фамили') || qText === 'lastname') {
-            if (!lastName && val.trim()) lastName = val.trim();
-          } else if (qText === 'имя' || qText.includes('имя') || qText === 'firstname') {
-            if (!firstName && val.trim()) firstName = val.trim();
-          } else if (qText === 'отчество' || qText.includes('отчеств') || qText === 'patronymic') {
-            if (!patronymic && val.trim()) patronymic = val.trim();
-          } else if (qText.includes('фио') || qText === 'fullname') {
-            if (!fullName && val.trim()) fullName = val.trim();
-          } else if (qText.includes('телефон') || qText.includes('связ') || qText.includes('номер') || qText === 'phone') {
-            if (!phone && val.trim()) phone = val.trim();
-          } else if (qText.includes('email') || qText.includes('почт') || qText.includes('e-mail')) {
-            if (!email && val.trim()) email = val.trim();
-          } else if (qText.includes('город') || qText.includes('регион') || qText.includes('откуда') || qText.includes('проживан') || qText === 'city') {
-            if (!city && val.trim()) {
-              city = val.trim();
-              region = val.trim();
-            }
+        if (label.includes('фамили') || label === 'lastname') {
+          if (!lastName && val) lastName = val;
+        } else if (label.includes('имя') || label === 'firstname' || label === 'first_name') {
+          if (!firstName && val) firstName = val;
+        } else if (label.includes('отчеств') || label === 'patronymic' || label === 'middlename') {
+          if (!patronymic && val) patronymic = val;
+        } else if (label.includes('фио') || label === 'fullname' || label === 'full_name') {
+          if (!fullName && val) fullName = val;
+        } else if (label.includes('телефон') || label.includes('связ') || label.includes('номер') || label === 'phone') {
+          if (!phone && val) phone = val;
+        } else if (label.includes('email') || label.includes('почт') || label === 'e-mail') {
+          if (!email && val) email = val;
+        } else if (label.includes('город') || label.includes('откуда') || label.includes('проживан') || label === 'city') {
+          if (!city && val) {
+            city = val;
+            if (!region) region = val;
           }
+        } else if (label.includes('регион') || label === 'region') {
+          if (!region && val) region = val;
+        }
+
+        if (typeof v === 'object' && v !== null && k !== 'competition') {
+          searchInObject(v);
         }
       }
-    }
+    };
+
+    searchInObject(body.params || body.answers || body.data || body);
 
     if (!fullName && (lastName || firstName)) {
       fullName = `${lastName} ${firstName}`.trim();
