@@ -45,7 +45,7 @@ export async function GET(
               },
             },
           },
-          orderBy: { createdAt: 'desc' },
+          orderBy: { calculatedAt: 'desc' },
         },
         teamMembers: {
           include: {
