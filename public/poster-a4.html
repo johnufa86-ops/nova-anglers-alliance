@@ -3,420 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Плакат А4 — Турнир NOVA Street & River Уфа 2026</title>
+<title>Афиша А4 — Турнир NOVA Street & River Уфа 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0b1120;
+    font-family: 'Manrope', -apple-system, sans-serif;
+    color: #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 20px 40px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-  /* ПАНЕЛЬ УПРАВЛЕНИЯ ПЕЧАТЬЮ (НЕ ПЕЧАТАЕТСЯ) */
+  /* ПАНЕЛЬ ПЕЧАТИ */
   .toolbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     background: #0f172a;
-    color: #fff;
-    padding: 12px 20px;
+    border-bottom: 1px solid #334155;
+    padding: 14px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 16px;
     z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    font-family: 'Manrope', sans-serif;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.6);
   }
-  .toolbar button {
+  .btn-print {
     background: #2563eb;
     color: #fff;
+    text-decoration: none;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 22px;
     font-weight: 700;
     font-size: 14px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 8px;
+    transition: all 0.2s;
   }
-  .toolbar button:hover {
+  .btn-print:hover {
     background: #1d4ed8;
     transform: translateY(-1px);
   }
-  .toolbar button.btn-theme {
-    background: #334155;
-  }
-  .toolbar button.btn-theme:hover {
-    background: #475569;
-  }
-  .toolbar .hint {
-    font-size: 13px;
-    color: #94a3b8;
-  }
-
-  /* СТРАНИЦА А4 */
-  body {
-    background: #475569;
-    font-family: 'Manrope', sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 70px 20px 40px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .sheet {
-    width: 210mm;
-    height: 297mm;
-    background: #090d16;
-    color: #ffffff;
-    position: relative;
-    padding: 12mm 14mm 10mm;
-    box-sizing: border-box;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-
-  /* СВЕТЛАЯ ТЕМА (ЭКО-ПЕЧАТЬ ДЛЯ ОФИСНОГО ПРИНТЕРА) */
-  body.light-theme .sheet {
-    background: #ffffff;
-    color: #0f172a;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    border: 1px solid #cbd5e1;
-  }
-  body.light-theme .top-badge {
-    background: #f1f5f9;
-    color: #0284c7;
-    border-color: #cbd5e1;
-  }
-  body.light-theme .open-badge {
-    background: #ecfdf5;
-    color: #059669;
-    border-color: #a7f3d0;
-  }
-  body.light-theme .title-accent {
-    color: #0284c7;
-  }
-  body.light-theme .prize-card {
-    background: #fefce8;
-    border-color: #eab308;
-    color: #0f172a;
-  }
-  body.light-theme .prize-amount {
-    color: #b45309;
-  }
-  body.light-theme .feature-item {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-  }
-  body.light-theme .feature-title {
-    color: #0f172a;
-  }
-  body.light-theme .qr-card {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-  }
-  body.light-theme .partner-banner-wrap {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-  }
-  body.light-theme .partner-banner-label {
-    color: #475569;
-  }
-  body.light-theme .partner-address {
-    color: #0f172a;
-  }
-
-  /* СТИЛИ КОНТЕНТА */
-  .top-badge-wrap {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3.5mm;
-  }
-  .top-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+  .btn-download {
+    background: #059669;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
     font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.12);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    padding: 5px 14px;
-    border-radius: 6px;
-  }
-  .open-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #34d399;
-    background: rgba(52, 211, 153, 0.12);
-    border: 1px solid rgba(52, 211, 153, 0.3);
-    padding: 5px 14px;
-    border-radius: 6px;
-  }
-
-  .header-main {
-    text-align: center;
-    margin-bottom: 4mm;
-  }
-  .org-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #94a3b8;
-    margin-bottom: 3px;
-  }
-  .main-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 34px;
-    font-weight: 800;
-    line-height: 1.08;
-    text-transform: uppercase;
-    letter-spacing: -0.5px;
-    margin-bottom: 4px;
-  }
-  .title-accent {
-    color: #38bdf8;
-  }
-  .subtitle {
     font-size: 14px;
-    font-weight: 600;
-    color: #cbd5e1;
-  }
-  body.light-theme .subtitle {
-    color: #475569;
-  }
-
-  /* ДАТА И МЕСТО */
-  .meta-bar {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 4mm;
-  }
-  .meta-item {
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12.5px;
-    font-weight: 700;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 6px 14px;
+    transition: all 0.2s;
+  }
+  .btn-download:hover {
+    background: #047857;
+    transform: translateY(-1px);
+  }
+  .hint {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  /* КОНТЕЙНЕР А4 */
+  .poster-container {
+    width: 210mm;
+    max-width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
     border-radius: 8px;
-  }
-  body.light-theme .meta-item {
-    background: #f1f5f9;
-  }
-
-  /* ПРИЗОВОЙ ФОНД */
-  .prize-card {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%);
-    border: 2px solid #f59e0b;
-    border-radius: 12px;
-    padding: 4.5mm 6mm;
-    text-align: center;
-    margin-bottom: 4mm;
-  }
-  .prize-label {
-    font-size: 11.5px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #f59e0b;
-    margin-bottom: 2px;
-  }
-  .prize-amount {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px;
-    font-weight: 800;
-    line-height: 1.1;
-    color: #fbbf24;
-    margin-bottom: 3px;
-  }
-  .prize-desc {
-    font-size: 11.5px;
-    font-weight: 600;
-    opacity: 0.9;
-  }
-
-  /* ОСОБЕННОСТИ */
-  .features-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3mm;
-    margin-bottom: 4mm;
-  }
-  .feature-item {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 3.5mm 4mm;
+    overflow: hidden;
+    background: #000;
     display: flex;
-    gap: 10px;
-    align-items: flex-start;
   }
-  .feature-icon {
-    font-size: 20px;
-    line-height: 1;
-  }
-  .feature-title {
-    font-size: 12px;
-    font-weight: 800;
-    color: #f1f5f9;
-    margin-bottom: 2px;
-  }
-  .feature-text {
-    font-size: 10.5px;
-    line-height: 1.35;
-    color: #94a3b8;
-  }
-
-  /* БЛОК ПАРТНЁРА (РЫБАЛЮБ С АДРЕСОМ И VK) */
-  .partner-banner-wrap {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    padding: 3.5mm 5mm;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    margin-bottom: 4mm;
-  }
-  .partner-banner-text {
-    flex-grow: 1;
-  }
-  .partner-banner-label {
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #34d399;
-    margin-bottom: 2px;
-  }
-  .partner-banner-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 2px;
-  }
-  .partner-address {
-    font-size: 11px;
-    font-weight: 700;
-    color: #38bdf8;
-    margin-bottom: 2px;
-  }
-  .partner-banner-desc {
-    font-size: 10.5px;
-    color: #94a3b8;
-  }
-  .partner-logo-img {
-    height: 42px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-
-  /* СЕКЦИЯ QR-КОДА И РЕГИСТРАЦИИ */
-  .qr-section {
-    display: flex;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
-    border: 2px solid rgba(56, 189, 248, 0.4);
-    border-radius: 14px;
-    padding: 4.5mm 6mm;
-    gap: 6mm;
-    align-items: center;
-    margin-bottom: 3.5mm;
-  }
-  .qr-card {
-    background: #ffffff;
-    padding: 8px;
-    border-radius: 10px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  }
-  .qr-card img {
-    width: 32mm;
-    height: 32mm;
+  .poster-img {
+    width: 100%;
+    height: auto;
     display: block;
-  }
-  .qr-info {
-    flex-grow: 1;
-  }
-  .qr-tag {
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #38bdf8;
-    margin-bottom: 3px;
-  }
-  body.light-theme .qr-tag {
-    color: #0284c7;
-  }
-  .qr-headline {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 4px;
-  }
-  .qr-step {
-    font-size: 11px;
-    line-height: 1.35;
-    color: #cbd5e1;
-    margin-bottom: 4px;
-  }
-  body.light-theme .qr-step {
-    color: #475569;
-  }
-  .qr-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    color: #38bdf8;
-  }
-  body.light-theme .qr-link {
-    color: #0284c7;
+    object-fit: contain;
   }
 
-  /* ПОДВАЛ */
-  .footer-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 2.5mm;
-    font-size: 9.5px;
-    color: #64748b;
-  }
-  body.light-theme .footer-row {
-    border-color: #cbd5e1;
-    color: #64748b;
-  }
-  .footer-row b {
-    color: #94a3b8;
-  }
-  body.light-theme .footer-row b {
-    color: #334155;
-  }
-
-  /* ПЕЧАТЬ */
   @media print {
     .toolbar { display: none !important; }
     body {
@@ -424,13 +102,17 @@
       padding: 0 !important;
       margin: 0 !important;
     }
-    .sheet {
-      box-shadow: none !important;
-      margin: 0 !important;
+    .poster-container {
       width: 100% !important;
       height: 100vh !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
       page-break-after: avoid;
-      page-break-inside: avoid;
+    }
+    .poster-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
     }
     @page {
       size: A4 portrait;
@@ -442,124 +124,20 @@
 <body>
 
 <div class="toolbar">
-  <button onclick="window.print()">
+  <button class="btn-print" onclick="window.print()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-    Распечатать / Сохранить в PDF
+    Распечатать А4 (Ctrl + P)
   </button>
-  <button class="btn-theme" onclick="toggleTheme()">
-    🌗 Сменить тему (Тёмная / Эко-белая для принтера)
-  </button>
-  <div class="hint">Совет: в настройках печати браузера выберите «Цветная» и «Подогнать по странице» / «Без полей».</div>
+  <a href="/nova_poster_a4.jpg" download="NOVA_Poster_A4_Ufa_2026.jpg" class="btn-download">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    Скачать оригинал JPG
+  </a>
+  <span class="hint">Формат А4 для размещения в магазине «РЫБАЛЮБ» (ул. Айская, 46)</span>
 </div>
 
-<div class="sheet" id="posterSheet">
-  <div>
-    <!-- Верхние бейджи -->
-    <div class="top-badge-wrap">
-      <div class="top-badge">🎣 Открытый турнир по спортивному спиннингу</div>
-      <div class="open-badge">⚡ Открытая регистрация</div>
-    </div>
-
-    <!-- Заголовок -->
-    <div class="header-main">
-      <div class="org-title">NOVA ANGLERS ALLIANCE • УФА</div>
-      <h1 class="main-title">NOVA STREET & RIVER <span class="title-accent">2026</span></h1>
-      <p class="subtitle">Открытый турнир по ловле рыбы спиннингом с берега</p>
-    </div>
-
-    <!-- Дата и место -->
-    <div class="meta-bar">
-      <div class="meta-item">
-        📅 <strong>10 октября 2026</strong> (суббота)
-      </div>
-      <div class="meta-item">
-        📍 <strong>Уфа, река Белая</strong>
-      </div>
-      <div class="meta-item">
-        ⏱ <strong>2 тура</strong>
-      </div>
-    </div>
-
-    <!-- Призовой фонд -->
-    <div class="prize-card">
-      <div class="prize-label">Гарантированный призовой фонд</div>
-      <div class="prize-amount">50% ВСЕХ ВЗНОСОВ — В ДЕНЬГИ!</div>
-      <div class="prize-desc">Денежные выплаты за 1, 2 и 3 места • Кубки, медали и номинация <strong>BIG FISH</strong></div>
-    </div>
-
-    <!-- Сетка преимуществ -->
-    <div class="features-grid">
-      <div class="feature-item">
-        <div class="feature-icon">🐟</div>
-        <div>
-          <div class="feature-title">CATCH & RELEASE</div>
-          <div class="feature-text">Поймал — отпусти. Бережное отношение к водным ресурсам родной Башкирии.</div>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">⚖️</div>
-        <div>
-          <div class="feature-title">ПРИНЦИП FAIR PLAY</div>
-          <div class="feature-text">Точные границы секторов перед стартом. Равные шансы для любителей и профи!</div>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🏆</div>
-        <div>
-          <div class="feature-title">КУБКИ И МЕДАЛИ</div>
-          <div class="feature-text">Официальный спортивный зачёт, награждение призёров и номинация Big Fish.</div>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🎁</div>
-        <div>
-          <div class="feature-title">ПРИЗЫ ОТ ПАРТНЁРОВ</div>
-          <div class="feature-text">Подарки и специальные номинации от рыболовных брендов и магазинов.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <!-- БЛОК ОФИЦИАЛЬНОГО ПАРТНЁРА (РЫБАЛЮБ С ТОЧНЫМ АДРЕСОМ И ССЫЛКОЙ) -->
-    <div class="partner-banner-wrap">
-      <div class="partner-banner-text">
-        <div class="partner-banner-label">Официальный партнёр турнира</div>
-        <div class="partner-banner-title">Рыболовный магазин «РЫБАЛЮБ»</div>
-        <div class="partner-address">📍 г. Уфа, ул. Айская, 46 (этаж 1) • VK: vk.ru/ribalubeyfa</div>
-        <div class="partner-banner-desc">Снасти, экипировка и приманки для спортивной и любительской ловли</div>
-      </div>
-      <img src="/rybalub-logo.jpg" alt="РЫБАЛЮБ рыболовный магазин" class="partner-logo-img">
-    </div>
-
-    <!-- Блок QR-кода -->
-    <div class="qr-section">
-      <div class="qr-card">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fwww.nova-anglers.ru%2Fcompetition.html%3Fid%3Dnova-street-river-ufa-2026&color=090d16" alt="QR-код регистрации">
-      </div>
-      <div class="qr-info">
-        <div class="qr-tag">Онлайн-регистрация</div>
-        <div class="qr-headline">Наведите камеру смартфона для подачи заявки</div>
-        <div class="qr-step">Откройте камеру → наведите на QR-код → заполните короткую форму участника.</div>
-        <div class="qr-link">🌐 nova-anglers.ru/competitions</div>
-      </div>
-    </div>
-
-    <!-- Футер -->
-    <div class="footer-row">
-      <div>Организатор: <b>NOVA Anglers Alliance</b></div>
-      <div>Сайт: <b>nova-anglers.ru</b></div>
-      <div>VK: <b>vk.com/nova_anglers</b></div>
-      <div>г. Уфа, Республика Башкортостан</div>
-    </div>
-  </div>
+<div class="poster-container">
+  <img src="/nova_poster_a4.jpg" alt="Афиша А4 турнира NOVA Street & River Уфа 2026" class="poster-img">
 </div>
-
-<script>
-  function toggleTheme() {
-    document.body.classList.toggle('light-theme');
-  }
-</script>
 
 </body>
 </html>
